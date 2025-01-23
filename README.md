@@ -7,15 +7,21 @@
     - Tailwind and MUI
 
 - Instructions to compile:
-    1. Make sure you're in the root directory then install required packages
+    1. Make sure you have Node installed on your machine
+        - Run the following to make sure you have Node installed
+            ```
+            node -v
+            ```
+        - If it's not installed, download it from [Node.JS](https://nodejs.org/) 
+    2. Make sure you're in the root directory then install required
         ```shell
         npm i
         ```
-    2. To run the server, run
+    3. To run the server, run
         ```shell
         npm start
         ```
-    3. To run the test API server (Only for test purposes)
+    4. To run the test API server (Only for test purposes)
         - First install json-server
             ```shell
             npm i -g json-server
