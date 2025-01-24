@@ -19,7 +19,7 @@
         ```
     3. To run the server, run
         ```shell
-        npm start
+        npm run dev
         ```
     4. To run the test API server (Only for test purposes)
         - First install json-server
