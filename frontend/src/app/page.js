@@ -1,5 +1,7 @@
 const Homepage = () => {
-  return <div>Homepage</div>;
+  return (
+    <div className="text-main-light-blue-dark font-jetBrains">Homepage</div>
+  );
 };
 
 export default Homepage;
