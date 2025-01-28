@@ -7,9 +7,13 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        jetBrains: ["JetbrainsBold", "monospace"],
+        jetBrainsExtraBold: ["JetbrainsExtraBold", "monospace"],
+      },
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        "main-light-blue-dark": "#1F99FC",
+        "main-dark-purple-dark": "#4C2DA8",
       },
     },
   },
