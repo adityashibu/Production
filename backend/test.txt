@@ -1,0 +1,15 @@
+TODO
+{
+    {
+        name: "LG TV",
+        state: "ON",
+        energy: "22 KwH",
+        uptime: "",
+    },
+    {
+        name: "Samsung Air purifier",
+        state: "OFF",
+        energy: "13 KwH",
+        uptime: "N/A"
+    },
+}
