@@ -11,7 +11,6 @@ import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -172,9 +171,14 @@ export default function Navbar() {
             variant="h6"
             noWrap
             component="div"
-            sx={{ display: { xs: "none", sm: "block" } }}
+            sx={{
+              display: {
+                xs: "none",
+                sm: "block",
+              },
+            }}
           >
-            MUI
+            PowerHouse
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
