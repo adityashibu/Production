@@ -90,7 +90,7 @@ export default function Navbar() {
     >
       <MenuItem>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="error">
+          <Badge badgeContent={4} color="primary" variant="dot">
             <MailIcon />
           </Badge>
         </IconButton>
@@ -102,7 +102,7 @@ export default function Navbar() {
           aria-label="show 17 new notifications"
           color="inherit"
         >
-          <Badge badgeContent={17} color="error">
+          <Badge badgeContent={17} color="primary" variant="dot">
             <NotificationsIcon />
           </Badge>
         </IconButton>
@@ -136,10 +136,10 @@ export default function Navbar() {
             sx={{ mr: 2 }}
             onClick={handleDrawerOpen}
           >
-            <MenuIcon />
+            <MenuIcon className="text-main-light-blue-dark" />
           </IconButton>
           <Typography
-            variant="h6"
+            variant="h5"
             noWrap
             component="div"
             sx={{
@@ -147,7 +147,10 @@ export default function Navbar() {
                 xs: "none",
                 sm: "block",
               },
+              fontFamily: "JetBrains Mono",
+              fontWeight: "bold",
             }}
+            className="font-jetBrains text-main-light-blue-dark"
           >
             PowerHouse
           </Typography>

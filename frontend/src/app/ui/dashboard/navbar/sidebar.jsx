@@ -1,8 +1,6 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
-import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
@@ -41,21 +39,23 @@ export default function Sidebar({ open, handleDrawerClose }) {
     >
       <DrawerHeader>
         <IconButton onClick={handleDrawerClose}>
-          <ChevronLeftIcon />
+          <ChevronLeftIcon className="text-main-light-blue-dark" />
         </IconButton>
       </DrawerHeader>
       <Divider />
       <List>
-        {["Inbox", "Starred", "Send Email", "Drafts"].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        {["Home", "Devices", "Automation", "Energy Usage", "Groups"].map(
+          (text, index) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </ListItem>
+          )
+        )}
       </List>
     </Drawer>
   );
