@@ -1,0 +1,43 @@
+{
+  "smart_home_devices": [
+    {
+      "id": 1,
+      "name": "Philips Hue Living Room Smart Bulb",
+      "type": "light",
+      "status": "on",
+      "power_usage": 20,
+      "uptime": 0
+    },
+    {
+      "id": 2,
+      "name": "August Main Door Lock",
+      "status": "on",
+      "battery_level": 100,
+      "power_usage": 5,
+      "uptime": 0
+    },
+    {
+      "id": 3,
+      "name": "Nest Kitchen Thermostat",
+      "status": "off",
+      "temperature": 72,
+      "power_usage": 50,
+      "uptime": 0
+    },
+    {
+      "id": 4,
+      "name": "Samsung Living Room TV",
+      "status": "off",
+      "volume": 25,
+      "power_usage": 100,
+      "uptime": 0
+    },
+    {
+      "id": 5,
+      "name": "TP-Link Office Smart Plug",
+      "status": "on",
+      "power_usage": 50,
+      "uptime": 0
+    }
+  ]
+}
