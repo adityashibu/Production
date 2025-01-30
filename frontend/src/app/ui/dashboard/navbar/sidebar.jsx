@@ -119,15 +119,7 @@ export default function Sidebar() {
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <IconButton onClick={() => open(!open)}>
-            {theme.direction === "rtl" ? (
-              <ChevronRightIcon />
-            ) : (
-              <ChevronLeftIcon />
-            )}
-          </IconButton>
-        </DrawerHeader>
+        <DrawerHeader></DrawerHeader>
         <Divider />
         <List>
           {menuItems.map(({ name: Name, icon: Icon, link }) => (
