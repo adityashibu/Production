@@ -25,7 +25,7 @@ const menuItems = [
         Home
       </span>
     ),
-    icon: () => <HomeIcon className="text-main-dark-blue-inactive" />,
+    icon: HomeIcon,
     link: "dashboard",
   },
   {
@@ -37,7 +37,7 @@ const menuItems = [
         Devices
       </span>
     ),
-    icon: () => <DevicesIcon className="text-main-dark-blue-inactive" />,
+    icon: DevicesIcon,
     link: "devices",
   },
   {
@@ -49,7 +49,7 @@ const menuItems = [
         Automation
       </span>
     ),
-    icon: () => <SmartToyIcon className="text-main-dark-blue-inactive" />,
+    icon: SmartToyIcon,
     link: "automations",
   },
   {
@@ -61,9 +61,7 @@ const menuItems = [
         Energy Usage
       </span>
     ),
-    icon: () => (
-      <BatteryChargingFullIcon className="text-main-dark-blue-inactive" />
-    ),
+    icon: BatteryChargingFullIcon,
     link: "energy",
   },
   {
@@ -75,7 +73,7 @@ const menuItems = [
         Groups
       </span>
     ),
-    icon: () => <GroupIcon className="text-main-dark-blue-inactive" />,
+    icon: GroupIcon,
     link: "groups",
   },
 ];
@@ -113,10 +111,29 @@ export default function Sidebar({ open, handleDrawerClose }) {
       <Divider />
       <List>
         {menuItems.map(({ name: Name, icon: Icon, link: Link }) => (
-          <ListItem key={Name} disablePadding>
+          <ListItem
+            key={Link}
+            disablePadding
+            className="hover:bg-main-light-blue-dark/20 ease-linear transition-all duration-300 group"
+          >
             <ListItemButton>
-              <ListItemIcon>{<Icon />}</ListItemIcon>
-              <ListItemText primary={<Name />} />
+              <ListItemIcon className="text-main-dark-blue-inactive group-hover:text-main-light-blue-dark transition-all duration-300">
+                <Icon className="text-main-dark-blue-inactive group-hover:text-main-light-blue-dark transition-all duration-300" />
+              </ListItemIcon>
+              <ListItemText
+                primary={
+                  <span
+                    style={{
+                      fontFamily: "JetBrains Mono",
+                      fontWeight: 700,
+                      fontSize: 14,
+                    }}
+                    className="text-main-dark-blue-inactive group-hover:text-main-light-blue-dark transition-all duration-300"
+                  >
+                    {Link.charAt(0).toUpperCase() + Link.slice(1)}
+                  </span>
+                }
+              />
             </ListItemButton>
           </ListItem>
         ))}
