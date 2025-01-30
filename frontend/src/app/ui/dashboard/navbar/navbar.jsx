@@ -24,7 +24,7 @@ const AppBar = styled(
   {}
 )(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  backgroundColor: theme.palette.background.paper, // Set solid background color
+  backgroundColor: theme.palette.background.paper,
 }));
 
 const Search = styled("div")(({ theme }) => ({
