@@ -21,6 +21,8 @@ import SmartToyIcon from "@mui/icons-material/SmartToy";
 import BatteryChargingFullIcon from "@mui/icons-material/BatteryChargingFull";
 import GroupIcon from "@mui/icons-material/Group";
 
+import { useAppStore } from "@/app/appStore";
+
 const menuItems = [
   {
     name: "Home",
@@ -108,14 +110,17 @@ const Drawer = styled(MuiDrawer, {
 
 export default function Sidebar() {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
+  // const [open, setOpen] = React.useState(true);
+
+  const updateOpen = useAppStore((state) => state.updateOpen);
+  const open = useAppStore((state) => state.Open);
 
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
-          <IconButton onClick={() => setOpen(!open)}>
+          <IconButton onClick={() => open(!open)}>
             {theme.direction === "rtl" ? (
               <ChevronRightIcon />
             ) : (
