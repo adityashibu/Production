@@ -9,8 +9,34 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
+import HomeIcon from "@mui/icons-material/Home";
+import DevicesIcon from "@mui/icons-material/Devices";
+import SmartToyIcon from "@mui/icons-material/SmartToy";
+import BatteryChargingFullIcon from "@mui/icons-material/BatteryChargingFull";
+import GroupIcon from "@mui/icons-material/Group";
+
+const menuItems = [
+  {
+    name: "Home",
+    icon: <HomeIcon />,
+  },
+  {
+    name: "Devices",
+    icon: <DevicesIcon />,
+  },
+  {
+    name: "Automation",
+    icon: <SmartToyIcon />,
+  },
+  {
+    name: "Energy Usage",
+    icon: <BatteryChargingFullIcon />,
+  },
+  {
+    name: "Groups",
+    icon: <GroupIcon />,
+  },
+];
 
 const drawerWidth = 240;
 
@@ -44,18 +70,14 @@ export default function Sidebar({ open, handleDrawerClose }) {
       </DrawerHeader>
       <Divider />
       <List>
-        {["Home", "Devices", "Automation", "Energy Usage", "Groups"].map(
-          (text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          )
-        )}
+        {menuItems.map(({ name, icon }) => (
+          <ListItem key={name} disablePadding>
+            <ListItemButton>
+              <ListItemIcon>{icon}</ListItemIcon>
+              <ListItemText primary={name} />
+            </ListItemButton>
+          </ListItem>
+        ))}
       </List>
     </Drawer>
   );
