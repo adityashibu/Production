@@ -48,8 +48,18 @@ export default function Navbar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem
+        onClick={handleMenuClose}
+        sx={{ fontFamily: "JetBrains Mono", fontWeight: 400 }}
+      >
+        Profile
+      </MenuItem>
+      <MenuItem
+        onClick={handleMenuClose}
+        sx={{ fontFamily: "JetBrains Mono", fontWeight: 400 }}
+      >
+        My account
+      </MenuItem>
     </Menu>
   );
 
@@ -73,11 +83,12 @@ export default function Navbar() {
             noWrap
             component="div"
             sx={{
-              display: { xs: "none", sm: "block" },
+              display: { xs: "block" },
               fontFamily: "JetBrains Mono",
-              fontWeight: "bold",
+              fontWeight: 800,
+              textAlign: "center",
             }}
-            className="font-jetBrains text-main-light-blue-dark"
+            className="font-jetBrains text-main-light-blue-dark underline"
           >
             PowerHouse
           </Typography>
@@ -90,8 +101,8 @@ export default function Navbar() {
               aria-label="show 4 new mails"
               color="inherit"
             >
-              <Badge badgeContent={4} color="primary" variant="dot">
-                <MailIcon />
+              <Badge badgeContent={4} color="secondary" variant="dot">
+                <MailIcon className="text-main-light-blue-dark" />
               </Badge>
             </IconButton>
             <IconButton
@@ -99,8 +110,8 @@ export default function Navbar() {
               aria-label="show 17 new notifications"
               color="inherit"
             >
-              <Badge badgeContent={17} color="primary" variant="dot">
-                <NotificationsIcon />
+              <Badge badgeContent={17} color="secondary" variant="dot">
+                <NotificationsIcon className="text-main-light-blue-dark" />
               </Badge>
             </IconButton>
             <IconButton

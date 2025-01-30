@@ -19,59 +19,64 @@ const menuItems = [
   {
     name: () => (
       <span
-        style={{ fontFamily: "JetBrains Mono", fontWeight: 700 }}
-        className="text-main-light-blue-dark"
+        style={{ fontFamily: "JetBrains Mono", fontWeight: 700, fontSize: 14 }}
+        className="text-main-dark-blue-inactive"
       >
         Home
       </span>
     ),
-    icon: () => <HomeIcon className="text-main-light-blue-dark" />,
+    icon: () => <HomeIcon className="text-main-dark-blue-inactive" />,
+    link: "dashboard",
   },
   {
     name: () => (
       <span
-        style={{ fontFamily: "JetBrains Mono", fontWeight: 700 }}
-        className="text-main-light-blue-dark"
+        style={{ fontFamily: "JetBrains Mono", fontWeight: 700, fontSize: 14 }}
+        className="text-main-dark-blue-inactive"
       >
         Devices
       </span>
     ),
-    icon: () => <DevicesIcon className="text-main-light-blue-dark" />,
+    icon: () => <DevicesIcon className="text-main-dark-blue-inactive" />,
+    link: "devices",
   },
   {
     name: () => (
       <span
-        style={{ fontFamily: "JetBrains Mono", fontWeight: 700 }}
-        className="text-main-light-blue-dark"
+        style={{ fontFamily: "JetBrains Mono", fontWeight: 700, fontSize: 14 }}
+        className="text-main-dark-blue-inactive"
       >
         Automation
       </span>
     ),
-    icon: () => <SmartToyIcon className="text-main-light-blue-dark" />,
+    icon: () => <SmartToyIcon className="text-main-dark-blue-inactive" />,
+    link: "automations",
   },
   {
     name: () => (
       <span
-        style={{ fontFamily: "JetBrains Mono", fontWeight: 700 }}
-        className="text-main-light-blue-dark"
+        style={{ fontFamily: "JetBrains Mono", fontWeight: 700, fontSize: 14 }}
+        className="text-main-dark-blue-inactive"
       >
         Energy Usage
       </span>
     ),
     icon: () => (
-      <BatteryChargingFullIcon className="text-main-light-blue-dark" />
+      <BatteryChargingFullIcon className="text-main-dark-blue-inactive" />
     ),
+    link: "energy",
   },
   {
     name: () => (
       <span
-        style={{ fontFamily: "JetBrains Mono", fontWeight: 700 }}
-        className="text-main-light-blue-dark"
+        style={{ fontFamily: "JetBrains Mono", fontWeight: 700, fontSize: 14 }}
+        className="text-main-dark-blue-inactive"
       >
         Groups
       </span>
     ),
-    icon: () => <GroupIcon className="text-main-light-blue-dark" />,
+    icon: () => <GroupIcon className="text-main-dark-blue-inactive" />,
+    link: "groups",
   },
 ];
 
@@ -107,7 +112,7 @@ export default function Sidebar({ open, handleDrawerClose }) {
       </DrawerHeader>
       <Divider />
       <List>
-        {menuItems.map(({ name: Name, icon: Icon }) => (
+        {menuItems.map(({ name: Name, icon: Icon, link: Link }) => (
           <ListItem key={Name} disablePadding>
             <ListItemButton>
               <ListItemIcon>{<Icon />}</ListItemIcon>

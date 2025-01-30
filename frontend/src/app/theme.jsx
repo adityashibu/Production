@@ -10,7 +10,7 @@ const theme = createTheme({
       main: "#1F99FC",
     },
     secondary: {
-      main: "#DEDEDE",
+      main: "#197AC9",
     },
     typography: {
       fontFamily: jetBrainsMono.style.fontFamily,

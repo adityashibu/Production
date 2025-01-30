@@ -15,6 +15,9 @@ export default {
         "bg-light": "#f3f3f3",
         "bg-lightSoft": "#dedede",
         "main-light-blue-dark": "#1F99FC",
+        "main-light-blue-darker": "#197ac9",
+        "main-dark-blue-inactive": "#012970",
+
         "main-dark-purple-dark": "#4C2DA8",
       },
     },
