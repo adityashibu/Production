@@ -17,24 +17,61 @@ import GroupIcon from "@mui/icons-material/Group";
 
 const menuItems = [
   {
-    name: "Home",
-    icon: <HomeIcon />,
+    name: () => (
+      <span
+        style={{ fontFamily: "JetBrains Mono", fontWeight: 700 }}
+        className="text-main-light-blue-dark"
+      >
+        Home
+      </span>
+    ),
+    icon: () => <HomeIcon className="text-main-light-blue-dark" />,
   },
   {
-    name: "Devices",
-    icon: <DevicesIcon />,
+    name: () => (
+      <span
+        style={{ fontFamily: "JetBrains Mono", fontWeight: 700 }}
+        className="text-main-light-blue-dark"
+      >
+        Devices
+      </span>
+    ),
+    icon: () => <DevicesIcon className="text-main-light-blue-dark" />,
   },
   {
-    name: "Automation",
-    icon: <SmartToyIcon />,
+    name: () => (
+      <span
+        style={{ fontFamily: "JetBrains Mono", fontWeight: 700 }}
+        className="text-main-light-blue-dark"
+      >
+        Automation
+      </span>
+    ),
+    icon: () => <SmartToyIcon className="text-main-light-blue-dark" />,
   },
   {
-    name: "Energy Usage",
-    icon: <BatteryChargingFullIcon />,
+    name: () => (
+      <span
+        style={{ fontFamily: "JetBrains Mono", fontWeight: 700 }}
+        className="text-main-light-blue-dark"
+      >
+        Energy Usage
+      </span>
+    ),
+    icon: () => (
+      <BatteryChargingFullIcon className="text-main-light-blue-dark" />
+    ),
   },
   {
-    name: "Groups",
-    icon: <GroupIcon />,
+    name: () => (
+      <span
+        style={{ fontFamily: "JetBrains Mono", fontWeight: 700 }}
+        className="text-main-light-blue-dark"
+      >
+        Groups
+      </span>
+    ),
+    icon: () => <GroupIcon className="text-main-light-blue-dark" />,
   },
 ];
 
@@ -70,11 +107,11 @@ export default function Sidebar({ open, handleDrawerClose }) {
       </DrawerHeader>
       <Divider />
       <List>
-        {menuItems.map(({ name, icon }) => (
-          <ListItem key={name} disablePadding>
+        {menuItems.map(({ name: Name, icon: Icon }) => (
+          <ListItem key={Name} disablePadding>
             <ListItemButton>
-              <ListItemIcon>{icon}</ListItemIcon>
-              <ListItemText primary={name} />
+              <ListItemIcon>{<Icon />}</ListItemIcon>
+              <ListItemText primary={<Name />} />
             </ListItemButton>
           </ListItem>
         ))}
