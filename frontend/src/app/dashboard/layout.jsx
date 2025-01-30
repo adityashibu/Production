@@ -1,20 +1,19 @@
+import { Box } from "@mui/material";
 import ThemeRegistry from "../themeRegistery";
-
-const { default: Navbar } = require("../ui/dashboard/navbar/navbar");
-// const { default: Sidebar } = require("../ui/dashboard/sidebar/sidebar");
+import Sidebar from "../ui/dashboard/navbar/sidebar";
+import Navbar from "../ui/dashboard/navbar/navbar";
 
 const layout = ({ children }) => {
   return (
     <ThemeRegistry>
-      <div>
-        {/* <div className="sm:flex-3 md:flex-1 bg-bg-lightSoft p-[20px]">
+      <Navbar />
+      <Box height={60} />
+      <Box sx={{ display: "flex" }}>
         <Sidebar />
-      </div> */}
-        <div>
-          <Navbar />
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           {children}
-        </div>
-      </div>
+        </Box>
+      </Box>
     </ThemeRegistry>
   );
 };
