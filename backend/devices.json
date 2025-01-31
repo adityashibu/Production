@@ -4,7 +4,7 @@
       "id": 1,
       "name": "Philips Hue Living Room Smart Bulb",
       "type": "light",
-      "status": "on",
+      "status": "off",
       "power_usage": 37,
       "uptime": 95
     },
@@ -12,17 +12,17 @@
       "id": 2,
       "name": "August Main Door Lock",
       "status": "on",
-      "battery_level": 7,
-      "power_usage": 136,
-      "uptime": 73
+      "battery_level": 5,
+      "power_usage": 106,
+      "uptime": 74
     },
     {
       "id": 3,
       "name": "Nest Kitchen Thermostat",
       "status": "on",
-      "temperature": 71,
-      "power_usage": 131,
-      "uptime": 108
+      "temperature": 66,
+      "power_usage": 8,
+      "uptime": 109
     },
     {
       "id": 4,
@@ -35,7 +35,7 @@
     {
       "id": 5,
       "name": "TP-Link Office Smart Plug",
-      "status": "on",
+      "status": "off",
       "power_usage": 151,
       "uptime": 112
     }
