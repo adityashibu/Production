@@ -123,7 +123,7 @@ export default function Sidebar() {
             <Link key={link} href={link} passHref legacyBehavior>
               <ListItem
                 disablePadding
-                className="hover:bg-main-light-blue-dark/20 ease-linear transition-all duration-300 group"
+                className="hover:bg-main-light-blue-dark/20 ease-linear transition-all duration-300 group md:px-1"
               >
                 <ListItemButton>
                   <ListItemIcon className="text-main-dark-blue-inactive group-hover:text-main-light-blue-dark transition-all duration-300">

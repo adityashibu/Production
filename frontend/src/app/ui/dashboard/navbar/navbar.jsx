@@ -115,10 +115,10 @@ export default function Navbar() {
             edge="start"
             color="inherit"
             aria-label="open drawer"
-            sx={{ mr: 2 }}
+            sx={{ mr: 2, ml: { md: -2 } }}
             onClick={() => updateOpen(!Open)}
           >
-            <MenuIcon className="text-main-light-blue-dark" />
+            <MenuIcon />
           </IconButton>
           <Typography
             variant="h5"
@@ -138,20 +138,11 @@ export default function Navbar() {
           <Box sx={{ display: "flex" }}>
             <IconButton
               size="large"
-              aria-label="show 4 new mails"
-              color="inherit"
-            >
-              <Badge badgeContent={4} color="secondary" variant="dot">
-                <MailIcon className="text-main-light-blue-dark" />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
               aria-label="show 17 new notifications"
               color="inherit"
             >
-              <Badge badgeContent={17} color="secondary" variant="dot">
-                <NotificationsIcon className="text-main-light-blue-dark" />
+              <Badge badgeContent={17} color="primary" variant="dot">
+                <NotificationsIcon />
               </Badge>
             </IconButton>
             <IconButton

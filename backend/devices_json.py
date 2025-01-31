@@ -1,7 +1,6 @@
 import json
 import asyncio
 import random
-import os
 
 deviceFile = "devices.json"
 
