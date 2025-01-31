@@ -24,27 +24,27 @@ const menuItems = [
   {
     name: "Home",
     icon: HomeIcon,
-    link: "/dashboard", // Add leading slash
+    link: "/dashboard",
   },
   {
     name: "Devices",
     icon: DevicesIcon,
-    link: "/dashboard/devices", // Add leading slash
+    link: "/dashboard/devices",
   },
   {
     name: "Automations",
     icon: SmartToyIcon,
-    link: "/automations", // Add leading slash
+    link: "/automations",
   },
   {
     name: "Energy Usage",
     icon: BatteryChargingFullIcon,
-    link: "/energy", // Add leading slash
+    link: "/energy",
   },
   {
     name: "Groups",
     icon: GroupIcon,
-    link: "/groups", // Add leading slash
+    link: "/groups",
   },
 ];
 
