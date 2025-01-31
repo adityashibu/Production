@@ -7,7 +7,7 @@ const layout = ({ children }) => {
   return (
     <ThemeRegistry>
       <Navbar />
-      <Box height={60} />
+      <Box height={{ xs: 40, sm: 60 }} />
       <Box sx={{ display: "flex" }}>
         <Sidebar />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>

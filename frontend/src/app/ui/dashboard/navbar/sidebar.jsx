@@ -24,27 +24,27 @@ const menuItems = [
   {
     name: "Home",
     icon: HomeIcon,
-    link: "/dashboard", // Add leading slash
+    link: "/dashboard",
   },
   {
     name: "Devices",
     icon: DevicesIcon,
-    link: "/dashboard/devices", // Add leading slash
+    link: "/dashboard/devices",
   },
   {
     name: "Automations",
     icon: SmartToyIcon,
-    link: "/automations", // Add leading slash
+    link: "/automations",
   },
   {
     name: "Energy Usage",
     icon: BatteryChargingFullIcon,
-    link: "/energy", // Add leading slash
+    link: "/energy",
   },
   {
     name: "Groups",
     icon: GroupIcon,
-    link: "/groups", // Add leading slash
+    link: "/groups",
   },
 ];
 
@@ -123,7 +123,7 @@ export default function Sidebar() {
             <Link key={link} href={link} passHref legacyBehavior>
               <ListItem
                 disablePadding
-                className="hover:bg-main-light-blue-dark/20 ease-linear transition-all duration-300 group"
+                className="hover:bg-main-light-blue-dark/20 ease-linear transition-all duration-300 group md:px-1"
               >
                 <ListItemButton>
                   <ListItemIcon className="text-main-dark-blue-inactive group-hover:text-main-light-blue-dark transition-all duration-300">
