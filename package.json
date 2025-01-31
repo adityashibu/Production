@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "cd frontend && npx next dev --turbopack",
-    "build": "next build",
+    "build": "cd frontend && npx next build",
     "start": "next start",
     "lint": "next lint"
   },

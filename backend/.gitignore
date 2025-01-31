@@ -1,0 +1,8 @@
+# JSON files
+devices.JSON
+
+# Venv files
+venv/
+
+Python cache files
+__pycache__/
