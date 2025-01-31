@@ -10,6 +10,9 @@
 !.yarn/releases
 !.yarn/versions
 
+# JSON files
+devices.json
+
 # testing
 /coverage
 
