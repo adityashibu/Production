@@ -82,7 +82,6 @@ const Dashboard = () => {
                 <Typography
                   variant="h6"
                   sx={{
-                    mt: 1,
                     fontSize: { xs: 30, md: 45 },
                     fontWeight: 800,
                     fontFamily: "JetBrains Mono",
