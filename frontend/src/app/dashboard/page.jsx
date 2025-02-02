@@ -1,9 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useEffect, useState } from "react";
 import Breadcrumb from "../ui/dashboard/breadcrumbs";
-import { styled } from "@mui/material/styles";
-import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import { Box } from "@mui/material";
 import Card from "@mui/material/Card";
@@ -17,18 +16,33 @@ import DevicesOtherIcon from "@mui/icons-material/DevicesOther";
 import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
 import SsidChartIcon from "@mui/icons-material/SsidChart";
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-  ...theme.applyStyles("dark", {
-    backgroundColor: "#1A2027",
-  }),
-}));
-
 const Dashboard = () => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8000/smart_home_devices"
+        );
+        const result = await response.json();
+        setData(result);
+      } catch (error) {
+        console.error("Error fetching smart home devices:", error);
+      }
+    };
+
+    fetchData();
+
+    const interval = setInterval(fetchData, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const totalPowerUsage = data.reduce(
+    (acc, device) => acc + (device.power_usage || 0),
+    0
+  );
+
   return (
     <div className="font-jetBrainsExtraBold text-main-light-blue-dark">
       <Breadcrumb />
@@ -36,29 +50,47 @@ const Dashboard = () => {
       <Grid container spacing={2}>
         <Grid item xs={12} md={12}>
           <Stack spacing={2} direction={{ xs: "column", md: "row" }}>
-            <Card sx={{ flex: 1, height: 140 }}>
-              <CardContent className="flex">
-                <ElectricBoltIcon
-                  sx={{ color: "#1F99FC", fontSize: { xs: 20, md: 22 } }}
-                  className="mt-1"
-                />
+            <Card
+              sx={{
+                flex: 1,
+                height: 140,
+                boxShadow: "0px 4px 10px rgba(31, 153, 252, 0.5)",
+              }}
+              variant="outlined"
+            >
+              <CardContent className="flex flex-col items-start">
+                <div className="flex items-center">
+                  <ElectricBoltIcon
+                    sx={{ color: "#1F99FC", fontSize: { xs: 20, md: 22 } }}
+                  />
+                  <Typography
+                    gutterBottom
+                    variant="h5"
+                    component="div"
+                    sx={{
+                      fontFamily: "JetBrains Mono",
+                      fontWeight: 600,
+                      fontSize: { xs: 20, md: 22 },
+                    }}
+                    className="text-main-light-blue-dark pl-3"
+                  >
+                    Energy Usage
+                  </Typography>
+                </div>
+
+                {/* Total Power Usage Below */}
                 <Typography
-                  gutterBottom
-                  variant="h5"
-                  component="div"
+                  variant="h6"
                   sx={{
+                    mt: 1,
+                    fontSize: { xs: 30, md: 45 },
+                    fontWeight: 800,
                     fontFamily: "JetBrains Mono",
-                    fontWeight: 600,
-                    fontSize: { xs: 20, md: 22 },
                   }}
-                  className="text-main-light-blue-dark pl-3"
+                  className="text-main-light-blue-dark"
                 >
-                  Energy Usage
+                  {totalPowerUsage} W
                 </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "text.secondary" }}
-                ></Typography>
               </CardContent>
             </Card>
 
