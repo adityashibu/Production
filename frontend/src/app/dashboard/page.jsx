@@ -4,16 +4,18 @@ import * as React from "react";
 import Breadcrumb from "../ui/dashboard/breadcrumbs";
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import { Box } from "@mui/material";
-
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-
 import Stack from "@mui/material/Stack";
 
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
+import DevicesOtherIcon from "@mui/icons-material/DevicesOther";
+import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
+import SsidChartIcon from "@mui/icons-material/SsidChart";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: "#fff",
@@ -32,53 +34,99 @@ const Dashboard = () => {
       <Breadcrumb />
       <Box height={30} />
       <Grid container spacing={2}>
-        <Grid size={8}>
-          <Stack spacing={2} direction={{ sm: "column", md: "row" }}>
-            <Card sx={{ maxWidth: 49 + "%", height: 140 }}>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  Lizard
+        <Grid item xs={12} md={12}>
+          <Stack spacing={2} direction={{ xs: "column", md: "row" }}>
+            <Card sx={{ flex: 1, height: 140 }}>
+              <CardContent className="flex">
+                <ElectricBoltIcon sx={{ color: "#1F99FC" }} className="mt-1" />
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  component="div"
+                  sx={{ fontFamily: "JetBrains Mono", fontWeight: 600 }}
+                  className="text-main-light-blue-dark pl-3"
+                >
+                  Energy Usage
                 </Typography>
-                <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  Lizards are a widespread group of squamate reptiles, with over
-                  6,000 species, ranging across all continents except Antarctica
-                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{ color: "text.secondary" }}
+                ></Typography>
               </CardContent>
-              {/* <CardActions>
-                <Button size="small">Share</Button>
-                <Button size="small">Learn More</Button>
-              </CardActions> */}
             </Card>
 
-            <Card sx={{ maxWidth: 49 + "%", height: 140 }}>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  Lizard
+            <Card sx={{ flex: 1, height: 140 }}>
+              <CardContent className="flex">
+                <DevicesOtherIcon sx={{ color: "#1F99FC" }} className="mt-1" />
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  component="div"
+                  sx={{ fontFamily: "JetBrains Mono", fontWeight: 600 }}
+                  className="text-main-light-blue-dark pl-3"
+                >
+                  Devices Connected
                 </Typography>
-                <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  Lizards are a widespread group of squamate reptiles, with over
-                  6,000 species, ranging across all continents except Antarctica
-                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{ color: "text.secondary" }}
+                ></Typography>
               </CardContent>
-              {/* <CardActions>
-                <Button size="small">Share</Button>
-                <Button size="small">Learn More</Button>
-              </CardActions> */}
+            </Card>
+
+            <Card sx={{ flex: 1, height: 140 }}>
+              <CardContent className="flex">
+                <PrecisionManufacturingIcon
+                  sx={{ color: "#1F99FC" }}
+                  className="mt-1"
+                />
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  component="div"
+                  sx={{ fontFamily: "JetBrains Mono", fontWeight: 600 }}
+                  className="text-main-light-blue-dark pl-3"
+                >
+                  Automation Schedules
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{ color: "text.secondary" }}
+                ></Typography>
+              </CardContent>
+            </Card>
+
+            <Card sx={{ flex: 1, height: 140 }}>
+              <CardContent className="flex">
+                <SsidChartIcon sx={{ color: "#1F99FC" }} className="mt-1" />
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  component="div"
+                  sx={{ fontFamily: "JetBrains Mono", fontWeight: 600 }}
+                  className="text-main-light-blue-dark pl-3"
+                >
+                  Usage Breakdown
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{ color: "text.secondary" }}
+                ></Typography>
+              </CardContent>
             </Card>
           </Stack>
         </Grid>
 
-        <Grid size={4}>
+        {/* Right Column */}
+        {/* <Grid item xs={12} md={4}>
           <Stack spacing={2} direction="column">
-            <Card sx={{ maxWidth: 345 }}>
+            <Card>
               <CardContent>
                 <Stack spacing={2} direction="row">
                   <div className="mt-[50px] ml-[20px]">
                     <CalendarMonthIcon />
                   </div>
                   <div className="pl-[10px] pr-[10px] pt-[10px] pb-[10px]">
-                    {/* <span className="">230 KwH</span>
-                    <span>Monthly Usage</span> */}
                     <Typography
                       sx={{ fontFamily: "JetBrains Mono", fontWeight: 700 }}
                     >
@@ -92,43 +140,24 @@ const Dashboard = () => {
                   </div>
                 </Stack>
               </CardContent>
-              {/* <CardActions>
-                <Button size="small">Share</Button>
-                <Button size="small">Learn More</Button>
-              </CardActions> */}
             </Card>
 
-            <Card sx={{ maxWidth: 345 }}>
+            <Card>
               <CardContent></CardContent>
-              {/* <CardActions>
-                <Button size="small">Share</Button>
-                <Button size="small">Learn More</Button>
-              </CardActions> */}
             </Card>
           </Stack>
-        </Grid>
+        </Grid> */}
 
-        <Grid size={8}>
-          <Stack spacing={2} direction="column">
-            <Card sx={{ height: 60 + "vh" }}>
-              <CardContent></CardContent>
-              {/* <CardActions>
-                <Button size="small">Share</Button>
-                <Button size="small">Learn More</Button>
-              </CardActions> */}
-            </Card>
-          </Stack>
+        {/* Large Cards Section */}
+        <Grid item xs={12} md={8}>
+          <Card sx={{ height: "60vh" }}>
+            <CardContent></CardContent>
+          </Card>
         </Grid>
-        <Grid size={4}>
-          <Stack spacing={2} direction="column">
-            <Card sx={{ height: 60 + "vh" }}>
-              <CardContent></CardContent>
-              {/* <CardActions>
-                <Button size="small">Share</Button>
-                <Button size="small">Learn More</Button>
-              </CardActions> */}
-            </Card>
-          </Stack>
+        <Grid item xs={12} md={4}>
+          <Card sx={{ height: "60vh" }}>
+            <CardContent></CardContent>
+          </Card>
         </Grid>
       </Grid>
     </div>
