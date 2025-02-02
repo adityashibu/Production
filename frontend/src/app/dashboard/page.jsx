@@ -9,15 +9,85 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import ListSubheader from "@mui/material/ListSubheader";
+import Switch from "@mui/material/Switch";
 
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import DevicesOtherIcon from "@mui/icons-material/DevicesOther";
 import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
 import SsidChartIcon from "@mui/icons-material/SsidChart";
 
+import { styled } from "@mui/material/styles";
+
+const IOSSwitch = styled((props) => (
+  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+))(({ theme }) => ({
+  width: 42,
+  height: 26,
+  padding: 0,
+  "& .MuiSwitch-switchBase": {
+    padding: 0,
+    margin: 2,
+    transitionDuration: "300ms",
+    "&.Mui-checked": {
+      transform: "translateX(16px)",
+      color: "#fff",
+      "& + .MuiSwitch-track": {
+        backgroundColor: "#1F99FC", // Change the background color when checked
+        opacity: 1,
+        border: 0,
+        ...theme.applyStyles("dark", {
+          backgroundColor: "#1F99FC", // Change the background color on dark mode as well
+        }),
+      },
+      "&.Mui-disabled + .MuiSwitch-track": {
+        opacity: 0.5,
+      },
+    },
+    "&.Mui-focusVisible .MuiSwitch-thumb": {
+      color: "#33cf4d",
+      border: "6px solid #fff",
+    },
+    "&.Mui-disabled .MuiSwitch-thumb": {
+      color: theme.palette.grey[100],
+      ...theme.applyStyles("dark", {
+        color: theme.palette.grey[600],
+      }),
+    },
+    "&.Mui-disabled + .MuiSwitch-track": {
+      opacity: 0.7,
+      ...theme.applyStyles("dark", {
+        opacity: 0.3,
+      }),
+    },
+  },
+  "& .MuiSwitch-thumb": {
+    boxSizing: "border-box",
+    width: 22,
+    height: 22,
+  },
+  "& .MuiSwitch-track": {
+    borderRadius: 26 / 2,
+    backgroundColor: "#E9E9EA",
+    opacity: 1,
+    transition: theme.transitions.create(["background-color"], {
+      duration: 500,
+    }),
+    ...theme.applyStyles("dark", {
+      backgroundColor: "#39393D",
+    }),
+  },
+}));
+
 const Dashboard = () => {
   const [data, setData] = useState([]);
+  const [checked, setChecked] = React.useState([]);
 
+  // Fetch data from API
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -26,6 +96,11 @@ const Dashboard = () => {
         );
         const result = await response.json();
         setData(result);
+        // Set initial checked state based on the device status
+        const initialChecked = result
+          .filter((device) => device.status === "on")
+          .map((device) => device.id);
+        setChecked(initialChecked);
       } catch (error) {
         console.error("Error fetching smart home devices:", error);
       }
@@ -33,14 +108,32 @@ const Dashboard = () => {
 
     fetchData();
 
+    // Set up an interval to fetch data every 1 second
     const interval = setInterval(fetchData, 1000);
     return () => clearInterval(interval);
   }, []);
 
+  // Toggle switch based on device ID
+  const handleToggle = (deviceId) => () => {
+    const currentIndex = checked.indexOf(deviceId);
+    const newChecked = [...checked];
+
+    if (currentIndex === -1) {
+      newChecked.push(deviceId);
+    } else {
+      newChecked.splice(currentIndex, 1);
+    }
+
+    setChecked(newChecked);
+  };
+
+  // Calculate total power usage and number of devices
   const totalPowerUsage = data.reduce(
     (acc, device) => acc + (device.power_usage || 0),
     0
   );
+
+  const noOfDevices = data.length || 0;
 
   return (
     <div className="font-jetBrainsExtraBold text-main-light-blue-dark">
@@ -54,75 +147,80 @@ const Dashboard = () => {
                 flex: 1,
                 height: 140,
                 boxShadow: "0px 4px 10px rgba(31, 153, 252, 0.5)",
-
-                /* Uncomment if we need dynamic shadows according to usage */
-                // boxShadow:
-                //   totalPowerUsage > 500
-                //     ? "0px 4px 10px rgba(255, 0, 0, 0.7)" // Red shadow for high usage
-                //     : totalPowerUsage < 400
-                //     ? "0px 4px 10px rgba(0, 255, 0, 0.7)" // Green shadow for low usage
-                //     : "0px 4px 10px rgba(204, 119, 34, 0.7)", // Orche shadow for moderate usage
               }}
               variant="outlined"
             >
-              <CardContent className="flex flex-col items-start">
-                <div className="flex items-center">
-                  <ElectricBoltIcon
-                    sx={{ color: "#1F99FC", fontSize: { xs: 20, md: 22 } }}
-                  />
+              <CardContent className="flex flex-row justify-between items-center h-full px-4">
+                <ElectricBoltIcon
+                  sx={{ color: "#1F99FC", fontSize: { xs: 50, md: 65 } }}
+                />
+
+                <div className="flex flex-col text-right mt-4 pr-3">
                   <Typography
-                    gutterBottom
                     variant="h5"
-                    component="div"
                     sx={{
                       fontFamily: "JetBrains Mono",
                       fontWeight: 600,
-                      fontSize: { xs: 20, md: 22 },
+                      fontSize: { xs: 18, md: 22 },
                     }}
-                    className="text-main-light-blue-dark pl-3"
+                    className="text-main-light-blue-dark"
                   >
                     Energy Usage
                   </Typography>
-                </div>
 
-                {/* Total Power Usage Below */}
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontSize: { xs: 30, md: 45 },
-                    fontWeight: 800,
-                    fontFamily: "JetBrains Mono",
-                  }}
-                  className="text-main-light-blue-dark"
-                >
-                  {totalPowerUsage} W
-                </Typography>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontSize: { xs: 30, md: 45 },
+                      fontWeight: 800,
+                      fontFamily: "JetBrains Mono",
+                    }}
+                    className="text-main-light-blue-dark"
+                  >
+                    {totalPowerUsage} W
+                  </Typography>
+                </div>
               </CardContent>
             </Card>
 
-            <Card sx={{ flex: 1, height: 140 }}>
-              <CardContent className="flex">
+            <Card
+              sx={{
+                flex: 1,
+                height: 140,
+                boxShadow: "0px 4px 10px rgba(31, 153, 252, 0.5)",
+              }}
+              variant="outlined"
+            >
+              <CardContent className="flex flex-row justify-between items-center h-full px-4">
                 <DevicesOtherIcon
-                  sx={{ color: "#1F99FC", fontSize: { xs: 20, md: 22 } }}
-                  className="mt-1"
+                  sx={{ color: "#1F99FC", fontSize: { xs: 50, md: 65 } }} // Adjusted size
                 />
-                <Typography
-                  gutterBottom
-                  variant="h5"
-                  component="div"
-                  sx={{
-                    fontFamily: "JetBrains Mono",
-                    fontWeight: 600,
-                    fontSize: { xs: 20, md: 22 },
-                  }}
-                  className="text-main-light-blue-dark pl-3"
-                >
-                  Devices Connected
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "text.secondary" }}
-                ></Typography>
+
+                <div className="flex flex-col text-right mt-4 pr-3">
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontFamily: "JetBrains Mono",
+                      fontWeight: 600,
+                      fontSize: { xs: 18, md: 22 },
+                    }}
+                    className="text-main-light-blue-dark"
+                  >
+                    Devices Connected
+                  </Typography>
+
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontSize: { xs: 30, md: 45 },
+                      fontWeight: 800,
+                      fontFamily: "JetBrains Mono",
+                    }}
+                    className="text-main-light-blue-dark"
+                  >
+                    {noOfDevices} Devices
+                  </Typography>
+                </div>
               </CardContent>
             </Card>
 
@@ -180,44 +278,70 @@ const Dashboard = () => {
           </Stack>
         </Grid>
 
-        {/* Right Column */}
-        {/* <Grid item xs={12} md={4}>
-          <Stack spacing={2} direction="column">
-            <Card>
-              <CardContent>
-                <Stack spacing={2} direction="row">
-                  <div className="mt-[50px] ml-[20px]">
-                    <CalendarMonthIcon />
-                  </div>
-                  <div className="pl-[10px] pr-[10px] pt-[10px] pb-[10px]">
-                    <Typography
-                      sx={{ fontFamily: "JetBrains Mono", fontWeight: 700 }}
-                    >
-                      230 KwH
-                    </Typography>
-                    <Typography
-                      sx={{ fontFamily: "JetBrains Mono", fontWeight: 400 }}
-                    >
-                      Monthly Usage
-                    </Typography>
-                  </div>
-                </Stack>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent></CardContent>
-            </Card>
-          </Stack>
-        </Grid> */}
+        <Grid item xs={12} md={4}>
+          <Card
+            sx={{
+              height: { xs: "60vh", md: "40vh" },
+              boxShadow: "0px 4px 10px rgba(31, 153, 252, 0.5)",
+            }}
+            variant="outlined"
+          >
+            <CardContent>
+              <List
+                sx={{
+                  width: "100%",
+                  maxWidth: 360,
+                  bgcolor: "background.paper",
+                  maxHeight: "400px",
+                  overflowX: "auto",
+                }}
+                subheader={
+                  <ListSubheader
+                    sx={{
+                      fontFamily: "JetBrains Mono",
+                      fontWeight: 800,
+                      fontSize: { xs: 20, md: 30 },
+                      mt: 1,
+                      color: "#1F99FC",
+                    }}
+                    className="text-main-light-blue-dark"
+                  >
+                    Device Control
+                  </ListSubheader>
+                }
+              >
+                <div className="mt-4">
+                  {data.map((device) => (
+                    <ListItem key={device.id}>
+                      <ListItemIcon>
+                        <IOSSwitch
+                          edge="end"
+                          onChange={handleToggle(device.id)}
+                          checked={checked.includes(device.id)}
+                          inputProps={{
+                            "aria-labelledby": `switch-list-label-${device.id}`,
+                          }}
+                        />
+                      </ListItemIcon>
+                      <ListItemText
+                        id={`switch-list-label-${device.id}`}
+                        primary={device.name}
+                        sx={{
+                          fontFamily: "JetBrains Mono",
+                          fontWeight: 600,
+                          fontSize: { xs: 18, md: 22 },
+                        }}
+                      />
+                    </ListItem>
+                  ))}
+                </div>
+              </List>
+            </CardContent>
+          </Card>
+        </Grid>
 
         {/* Large Cards Section */}
         <Grid item xs={12} md={8}>
-          <Card sx={{ height: "60vh" }}>
-            <CardContent></CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={4}>
           <Card sx={{ height: "60vh" }}>
             <CardContent></CardContent>
           </Card>
