@@ -10,7 +10,6 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import DevicesOtherIcon from "@mui/icons-material/DevicesOther";
 import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
