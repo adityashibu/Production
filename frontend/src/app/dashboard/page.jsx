@@ -55,6 +55,14 @@ const Dashboard = () => {
                 flex: 1,
                 height: 140,
                 boxShadow: "0px 4px 10px rgba(31, 153, 252, 0.5)",
+
+                /* Uncomment if we need dynamic shadows according to usage */
+                // boxShadow:
+                //   totalPowerUsage > 500
+                //     ? "0px 4px 10px rgba(255, 0, 0, 0.7)" // Red shadow for high usage
+                //     : totalPowerUsage < 400
+                //     ? "0px 4px 10px rgba(0, 255, 0, 0.7)" // Green shadow for low usage
+                //     : "0px 4px 10px rgba(204, 119, 34, 0.7)", // Orche shadow for moderate usage
               }}
               variant="outlined"
             >
