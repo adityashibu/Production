@@ -38,12 +38,19 @@ const Dashboard = () => {
           <Stack spacing={2} direction={{ xs: "column", md: "row" }}>
             <Card sx={{ flex: 1, height: 140 }}>
               <CardContent className="flex">
-                <ElectricBoltIcon sx={{ color: "#1F99FC" }} className="mt-1" />
+                <ElectricBoltIcon
+                  sx={{ color: "#1F99FC", fontSize: { xs: 20, md: 22 } }}
+                  className="mt-1"
+                />
                 <Typography
                   gutterBottom
                   variant="h5"
                   component="div"
-                  sx={{ fontFamily: "JetBrains Mono", fontWeight: 600 }}
+                  sx={{
+                    fontFamily: "JetBrains Mono",
+                    fontWeight: 600,
+                    fontSize: { xs: 20, md: 22 },
+                  }}
                   className="text-main-light-blue-dark pl-3"
                 >
                   Energy Usage
@@ -57,12 +64,19 @@ const Dashboard = () => {
 
             <Card sx={{ flex: 1, height: 140 }}>
               <CardContent className="flex">
-                <DevicesOtherIcon sx={{ color: "#1F99FC" }} className="mt-1" />
+                <DevicesOtherIcon
+                  sx={{ color: "#1F99FC", fontSize: { xs: 20, md: 22 } }}
+                  className="mt-1"
+                />
                 <Typography
                   gutterBottom
                   variant="h5"
                   component="div"
-                  sx={{ fontFamily: "JetBrains Mono", fontWeight: 600 }}
+                  sx={{
+                    fontFamily: "JetBrains Mono",
+                    fontWeight: 600,
+                    fontSize: { xs: 20, md: 22 },
+                  }}
                   className="text-main-light-blue-dark pl-3"
                 >
                   Devices Connected
@@ -77,14 +91,18 @@ const Dashboard = () => {
             <Card sx={{ flex: 1, height: 140 }}>
               <CardContent className="flex">
                 <PrecisionManufacturingIcon
-                  sx={{ color: "#1F99FC" }}
+                  sx={{ color: "#1F99FC", fontSize: { xs: 20, md: 22 } }}
                   className="mt-1"
                 />
                 <Typography
                   gutterBottom
                   variant="h5"
                   component="div"
-                  sx={{ fontFamily: "JetBrains Mono", fontWeight: 600 }}
+                  sx={{
+                    fontFamily: "JetBrains Mono",
+                    fontWeight: 600,
+                    fontSize: { xs: 20, md: 22 },
+                  }}
                   className="text-main-light-blue-dark pl-3"
                 >
                   Automation Schedules
@@ -98,12 +116,19 @@ const Dashboard = () => {
 
             <Card sx={{ flex: 1, height: 140 }}>
               <CardContent className="flex">
-                <SsidChartIcon sx={{ color: "#1F99FC" }} className="mt-1" />
+                <SsidChartIcon
+                  sx={{ color: "#1F99FC", fontSize: { xs: 20, md: 22 } }}
+                  className="mt-1"
+                />
                 <Typography
                   gutterBottom
                   variant="h5"
                   component="div"
-                  sx={{ fontFamily: "JetBrains Mono", fontWeight: 600 }}
+                  sx={{
+                    fontFamily: "JetBrains Mono",
+                    fontWeight: 600,
+                    fontSize: { xs: 20, md: 22 },
+                  }}
                   className="text-main-light-blue-dark pl-3"
                 >
                   Usage Breakdown
