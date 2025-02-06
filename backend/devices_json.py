@@ -2,7 +2,7 @@ import json
 import asyncio
 import random
 
-deviceFile = "devices.json"
+deviceFile = "devices_template.json"
 
 def loadJSON():
     try:
@@ -35,6 +35,19 @@ def randomize_device(device):
         if "battery_level" in device:
             device["battery_level"] = max(0, device["battery_level"] - random.randint(0, 2))
 
+def changeDeviceName(id, newName):
+    data = loadJSON()
+    devices = data.get("smart_home_devices", [])
+
+    for device in devices:      
+        if device["id"] == id:
+            if device["name"] == newName:
+                return {"error": "Can't use the same name!"}
+            device["name"] = newName
+            print("Changed device name to", newName)
+            saveJSON(data)
+    return {"error": "ID not found!"}
+    
 async def updateDevices():
     while True:
         data = loadJSON()
