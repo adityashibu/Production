@@ -3,9 +3,9 @@
     {
       "id": 1,
       "name": "Philips Hue Living Room Smart Bulb",
-      "type": "light",
       "status": "off",
-      "power_usage": 9,
+      "power_rating": 10,
+      "power_usage": 10,
       "uptime": 128
     },
     {
@@ -13,7 +13,8 @@
       "name": "August Main Door Lock",
       "status": "off",
       "battery_level": 0,
-      "power_usage": 107,
+      "power_rating": 2,
+      "power_usage": 2,
       "uptime": 96
     },
     {
@@ -21,6 +22,7 @@
       "name": "Nest Kitchen Thermostat",
       "status": "off",
       "temperature": 79,
+      "power_rating": 2,
       "power_usage": 44,
       "uptime": 141
     },
@@ -29,6 +31,7 @@
       "name": "Samsung Living Room TV",
       "status": "on",
       "volume": 38,
+      "power_rating": 2,
       "power_usage": 79,
       "uptime": 113
     },
@@ -36,8 +39,35 @@
       "id": 5,
       "name": "TP-Link Office Smart Plug",
       "status": "off",
+      "power_rating": 2,
       "power_usage": 38,
       "uptime": 141
+    },
+    {
+      "id": 6,
+      "name": "Amazon Alexa Echo Dot",
+      "status": "off",
+      "power_rating": 2,
+      "power_usage": 9,
+      "uptime": 0
+    },
+    {
+      "id": 7,
+      "name": "Siemens Smart Oven",
+      "status": "off",
+      "temperature": 180,
+      "timer": 0,
+      "power_rating": 900,
+      "power_usage": 5,
+      "uptime": 0
+    },
+    {
+      "id": 8,
+      "name": "Samsung Fridge",
+      "status": "off",
+      "power_rating": 700,
+      "power_usage": 700,
+      "uptime": 0
     }
   ]
 }
