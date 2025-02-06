@@ -12,13 +12,11 @@ import Stack from "@mui/material/Stack";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
 import ListSubheader from "@mui/material/ListSubheader";
 
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import DevicesOtherIcon from "@mui/icons-material/DevicesOther";
 import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
-import SsidChartIcon from "@mui/icons-material/SsidChart";
 
 import IOSSwitch from "../ui/iosButton";
 
@@ -153,7 +151,7 @@ const Dashboard = () => {
         <Grid item xs={12} md={4}>
           <Card
             sx={{
-              height: { xs: "37vh", md: "55vh" }, // Fixed height
+              height: { xs: "37vh", md: "55vh" },
               display: "flex",
               flexDirection: "column",
               boxShadow: "0px 4px 10px rgba(31, 153, 252, 0.5)",
@@ -173,7 +171,7 @@ const Dashboard = () => {
                   fontSize: { xs: 20, md: 24 },
                   fontWeight: 800,
                   fontFamily: "JetBrains Mono",
-                  marginBottom: 2, // Adds space between title and list
+                  marginBottom: 2,
                 }}
                 className="text-main-light-blue-dark"
               >
@@ -183,11 +181,11 @@ const Dashboard = () => {
               {/* Scrollable List */}
               <List
                 sx={{
-                  height: "100%", // Enforce height constraint
-                  maxHeight: "100%", // Prevent overflow
-                  overflowY: "auto", // Enable scrolling
-                  paddingRight: 1, // Prevents content cutoff by scrollbar
-                  "&::-webkit-scrollbar": { width: "8px" }, // Always show scrollbar
+                  height: "100%",
+                  maxHeight: "100%",
+                  overflowY: "auto",
+                  paddingRight: 1,
+                  "&::-webkit-scrollbar": { width: "8px" },
                   "&::-webkit-scrollbar-thumb": {
                     backgroundColor: "#1F99FC",
                     borderRadius: "4px",
