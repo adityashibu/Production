@@ -6,7 +6,8 @@
       "status": "off",
       "power_rating": 10,
       "power_usage": 10,
-      "uptime": 128
+      "uptime": 128,
+      "ip": "192.168.1.1"
     },
     {
       "id": 2,
@@ -15,7 +16,8 @@
       "battery_level": 0,
       "power_rating": 2,
       "power_usage": 2,
-      "uptime": 96
+      "uptime": 96,
+      "ip": "192.168.1.2"
     },
     {
       "id": 3,
@@ -24,7 +26,8 @@
       "temperature": 79,
       "power_rating": 2,
       "power_usage": 44,
-      "uptime": 141
+      "uptime": 141,
+      "ip": "192.168.1.3"
     },
     {
       "id": 4,
@@ -33,7 +36,8 @@
       "volume": 38,
       "power_rating": 2,
       "power_usage": 79,
-      "uptime": 113
+      "uptime": 113,
+      "ip": "192.168.1.4"
     },
     {
       "id": 5,
@@ -41,7 +45,8 @@
       "status": "off",
       "power_rating": 2,
       "power_usage": 38,
-      "uptime": 141
+      "uptime": 141,
+      "ip": "192.168.1.5"
     },
     {
       "id": 6,
@@ -50,6 +55,7 @@
       "power_rating": 2,
       "power_usage": 9,
       "uptime": 0
+      "ip": "192.168.1.6"
     },
     {
       "id": 7,
@@ -59,7 +65,8 @@
       "timer": 0,
       "power_rating": 900,
       "power_usage": 5,
-      "uptime": 0
+      "uptime": 0,
+      "ip": "192.168.1.7"
     },
     {
       "id": 8,
@@ -67,7 +74,8 @@
       "status": "off",
       "power_rating": 700,
       "power_usage": 700,
-      "uptime": 0
+      "uptime": 0,
+      "ip": "192.168.1.8"
     }
   ]
 }
