@@ -48,8 +48,8 @@ def changeDeviceName(id, newName): # Changes device name according to its ID
             if device["name"] == newName:
                 return {"error": "Can't use the same name!"}
             device["name"] = newName
-            print("Changed device name to", newName)
             saveJSON(data)
+            return {"success": "Changed device name to " + newName}
     return {"error": "ID not found!"}
 
 def changeDeviceStatus(id): # Changes device status according to its ID - similar to button press
@@ -63,6 +63,23 @@ def changeDeviceStatus(id): # Changes device status according to its ID - simila
             return {"success": "Changed device status to " + device["status"]}
     return {"error": "ID not found!"}
 
+def sumPower(): # Sums up power usage of all devices
+    data = loadJSON()
+    devices = data.get("smart_home_devices", [])
+    powerSum = 0
+
+    for device in devices:
+        powerSum += device["power_usage"]
+    return powerSum
+
+def sumRating(): # Sums up all power ratings of devices - helper function for tips
+    data = loadJSON()
+    devices = data.get("smart_home_devices", [])
+    ratingSum = 0
+
+    for device in devices:
+        ratingSum += device["power_rating"]
+    return ratingSum
 
 async def updateDevices(): # Updates device status every second
     while True:
