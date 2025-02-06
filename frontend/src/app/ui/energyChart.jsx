@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import { LineChart } from "@mui/x-charts/LineChart";
-import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 
 const EnergyUsageChart = ({ data }) => {
