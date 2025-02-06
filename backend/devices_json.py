@@ -16,7 +16,7 @@ def saveJSON(data):
     with open(deviceFile, "w") as JSONfile:
         json.dump(data, JSONfile, indent=2)
 
-def randomize_device(device):
+def randomizeDevice(device):
     if random.random() < 0.2:
         device["status"] = "on" if device["status"] == "off" else "off"
 
@@ -24,10 +24,14 @@ def randomize_device(device):
         device["uptime"] += 1
 
         if "power_usage" in device:
-            device["power_usage"] = random.randint(5, 200)
+            usualPower = int(device["power_rating"] * 0.75)
+            device["power_usage"] = random.randint(usualPower, device["power_rating"])
 
-        if "temperature" in device:
-            device["temperature"] = random.randint(65, 80)
+        if "acTemp" in device:
+            device["acTemp"] = random.randint(65, 80)
+
+        if "ovenTemp" in device:
+            device["ovenTemp"] = random.randint(180, 300) 
 
         if "volume" in device:
             device["volume"] = random.randint(0, 100)
@@ -54,7 +58,7 @@ async def updateDevices():
         devices = data.get("smart_home_devices", [])
 
         for device in devices:
-            randomize_device(device)
+            randomizeDevice(device)
 
         saveJSON(data)
         print("Updated JSON data...\n", json.dumps(data, indent=2))
