@@ -19,6 +19,7 @@ import DevicesOtherIcon from "@mui/icons-material/DevicesOther";
 import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
 
 import IOSSwitch from "../ui/iosButton";
+import EnergyUsageChart from "../ui/energyChart";
 
 const Dashboard = () => {
   const [data, setData] = useState([]);
@@ -168,12 +169,12 @@ const Dashboard = () => {
               {/* Subheader with margin for spacing */}
               <ListSubheader
                 sx={{
-                  fontSize: { xs: 20, md: 24 },
+                  fontSize: { xs: 20, md: 27 },
                   fontWeight: 800,
                   fontFamily: "JetBrains Mono",
                   marginBottom: 2,
+                  color: "#1F99FC",
                 }}
-                className="text-main-light-blue-dark"
               >
                 Device Control
               </ListSubheader>
@@ -230,10 +231,15 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </Grid>
-
         <Grid item xs={12} md={8}>
-          <Card sx={{ height: "55vh" }}>
-            <CardContent></CardContent>
+          <Card
+            sx={{ height: "55vh", display: "flex", flexDirection: "column" }}
+          >
+            <CardContent
+              sx={{ flex: 1, display: "flex", flexDirection: "column" }}
+            >
+              <EnergyUsageChart data={data} />
+            </CardContent>
           </Card>
         </Grid>
       </Grid>
