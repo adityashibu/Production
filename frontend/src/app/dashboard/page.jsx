@@ -14,74 +14,13 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import ListSubheader from "@mui/material/ListSubheader";
-import Switch from "@mui/material/Switch";
 
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import DevicesOtherIcon from "@mui/icons-material/DevicesOther";
 import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
 import SsidChartIcon from "@mui/icons-material/SsidChart";
 
-import { styled } from "@mui/material/styles";
-
-const IOSSwitch = styled((props) => (
-  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
-))(({ theme }) => ({
-  width: 42,
-  height: 26,
-  padding: 0,
-  "& .MuiSwitch-switchBase": {
-    padding: 0,
-    margin: 2,
-    transitionDuration: "300ms",
-    "&.Mui-checked": {
-      transform: "translateX(16px)",
-      color: "#fff",
-      "& + .MuiSwitch-track": {
-        backgroundColor: "#1F99FC", // Change the background color when checked
-        opacity: 1,
-        border: 0,
-        ...theme.applyStyles("dark", {
-          backgroundColor: "#1F99FC", // Change the background color on dark mode as well
-        }),
-      },
-      "&.Mui-disabled + .MuiSwitch-track": {
-        opacity: 0.5,
-      },
-    },
-    "&.Mui-focusVisible .MuiSwitch-thumb": {
-      color: "#33cf4d",
-      border: "6px solid #fff",
-    },
-    "&.Mui-disabled .MuiSwitch-thumb": {
-      color: theme.palette.grey[100],
-      ...theme.applyStyles("dark", {
-        color: theme.palette.grey[600],
-      }),
-    },
-    "&.Mui-disabled + .MuiSwitch-track": {
-      opacity: 0.7,
-      ...theme.applyStyles("dark", {
-        opacity: 0.3,
-      }),
-    },
-  },
-  "& .MuiSwitch-thumb": {
-    boxSizing: "border-box",
-    width: 22,
-    height: 22,
-  },
-  "& .MuiSwitch-track": {
-    borderRadius: 26 / 2,
-    backgroundColor: "#E9E9EA",
-    opacity: 1,
-    transition: theme.transitions.create(["background-color"], {
-      duration: 500,
-    }),
-    ...theme.applyStyles("dark", {
-      backgroundColor: "#39393D",
-    }),
-  },
-}));
+import IOSSwitch from "../ui/iosButton";
 
 const Dashboard = () => {
   const [data, setData] = useState([]);
@@ -312,7 +251,13 @@ const Dashboard = () => {
               >
                 <div className="mt-4">
                   {data.map((device) => (
-                    <ListItem key={device.id}>
+                    <ListItem
+                      key={device.id}
+                      sx={{
+                        fontFamily: "JetBrains Mono", // Ensure the list item itself uses the font
+                      }}
+                      className="font-jetBrains"
+                    >
                       <ListItemIcon>
                         <IOSSwitch
                           edge="end"
@@ -331,6 +276,7 @@ const Dashboard = () => {
                           fontWeight: 600,
                           fontSize: { xs: 18, md: 22 },
                         }}
+                        className="font-jetBrains"
                       />
                     </ListItem>
                   ))}
