@@ -1,9 +1,14 @@
 import json
 import asyncio
 import random
+
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 deviceFile = "devices_template.json"
+
+# FastAPI initialization and routes
+app = FastAPI()
 
 def loadJSON(): # Loads JSON file from devices_template
     try:
@@ -115,23 +120,28 @@ async def updateDevices(): # Updates device status every second
         print("Updated JSON data...\n", json.dumps(data, indent=2))
 
         await asyncio.sleep(1)
+        
+# Add CORS Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Allow requests from Next.js frontend
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allow all headers
+)
 
-
-# FastAPI initialization and routes
-app = FastAPI()
+@app.on_event("startup")
+async def startup_event():
+    """Starts device updates when the FastAPI server starts."""
+    loop = asyncio.get_event_loop()
+    loop.create_task(updateDevices())
 
 @app.get("/")
 def root():
     return {"message": "Welcome to the Smart Home API!"}
 
-@app.post("/test/")
+@app.get("/test")
 def test():
+    """Returns the current JSON data."""
     jsonData = loadJSON()
-    return jsonData   
-
-async def main():
-   setTimer(7, 300)
-   await updateDevices()
-
-if __name__ == "__main__":
-    asyncio.run(main())
+    return jsonData

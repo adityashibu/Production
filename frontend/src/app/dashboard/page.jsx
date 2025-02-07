@@ -30,19 +30,28 @@ const Dashboard = () => {
       try {
         const response = await fetch("http://localhost:8000/test");
         const result = await response.json();
-        setData(result);
-        const initialChecked = result
-          .filter((device) => device.status === "on")
-          .map((device) => device.id);
-        setChecked(initialChecked);
+
+        // Ensure result is structured correctly
+        if (result && Array.isArray(result.smart_home_devices)) {
+          const devices = result.smart_home_devices;
+          setData(devices);
+
+          // Set initially checked devices based on their status
+          const initialChecked = devices
+            .filter((device) => device.status === "on")
+            .map((device) => device.id);
+          setChecked(initialChecked);
+        } else {
+          console.error("Invalid response structure", result);
+        }
       } catch (error) {
         console.error("Error fetching smart home devices:", error);
       }
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 1000);
-    return () => clearInterval(interval);
+    const interval = setInterval(fetchData, 1000); // Fetch data every second
+    return () => clearInterval(interval); // Clean up interval on component unmount
   }, []);
 
   const handleToggle = (deviceId) => () => {
