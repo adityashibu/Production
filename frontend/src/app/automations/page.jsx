@@ -1,6 +1,7 @@
+import React from "react";
 import Breadcrumb from "../ui/dashboard/breadcrumbs";
 
-const Energy = () => {
+const Automations = () => {
   return (
     <div>
       <Breadcrumb />
@@ -8,4 +9,4 @@ const Energy = () => {
   );
 };
 
-export default Energy;
+export default Automations;
