@@ -233,7 +233,12 @@ const Dashboard = () => {
         </Grid>
         <Grid item xs={12} md={8}>
           <Card
-            sx={{ height: "55vh", display: "flex", flexDirection: "column" }}
+            sx={{
+              height: "55vh",
+              display: "flex",
+              flexDirection: "column",
+              boxShadow: "0px 4px 10px rgba(31, 153, 252, 0.5)",
+            }}
           >
             <CardContent
               sx={{ flex: 1, display: "flex", flexDirection: "column" }}
