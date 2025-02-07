@@ -1,0 +1,30 @@
+{
+    "highEnergyTip": [ 
+        {
+            "tip": "Turn off lights when you leave a room."
+        },
+        {
+            "tip": "Use natural light when possible."
+        },
+        {
+            "tip": "Unplug electronics when not in use."
+        },
+        {
+            "tip": "Use energy-efficient light bulbs."
+        }
+    ],
+    "mediumEnergyTip": [
+        {
+            "tip": "Use a ceiling fan instead of air conditioning."
+        },
+        {
+            "tip": "Use a fan instead of air conditioning."
+        },
+        {
+            "tip": "Use a microwave instead of an oven."
+        },
+        {
+            "tip": "Use a dishwasher instead of hand washing."
+        }
+    ]
+}

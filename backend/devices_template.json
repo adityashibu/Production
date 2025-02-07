@@ -3,41 +3,79 @@
     {
       "id": 1,
       "name": "Philips Hue Living Room Smart Bulb",
-      "type": "light",
-      "status": "off",
-      "power_usage": 9,
-      "uptime": 128
+      "status": "on",
+      "power_rating": 10,
+      "power_usage": 7,
+      "uptime": 241,
+      "ip": "192.168.1.1"
     },
     {
       "id": 2,
       "name": "August Main Door Lock",
-      "status": "off",
+      "status": "on",
       "battery_level": 0,
-      "power_usage": 107,
-      "uptime": 96
+      "power_rating": 2,
+      "power_usage": 1,
+      "uptime": 238,
+      "ip": "192.168.1.2"
     },
     {
       "id": 3,
       "name": "Nest Kitchen Thermostat",
       "status": "off",
       "temperature": 79,
-      "power_usage": 44,
-      "uptime": 141
+      "power_rating": 2,
+      "power_usage": 1,
+      "uptime": 276,
+      "ip": "192.168.1.3"
     },
     {
       "id": 4,
       "name": "Samsung Living Room TV",
       "status": "on",
-      "volume": 38,
-      "power_usage": 79,
-      "uptime": 113
+      "volume": 47,
+      "power_rating": 2,
+      "power_usage": 2,
+      "uptime": 261,
+      "ip": "192.168.1.4"
     },
     {
       "id": 5,
       "name": "TP-Link Office Smart Plug",
       "status": "off",
-      "power_usage": 38,
-      "uptime": 141
+      "power_rating": 2,
+      "power_usage": 1,
+      "uptime": 256,
+      "ip": "192.168.1.5"
+    },
+    {
+      "id": 6,
+      "name": "Amazon Alexa Echo Dot",
+      "status": "off",
+      "power_rating": 2,
+      "power_usage": 1,
+      "uptime": 153,
+      "ip": "192.168.1.6"
+    },
+    {
+      "id": 7,
+      "name": "Siemens Smart Oven",
+      "status": "on",
+      "temperature": 180,
+      "timer": 0,
+      "power_rating": 900,
+      "power_usage": 678,
+      "uptime": 124,
+      "ip": "192.168.1.7"
+    },
+    {
+      "id": 8,
+      "name": "Samsung Fridge",
+      "status": "off",
+      "power_rating": 700,
+      "power_usage": 555,
+      "uptime": 151,
+      "ip": "192.168.1.8"
     }
   ]
 }
