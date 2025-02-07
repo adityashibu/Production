@@ -1,6 +1,7 @@
 import json
 import asyncio
 import random
+from fastapi import FastAPI
 
 deviceFile = "devices_template.json"
 
@@ -114,6 +115,14 @@ async def updateDevices(): # Updates device status every second
         print("Updated JSON data...\n", json.dumps(data, indent=2))
 
         await asyncio.sleep(1)
+
+
+# FastAPI initialization and routes
+app = FastAPI()
+
+@app.get("/")
+def root():
+    return {"message": "Welcome to the Smart Home API!"}
 
 async def main():
    setTimer(7, 300)
