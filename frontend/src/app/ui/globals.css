@@ -36,7 +36,11 @@ a {
   color: inherit;
 }
 
-html,
+/* html,
 body {
-  transition: background-color 0.5s ease, color 0.5s ease;
+  transition: background-color 0.4s ease-in-out, color 0.4s ease-in-out;
 }
+
+.MuiPaper-root {
+  transition: background-color 0.4s ease-in-out;
+} */

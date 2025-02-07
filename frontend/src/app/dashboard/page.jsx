@@ -28,9 +28,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:8000/smart_home_devices"
-        );
+        const response = await fetch("http://localhost:8000/test");
         const result = await response.json();
         setData(result);
         const initialChecked = result
