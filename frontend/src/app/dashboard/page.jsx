@@ -160,7 +160,7 @@ const Dashboard = () => {
           >
             <CardContent
               sx={{
-                height: "100%", // Make sure it takes the full height
+                height: "100%",
                 display: "flex",
                 flexDirection: "column",
                 padding: 2,

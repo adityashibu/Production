@@ -10,11 +10,15 @@ import InputBase from "@mui/material/InputBase";
 import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
+
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import LightModeIcon from "@mui/icons-material/LightMode";
 
 import { useAppStore } from "@/app/appStore";
+import { Light } from "@mui/icons-material";
+import { useThemeMode } from "@/app/themeRegistery";
 
 const AppBar = styled(
   MuiAppBar,
@@ -68,6 +72,8 @@ export default function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const updateOpen = useAppStore((state) => state.updateOpen);
   const Open = useAppStore((state) => state.Open);
+
+  const { mode, toggleTheme } = useThemeMode();
 
   const isMenuOpen = Boolean(anchorEl);
 
@@ -129,12 +135,19 @@ export default function Navbar() {
               fontWeight: 800,
               textAlign: "center",
             }}
-            className="font-jetBrains text-main-light-blue-dark underline"
+            className="font-jetBrains text-main-light-blue-dark"
           >
             PowerHouse
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: "flex" }}>
+            <IconButton
+              size="large"
+              aria-label="show 17 new notifications"
+              color="inherit"
+            >
+              <LightModeIcon onClick={toggleTheme} />
+            </IconButton>
             <IconButton
               size="large"
               aria-label="show 17 new notifications"
