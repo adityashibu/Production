@@ -2,7 +2,13 @@ import json
 import asyncio
 import random
 
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 deviceFile = "devices_template.json"
+
+# FastAPI initialization and routes
+app = FastAPI()
 
 def loadJSON(): # Loads JSON file from devices_template
     try:
@@ -38,6 +44,26 @@ def randomizeDevice(device): # Dummy function for simulating device usage
 
         if "battery_level" in device:
             device["battery_level"] = max(0, device["battery_level"] - random.randint(0, 2))
+
+def setTimer(id, time): # Sets timer for device according to its ID in seconds
+    data = loadJSON()
+    devices = data.get("smart_home_devices", [])
+
+    for device in devices:
+        if device["id"] == id:
+            if "timer" in device and device["timer"] == 0:
+                device["timer"] = time
+                saveJSON(data)
+                return {"success": "Set timer for " + device["name"] + " to " + str(time) + " seconds"}
+            return {"error": "This device does not use a timer."}
+            
+
+def handleTimer(device): # Dummy function for simulating device timer
+    if "timer" in device and device["timer"] > 0:
+        device["timer"] -= 1
+        if device["timer"] == 0:
+            device["status"] = "off"
+            return {"success:" : "Turned off " + device["name"] + " after timer"}
 
 def changeDeviceName(id, newName): # Changes device name according to its ID
     data = loadJSON()
@@ -88,14 +114,34 @@ async def updateDevices(): # Updates device status every second
 
         for device in devices:
             randomizeDevice(device)
+            handleTimer(device)
 
         saveJSON(data)
         print("Updated JSON data...\n", json.dumps(data, indent=2))
 
         await asyncio.sleep(1)
+        
+# Add CORS Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-async def main():
-   await updateDevices()
+@app.on_event("startup")
+async def startup_event():
+    """Starts device updates when the FastAPI server starts."""
+    loop = asyncio.get_event_loop()
+    loop.create_task(updateDevices())
 
-if __name__ == "__main__":
-    asyncio.run(main())
+@app.get("/")
+def root():
+    return {"message": "Welcome to the Smart Home API!"}
+
+@app.get("/test")
+def test():
+    """Returns the current JSON data."""
+    jsonData = loadJSON()
+    return jsonData

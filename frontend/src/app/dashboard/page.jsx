@@ -28,15 +28,20 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:8000/smart_home_devices"
-        );
+        const response = await fetch("http://localhost:8000/test");
         const result = await response.json();
-        setData(result);
-        const initialChecked = result
-          .filter((device) => device.status === "on")
-          .map((device) => device.id);
-        setChecked(initialChecked);
+
+        if (result && Array.isArray(result.smart_home_devices)) {
+          const devices = result.smart_home_devices;
+          setData(devices);
+
+          const initialChecked = devices
+            .filter((device) => device.status === "on")
+            .map((device) => device.id);
+          setChecked(initialChecked);
+        } else {
+          console.error("Invalid response structure", result);
+        }
       } catch (error) {
         console.error("Error fetching smart home devices:", error);
       }
@@ -160,7 +165,7 @@ const Dashboard = () => {
           >
             <CardContent
               sx={{
-                height: "100%", // Make sure it takes the full height
+                height: "100%",
                 display: "flex",
                 flexDirection: "column",
                 padding: 2,
@@ -233,7 +238,12 @@ const Dashboard = () => {
         </Grid>
         <Grid item xs={12} md={8}>
           <Card
-            sx={{ height: "55vh", display: "flex", flexDirection: "column" }}
+            sx={{
+              height: "55vh",
+              display: "flex",
+              flexDirection: "column",
+              boxShadow: "0px 4px 10px rgba(31, 153, 252, 0.5)",
+            }}
           >
             <CardContent
               sx={{ flex: 1, display: "flex", flexDirection: "column" }}
