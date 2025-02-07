@@ -124,6 +124,11 @@ app = FastAPI()
 def root():
     return {"message": "Welcome to the Smart Home API!"}
 
+@app.post("/test/")
+def test():
+    jsonData = loadJSON()
+    return jsonData   
+
 async def main():
    setTimer(7, 300)
    await updateDevices()
