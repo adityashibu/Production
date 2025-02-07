@@ -1,5 +1,5 @@
 # JSON files
-devices.json
+devices_template.json
 
 # Venv files
 venv/
