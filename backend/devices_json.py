@@ -17,9 +17,6 @@ def saveJSON(data): # Saves JSON file from devices_template
         json.dump(data, JSONfile, indent=2)
 
 def randomizeDevice(device): # Dummy function for simulating device usage
-    if random.random() < 0.2:
-        device["status"] = "on" if device["status"] == "off" else "off"
-
     if device["status"] == "on":
         device["uptime"] += 1
 
