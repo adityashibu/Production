@@ -38,8 +38,11 @@ export default function IconBreadcrumbs() {
           // Last segment (not clickable)
           <Typography
             key={href}
-            className="text-main-light-blue-dark"
-            sx={{ fontFamily: "JetBrains Mono", fontWeight: 700 }}
+            sx={{
+              fontFamily: "JetBrains Mono",
+              fontWeight: 700,
+              color: "primary.main",
+            }}
           >
             {formatBreadcrumb(segment)}
           </Typography>

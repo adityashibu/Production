@@ -134,8 +134,9 @@ export default function Navbar() {
               fontFamily: "JetBrains Mono",
               fontWeight: 800,
               textAlign: "center",
+              color: "primary.main",
             }}
-            className="font-jetBrains text-main-light-blue-dark"
+            className="font-jetBrains"
           >
             PowerHouse
           </Typography>
