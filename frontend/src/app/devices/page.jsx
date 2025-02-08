@@ -124,7 +124,7 @@ const Devices = () => {
                   justifyContent: "center",
                   position: "relative",
                   transition: "transform 0.2s ease-in-out",
-                  "&:hover": { transform: "scale(1.02)" }, // Slight hover effect
+                  "&:hover": { transform: "scale(1.02)" },
                 }}
               >
                 <CardContent
@@ -185,19 +185,24 @@ const Devices = () => {
       </Box>
 
       {/* Dialog for editing device name */}
-      <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth={true}>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        fullWidth={true}
+        maxWidth="sm"
+      >
         <DialogTitle
           sx={{ fontFamily: "JetBrains Mono", color: "primary.main" }}
         >
           Edit Device Name
         </DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ paddingTop: 2, paddingBottom: 2 }}>
           <TextField
             autoFocus
             fullWidth
             value={deviceName}
             onChange={(e) => setDeviceName(e.target.value)}
-            label="Device Name"
+            sx={{ fontFamily: "JetBrains Mono" }}
           />
         </DialogContent>
         <DialogActions>
