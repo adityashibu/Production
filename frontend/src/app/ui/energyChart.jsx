@@ -1,85 +1,122 @@
 import { useEffect, useState, useRef } from "react";
-import { LineChart } from "@mui/x-charts/LineChart";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import Typography from "@mui/material/Typography";
+import dayjs from "dayjs";
+import { useTheme } from "@emotion/react";
 
 const EnergyUsageChart = ({ data }) => {
   const [dataPoints, setDataPoints] = useState([]);
+  const [buffer, setBuffer] = useState([]); // Store data for averaging
   const chartRef = useRef(null);
-  const [dimensions, setDimensions] = useState({ width: 500, height: 300 });
 
+  const theme = useTheme();
+  const strokeColor = theme.palette.mode === "dark" ? "#8253d7" : "#1F99FC";
+
+  // Function to get current power usage
+  const getCurrentPowerUsage = () => {
+    if (!data || data.length === 0) return 0;
+    return data.reduce((acc, device) => acc + (device.power_usage || 0), 0);
+  };
+
+  // Initialize with first data point
+  useEffect(() => {
+    const initialPower = getCurrentPowerUsage();
+    setDataPoints([{ time: new Date(), power: initialPower }]);
+  }, []); // Runs only on first render
+
+  // Update buffer every second with new power usage
   useEffect(() => {
     if (!data || data.length === 0) return;
 
-    const totalPowerUsage = data.reduce(
-      (acc, device) => acc + (device.power_usage || 0),
-      0
-    );
+    const currentPower = getCurrentPowerUsage();
+    setBuffer((prevBuffer) => {
+      const newBuffer = [...prevBuffer, currentPower];
 
-    setDataPoints((prevData) => {
-      const newData = [
-        ...prevData,
-        { time: Date.now(), power: totalPowerUsage },
-      ];
-      return newData.length > 10 ? newData.slice(1) : newData;
+      // Keep only the last 5 minutes (assuming data updates every second)
+      return newBuffer.length > 300 ? newBuffer.slice(-300) : newBuffer;
     });
   }, [data]);
 
-  // Track container size
+  // Every 5 minutes, plot the average power usage
   useEffect(() => {
-    const resizeObserver = new ResizeObserver((entries) => {
-      if (!entries[0]) return;
-      setDimensions({
-        width: entries[0].contentRect.width,
-        height: entries[0].contentRect.height,
-      });
-    });
+    const interval = setInterval(() => {
+      if (buffer.length === 0) return;
 
-    if (chartRef.current) {
-      resizeObserver.observe(chartRef.current);
-    }
+      const averagePower =
+        buffer.reduce((acc, val) => acc + val, 0) / buffer.length || 0;
+      const timestamp = new Date();
 
-    return () => resizeObserver.disconnect();
-  }, []);
+      if (!isNaN(averagePower) && averagePower !== undefined) {
+        setDataPoints((prevData) => {
+          const newData = [
+            ...prevData,
+            { time: timestamp, power: averagePower },
+          ];
+          return newData.length > 10 ? newData.slice(1) : newData;
+        });
+      }
+
+      setBuffer([]); // Clear buffer for next 5-minute cycle
+    }, 1000); // 5 minutes (300,000 ms)
+
+    return () => clearInterval(interval);
+  }, [buffer]);
 
   return (
     <>
       <Typography
         sx={{
-          fontSize: { xs: 20, md: 27 },
+          fontSize: { xs: 20, md: 30 },
           fontWeight: 800,
           fontFamily: "JetBrains Mono",
           marginBottom: 2,
+          marginLeft: 2,
+          marginTop: 2,
+          color: "primary.main",
         }}
-        className="text-main-light-blue-dark"
       >
         Energy Usage Trend
       </Typography>
 
-      {/* Responsive container */}
-      <div
-        ref={chartRef}
-        style={{ width: "100%", height: "auto", minHeight: 200 }}
-      >
-        <LineChart
-          xAxis={[
-            {
-              data: dataPoints.map((dp) => dp.time),
-              label: "Time",
-              scaleType: "time",
-            },
-          ]}
-          series={[
-            {
-              data: dataPoints.map((dp) => dp.power),
-              label: "Power Usage (W)",
-              color: "#1F99FC",
-              strokeWidth: 2,
-            },
-          ]}
-          width={dimensions.width}
-          height={Math.max(dimensions.height, 250)} // Ensures minimum height
-        />
-      </div>
+      {/* Ensure chart only renders with valid data */}
+      {dataPoints.length > 0 ? (
+        <ResponsiveContainer width="100%" height={300} className="mt-10">
+          <LineChart data={dataPoints}>
+            <XAxis
+              dataKey="time"
+              tickFormatter={(time) => dayjs(time).format("HH:mm")}
+            />
+            <YAxis
+              label={{ value: "Power (W)", angle: -90, position: "insideLeft" }}
+            />
+            <Tooltip
+              labelFormatter={(label) =>
+                `Time: ${dayjs(label).format("HH:mm:ss")}`
+              }
+              formatter={(value) => [`${value} W`, "Power Usage"]}
+            />
+            <Line
+              type="monotone"
+              dataKey="power"
+              stroke={strokeColor}
+              strokeWidth={2}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      ) : (
+        <Typography
+          sx={{ fontSize: 16, fontStyle: "italic", textAlign: "center" }}
+        >
+          No data available yet...
+        </Typography>
+      )}
     </>
   );
 };

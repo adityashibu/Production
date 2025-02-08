@@ -8,7 +8,7 @@ const getTheme = (mode) =>
     palette: {
       mode,
       primary: {
-        main: "#1F99FC",
+        main: mode === "dark" ? "#9A6FDE" : "#1F99FC",
       },
       secondary: {
         main: "#197AC9",

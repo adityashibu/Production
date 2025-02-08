@@ -12,7 +12,6 @@ import Stack from "@mui/material/Stack";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import ListSubheader from "@mui/material/ListSubheader";
 
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import DevicesOtherIcon from "@mui/icons-material/DevicesOther";
@@ -20,10 +19,17 @@ import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturi
 
 import IOSSwitch from "../ui/iosButton";
 import EnergyUsageChart from "../ui/energyChart";
+import { useTheme } from "@emotion/react";
 
 const Dashboard = () => {
   const [data, setData] = useState([]);
   const [checked, setChecked] = useState([]);
+
+  const theme = useTheme();
+  const boxShadow =
+    theme.palette.mode === "dark"
+      ? "0px 4px 10px rgba(130, 83, 215, 0.5)" // Purple shadow for dark mode
+      : "0px 4px 10px rgba(31, 153, 252, 0.5)"; // Blue shadow for light mode
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,7 +90,7 @@ const Dashboard = () => {
                 value: `${totalPowerUsage} W`,
                 icon: (
                   <ElectricBoltIcon
-                    sx={{ color: "#1F99FC", fontSize: { xs: 50, md: 65 } }}
+                    sx={{ color: "primary.main", fontSize: { xs: 50, md: 65 } }}
                   />
                 ),
               },
@@ -93,7 +99,7 @@ const Dashboard = () => {
                 value: `${noOfDevices} Devices`,
                 icon: (
                   <DevicesOtherIcon
-                    sx={{ color: "#1F99FC", fontSize: { xs: 50, md: 65 } }}
+                    sx={{ color: "primary.main", fontSize: { xs: 50, md: 65 } }}
                   />
                 ),
               },
@@ -102,7 +108,7 @@ const Dashboard = () => {
                 value: "18 Schedules",
                 icon: (
                   <PrecisionManufacturingIcon
-                    sx={{ color: "#1F99FC", fontSize: { xs: 50, md: 65 } }}
+                    sx={{ color: "primary.main", fontSize: { xs: 50, md: 65 } }}
                   />
                 ),
               },
@@ -112,7 +118,7 @@ const Dashboard = () => {
                 sx={{
                   flex: 1,
                   height: 140,
-                  boxShadow: "0px 4px 10px rgba(31, 153, 252, 0.5)",
+                  boxShadow: boxShadow,
                 }}
               >
                 <CardContent
@@ -131,8 +137,8 @@ const Dashboard = () => {
                         fontSize: { xs: 16, md: 20 },
                         fontWeight: 600,
                         fontFamily: "JetBrains Mono",
+                        color: "primary.main",
                       }}
-                      className="text-main-light-blue-dark"
                     >
                       {card.title}
                     </Typography>
@@ -142,8 +148,8 @@ const Dashboard = () => {
                         fontSize: { xs: 24, md: 36 },
                         fontWeight: 800,
                         fontFamily: "JetBrains Mono",
+                        color: "primary.main",
                       }}
-                      className="text-main-light-blue-dark"
                     >
                       {card.value}
                     </Typography>
@@ -160,7 +166,7 @@ const Dashboard = () => {
               height: { xs: "37vh", md: "55vh" },
               display: "flex",
               flexDirection: "column",
-              boxShadow: "0px 4px 10px rgba(31, 153, 252, 0.5)",
+              boxShadow: boxShadow,
             }}
           >
             <CardContent
@@ -171,17 +177,19 @@ const Dashboard = () => {
                 padding: 2,
               }}
             >
-              <ListSubheader
+              <Typography
                 sx={{
-                  fontSize: { xs: 20, md: 27 },
+                  fontSize: { xs: 20, md: 30 },
                   fontWeight: 800,
                   fontFamily: "JetBrains Mono",
                   marginBottom: 2,
-                  color: "#1F99FC",
+                  marginLeft: 2,
+                  marginTop: 2,
+                  color: "primary.main",
                 }}
               >
                 Device Control
-              </ListSubheader>
+              </Typography>
 
               <List
                 sx={{
@@ -224,8 +232,8 @@ const Dashboard = () => {
                         fontFamily: "JetBrains Mono",
                         flexGrow: 1,
                         textAlign: "left",
+                        color: "primary.main",
                       }}
-                      className="text-main-light-blue-dark"
                     >
                       {device.name}
                     </Typography>
@@ -242,7 +250,7 @@ const Dashboard = () => {
               height: "55vh",
               display: "flex",
               flexDirection: "column",
-              boxShadow: "0px 4px 10px rgba(31, 153, 252, 0.5)",
+              boxShadow: boxShadow,
               width: "100%",
             }}
           >
@@ -254,7 +262,7 @@ const Dashboard = () => {
                 width: "100%",
               }}
             >
-              <EnergyUsageChart />
+              <EnergyUsageChart data={data} />
             </CardContent>
           </Card>
         </Grid>

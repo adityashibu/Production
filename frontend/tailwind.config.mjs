@@ -19,6 +19,7 @@ export default {
         "main-dark-blue-inactive": "#012970",
 
         "main-dark-purple-dark": "#4C2DA8",
+        "main-dark-purple-light": "#8253d7",
       },
     },
   },
