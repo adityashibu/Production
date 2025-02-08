@@ -21,7 +21,7 @@ const getTheme = (mode) =>
         primary: mode === "dark" ? "#ffffff" : "#000000",
       },
     },
-    typography: {
+    typgraphy: {
       fontFamily: jetBrainsMono.style.fontFamily,
     },
   });

@@ -2,7 +2,6 @@ import { Box } from "@mui/material";
 import ThemeRegistry from "../themeRegistery";
 import Sidebar from "../ui/dashboard/navbar/sidebar";
 import Navbar from "../ui/dashboard/navbar/navbar";
-import Transition from "../transition";
 
 const layout = ({ children }) => {
   return (

@@ -2,13 +2,7 @@ import json
 import asyncio
 import random
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-
 deviceFile = "devices_template.json"
-
-# FastAPI initialization and routes
-app = FastAPI()
 
 def loadJSON(): # Loads JSON file from devices_template
     try:
@@ -23,28 +17,29 @@ def saveJSON(data): # Saves JSON file from devices_template
         json.dump(data, JSONfile, indent=2)
 
 def randomizeDevice(device): # Dummy function for simulating device usage
-    if random.random() < 0.2:
-        device["status"] = "on" if device["status"] == "off" else "off"
-
     if device["status"] == "on":
         device["uptime"] += 1
 
         if "power_usage" in device:
             usualPower = int(device["power_rating"] * 0.75)
             device["power_usage"] = random.randint(usualPower, device["power_rating"])
+        else:
+            device["power_usage"] = 0
+    else:
+        device["power_usage"] = 0
 
-        if "acTemp" in device:
-            device["acTemp"] = random.randint(65, 80)
+    if "acTemp" in device and device["status"] == "on":
+        device["acTemp"] = random.randint(65, 80)
 
-        if "ovenTemp" in device:
-            device["ovenTemp"] = random.randint(180, 300) 
+    if "ovenTemp" in device and device["status"] == "on":
+        device["ovenTemp"] = random.randint(180, 300) 
 
-        if "volume" in device:
-            device["volume"] = random.randint(0, 100)
+    if "volume" in device and device["status"] == "on":
+        device["volume"] = random.randint(0, 100)
 
-        if "battery_level" in device:
-            device["battery_level"] = max(0, device["battery_level"] - random.randint(0, 2))
-
+    if "battery_level" in device and device["status"] == "on":
+        device["battery_level"] = max(0, device["battery_level"] - random.randint(0, 2))
+        
 def setTimer(id, time): # Sets timer for device according to its ID in seconds
     data = loadJSON()
     devices = data.get("smart_home_devices", [])
@@ -120,28 +115,4 @@ async def updateDevices(): # Updates device status every second
         print("Updated JSON data...\n", json.dumps(data, indent=2))
 
         await asyncio.sleep(1)
-        
-# Add CORS Middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
-@app.on_event("startup")
-async def startup_event():
-    """Starts device updates when the FastAPI server starts."""
-    loop = asyncio.get_event_loop()
-    loop.create_task(updateDevices())
-
-@app.get("/")
-def root():
-    return {"message": "Welcome to the Smart Home API!"}
-
-@app.get("/test")
-def test():
-    """Returns the current JSON data."""
-    jsonData = loadJSON()
-    return jsonData
