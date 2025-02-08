@@ -149,7 +149,7 @@ const Dashboard = () => {
                       textDecoration: "none",
                       flex: 1,
                       height: 140,
-                      boxShadow: boxShadow,
+                      // boxShadow: boxShadow,
                       transition: "transform 0.2s ease-in-out",
                       "&:hover": { transform: "scale(1.01)" },
                     }}
@@ -205,7 +205,7 @@ const Dashboard = () => {
                 height: { xs: "37vh", md: "55vh" },
                 display: "flex",
                 flexDirection: "column",
-                boxShadow: boxShadow,
+                // boxShadow: boxShadow,
                 textDecoration: "none",
                 color: "inherit",
                 transition: "transform 0.2s ease-in-out",
@@ -296,7 +296,7 @@ const Dashboard = () => {
                 height: "55vh",
                 display: "flex",
                 flexDirection: "column",
-                boxShadow: boxShadow,
+                // boxShadow: boxShadow,
                 width: "100%",
                 textDecoration: "none", // Prevents underline
                 color: "inherit", // Keeps original text color
