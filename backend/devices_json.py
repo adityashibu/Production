@@ -23,19 +23,23 @@ def randomizeDevice(device): # Dummy function for simulating device usage
         if "power_usage" in device:
             usualPower = int(device["power_rating"] * 0.75)
             device["power_usage"] = random.randint(usualPower, device["power_rating"])
+        else:
+            device["power_usage"] = 0
+    else:
+        device["power_usage"] = 0
 
-        if "acTemp" in device:
-            device["acTemp"] = random.randint(65, 80)
+    if "acTemp" in device and device["status"] == "on":
+        device["acTemp"] = random.randint(65, 80)
 
-        if "ovenTemp" in device:
-            device["ovenTemp"] = random.randint(180, 300) 
+    if "ovenTemp" in device and device["status"] == "on":
+        device["ovenTemp"] = random.randint(180, 300) 
 
-        if "volume" in device:
-            device["volume"] = random.randint(0, 100)
+    if "volume" in device and device["status"] == "on":
+        device["volume"] = random.randint(0, 100)
 
-        if "battery_level" in device:
-            device["battery_level"] = max(0, device["battery_level"] - random.randint(0, 2))
-
+    if "battery_level" in device and device["status"] == "on":
+        device["battery_level"] = max(0, device["battery_level"] - random.randint(0, 2))
+        
 def setTimer(id, time): # Sets timer for device according to its ID in seconds
     data = loadJSON()
     devices = data.get("smart_home_devices", [])

@@ -30,7 +30,7 @@ const menuItems = [
   {
     name: "Devices",
     icon: DevicesIcon,
-    link: "/dashboard/devices",
+    link: "/devices",
   },
   {
     name: "Automations",
