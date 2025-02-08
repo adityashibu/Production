@@ -1,7 +1,8 @@
 import devices_json as dj
 import asyncio
 
-from fastapi import FastAPI
+from pydantic import BaseModel
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 # FastAPI initialization and routes
@@ -36,3 +37,15 @@ def device_info():
 def change_device_status(id: int):
     """Changes the status of a device according to its ID."""
     return dj.changeDeviceStatus(id)
+
+# The Pydantic model for the request body
+class DeviceNameUpdate(BaseModel):
+    new_name: str
+
+@app.post("/device/{id}/name")
+def change_device_name(id: int, payload: DeviceNameUpdate):
+    """Changes the name of a device according to its ID."""
+    result = dj.changeDeviceName(id, payload.new_name)
+    if "error" in result:
+        raise HTTPException(status_code=400, detail=result["Failed to rename the device. Please try again"])
+    return result
