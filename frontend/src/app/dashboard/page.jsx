@@ -30,6 +30,8 @@ const Dashboard = () => {
     theme.palette.mode === "dark"
       ? "0px 4px 10px rgba(130, 83, 215, 0.5)" // Purple shadow for dark mode
       : "0px 4px 10px rgba(31, 153, 252, 0.5)"; // Blue shadow for light mode
+  const strokeColor = theme.palette.mode === "dark" ? "#8253d7" : "#1F99FC";
+  const bgColor = theme.palette.mode === "dark" ? "#39393D" : "#E9E9EA";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -184,7 +186,7 @@ const Dashboard = () => {
                   fontFamily: "JetBrains Mono",
                   marginBottom: 2,
                   marginLeft: 2,
-                  marginTop: 2,
+                  marginTop: { xs: 1, md: 2 },
                   color: "primary.main",
                 }}
               >
@@ -199,11 +201,11 @@ const Dashboard = () => {
                   paddingRight: 1,
                   "&::-webkit-scrollbar": { width: "8px" },
                   "&::-webkit-scrollbar-thumb": {
-                    backgroundColor: "#1F99FC",
+                    backgroundColor: strokeColor,
                     borderRadius: "4px",
                   },
                   "&::-webkit-scrollbar-track": {
-                    backgroundColor: "#f0f0f0",
+                    backgroundColor: bgColor,
                   },
                   width: "100%",
                 }}
