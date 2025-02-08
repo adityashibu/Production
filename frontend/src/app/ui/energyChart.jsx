@@ -56,7 +56,10 @@ const EnergyUsageChart = ({ data }) => {
       </Typography>
 
       {/* Responsive container */}
-      <div ref={chartRef} style={{ flex: 1, width: "100%", height: "100%" }}>
+      <div
+        ref={chartRef}
+        style={{ width: "100%", height: "auto", minHeight: 200 }}
+      >
         <LineChart
           xAxis={[
             {
@@ -69,13 +72,12 @@ const EnergyUsageChart = ({ data }) => {
             {
               data: dataPoints.map((dp) => dp.power),
               label: "Power Usage (W)",
-              showMark: true,
               color: "#1F99FC",
               strokeWidth: 2,
             },
           ]}
           width={dimensions.width}
-          height={dimensions.height}
+          height={Math.max(dimensions.height, 250)} // Ensures minimum height
         />
       </div>
     </>

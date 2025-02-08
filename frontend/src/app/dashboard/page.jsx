@@ -171,7 +171,6 @@ const Dashboard = () => {
                 padding: 2,
               }}
             >
-              {/* Subheader with margin for spacing */}
               <ListSubheader
                 sx={{
                   fontSize: { xs: 20, md: 27 },
@@ -184,7 +183,6 @@ const Dashboard = () => {
                 Device Control
               </ListSubheader>
 
-              {/* Scrollable List */}
               <List
                 sx={{
                   height: "100%",
@@ -199,6 +197,7 @@ const Dashboard = () => {
                   "&::-webkit-scrollbar-track": {
                     backgroundColor: "#f0f0f0",
                   },
+                  width: "100%",
                 }}
               >
                 {data.map((device) => (
@@ -236,19 +235,26 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} md={8}>
+
+        <Grid item xs={12} md={8} sx={{ display: { xs: "none", md: "block" } }}>
           <Card
             sx={{
               height: "55vh",
               display: "flex",
               flexDirection: "column",
               boxShadow: "0px 4px 10px rgba(31, 153, 252, 0.5)",
+              width: "100%",
             }}
           >
             <CardContent
-              sx={{ flex: 1, display: "flex", flexDirection: "column" }}
+              sx={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
+              }}
             >
-              <EnergyUsageChart data={data} />
+              <EnergyUsageChart />
             </CardContent>
           </Card>
         </Grid>
