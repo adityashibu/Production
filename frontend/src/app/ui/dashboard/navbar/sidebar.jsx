@@ -107,11 +107,14 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function Sidebar() {
-  const theme = useTheme();
-  // const [open, setOpen] = React.useState(true);
-
   const updateOpen = useAppStore((state) => state.updateOpen);
   const open = useAppStore((state) => state.Open);
+
+  const handleCloseDrawer = () => {
+    if (open) {
+      updateOpen(false); // Close the drawer when navigating
+    }
+  };
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -124,6 +127,7 @@ export default function Sidebar() {
             <Link key={link} href={link} passHref legacyBehavior>
               <ListItem
                 disablePadding
+                onClick={handleCloseDrawer} // Close drawer on click
                 className="hover:bg-main-light-blue-dark/20 ease-linear transition-all duration-300 group md:px-1"
               >
                 <ListItemButton>

@@ -199,94 +199,92 @@ const Dashboard = () => {
 
         <Grid item xs={12} md={4}>
           <Box sx={{ flex: 1 }}>
-            <Link href="/devices" passHref legacyBehavior>
-              <Card
-                component="a"
+            <Card
+              component="a"
+              sx={{
+                height: { xs: "37vh", md: "55vh" },
+                display: "flex",
+                flexDirection: "column",
+                boxShadow: boxShadow,
+                textDecoration: "none",
+                color: "inherit",
+                transition: "transform 0.2s ease-in-out",
+                "&:hover": { transform: "scale(1.01)" }, // Slight hover effect
+              }}
+            >
+              <CardContent
                 sx={{
-                  height: { xs: "37vh", md: "55vh" },
+                  height: "100%",
                   display: "flex",
                   flexDirection: "column",
-                  boxShadow: boxShadow,
-                  textDecoration: "none",
-                  color: "inherit",
-                  transition: "transform 0.2s ease-in-out",
-                  "&:hover": { transform: "scale(1.01)" }, // Slight hover effect
+                  padding: 2,
                 }}
               >
-                <CardContent
+                <Typography
                   sx={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    padding: 2,
+                    fontSize: { xs: 20, md: 30 },
+                    fontWeight: 800,
+                    fontFamily: "JetBrains Mono",
+                    marginBottom: 2,
+                    marginLeft: 2,
+                    marginTop: { xs: 1, md: 2 },
+                    color: "primary.main",
                   }}
                 >
-                  <Typography
-                    sx={{
-                      fontSize: { xs: 20, md: 30 },
-                      fontWeight: 800,
-                      fontFamily: "JetBrains Mono",
-                      marginBottom: 2,
-                      marginLeft: 2,
-                      marginTop: { xs: 1, md: 2 },
-                      color: "primary.main",
-                    }}
-                  >
-                    Device Control
-                  </Typography>
+                  Device Control
+                </Typography>
 
-                  <List
-                    sx={{
-                      height: "100%",
-                      maxHeight: "100%",
-                      overflowY: "auto",
-                      paddingRight: 1,
-                      "&::-webkit-scrollbar": { width: "8px" },
-                      "&::-webkit-scrollbar-thumb": {
-                        backgroundColor: strokeColor,
-                        borderRadius: "4px",
-                      },
-                      "&::-webkit-scrollbar-track": {
-                        backgroundColor: bgColor,
-                      },
-                      width: "100%",
-                    }}
-                  >
-                    {data.map((device) => (
-                      <ListItem
-                        key={device.id}
+                <List
+                  sx={{
+                    height: "100%",
+                    maxHeight: "100%",
+                    overflowY: "auto",
+                    paddingRight: 1,
+                    "&::-webkit-scrollbar": { width: "8px" },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: strokeColor,
+                      borderRadius: "4px",
+                    },
+                    "&::-webkit-scrollbar-track": {
+                      backgroundColor: bgColor,
+                    },
+                    width: "100%",
+                  }}
+                >
+                  {data.map((device) => (
+                    <ListItem
+                      key={device.id}
+                      sx={{
+                        pl: 2,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                      }}
+                    >
+                      <ListItemIcon>
+                        <IOSSwitch
+                          edge="end"
+                          onChange={handleToggle(device.id)}
+                          checked={checked.includes(device.id)}
+                        />
+                      </ListItemIcon>
+                      <Typography
                         sx={{
-                          pl: 2,
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 2,
+                          fontSize: { xs: 14, md: 18 },
+                          fontWeight: 600,
+                          fontFamily: "JetBrains Mono",
+                          flexGrow: 1,
+                          textAlign: "left",
+                          color: "primary.main",
                         }}
                       >
-                        <ListItemIcon>
-                          <IOSSwitch
-                            edge="end"
-                            onChange={handleToggle(device.id)}
-                            checked={checked.includes(device.id)}
-                          />
-                        </ListItemIcon>
-                        <Typography
-                          sx={{
-                            fontSize: { xs: 14, md: 18 },
-                            fontWeight: 600,
-                            fontFamily: "JetBrains Mono",
-                            flexGrow: 1,
-                            textAlign: "left",
-                            color: "primary.main",
-                          }}
-                        >
-                          {device.name}
-                        </Typography>
-                      </ListItem>
-                    ))}
-                  </List>
-                </CardContent>
-              </Card>
-            </Link>
+                        {device.name}
+                      </Typography>
+                    </ListItem>
+                  ))}
+                </List>
+              </CardContent>
+            </Card>
           </Box>
         </Grid>
 
