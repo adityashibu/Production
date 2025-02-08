@@ -4,6 +4,11 @@
 
 ![Node Setup](https://github.com/PowerHouse-Project/Production/actions/workflows/devOps.yml/badge.svg)
 
+## Sections
+
+1. [Frontend Setup](#frontend-instructions)
+2. [Backend Setup](#backend-instructions)
+
 ## Frontend Instructions
 
 - Tech Stack
@@ -27,12 +32,6 @@
      ```shell
      npm run dev
      ```
-  4. To run the test API server (Only for test purposes)
-     - First install json-server
-       ```shell
-       npm i -g json-server
-       ```
-     - Then run the API server using
-       ```shell
-       json-server --watch ./frontend/api/info.json
-       ```
+  4. Continue from the [Backend Instructions](#backend-instructions)
+
+## Backend Instructions
