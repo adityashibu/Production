@@ -2,7 +2,7 @@
 
 ## CI/CD Pipeline
 
-![Node Setup](https://github.com/PowerHouse-Project/Production/blob/adityashibu-patch-1/.github/workflows/devOps.yml/badge.svg)
+![Node Setup](https://github.com/PowerHouse-Project/Production/actions/workflows/devOps.yml/badge.svg)
 
 ## Frontend Instructions
 
