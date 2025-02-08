@@ -1,13 +1,31 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Grid, Card, CardContent, Typography, Box, Stack } from "@mui/material";
+import {
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  Stack,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Button,
+} from "@mui/material";
 import Breadcrumb from "@/app/ui/dashboard/breadcrumbs";
 import IOSSwitch from "../ui/iosButton";
+import EditIcon from "@mui/icons-material/Edit"; // Import Edit icon
 
 const Devices = () => {
   const [devices, setDevices] = useState([]);
-  const [checked, setChecked] = useState([]); // Stores IDs of "on" devices
+  const [checked, setChecked] = useState([]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [deviceName, setDeviceName] = useState("");
+  const [deviceId, setDeviceId] = useState(null);
 
   useEffect(() => {
     fetch("http://localhost:8000/device_info")
@@ -52,6 +70,45 @@ const Devices = () => {
     }
   };
 
+  const handleEdit = (id, name) => {
+    setDeviceId(id);
+    setDeviceName(name);
+    setOpenDialog(true); // Open the dialog when edit icon is clicked
+  };
+
+  const handleSave = async () => {
+    try {
+      // Modify the fetch request to match the updated API endpoint
+      const response = await fetch(
+        `http://localhost:8000/device/${deviceId}/name/${deviceName}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // Check if the response is successful
+      if (response.ok) {
+        setDevices((prevDevices) =>
+          prevDevices.map((device) =>
+            device.id === deviceId ? { ...device, name: deviceName } : device
+          )
+        );
+        setOpenDialog(false); // Close dialog after saving
+      } else {
+        console.error("Error updating device name:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error updating device name:", error);
+    }
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false); // Close dialog without saving
+  };
+
   return (
     <div>
       <Breadcrumb />
@@ -65,6 +122,9 @@ const Devices = () => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  position: "relative",
+                  transition: "transform 0.2s ease-in-out",
+                  "&:hover": { transform: "scale(1.02)" }, // Slight hover effect
                 }}
               >
                 <CardContent
@@ -104,12 +164,59 @@ const Devices = () => {
                       </Typography>
                     </Box>
                   </Stack>
+
+                  {/* Edit Icon Button */}
+                  <IconButton
+                    sx={{
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      color: "text.secondary",
+                    }}
+                    onClick={() => handleEdit(device.id, device.name)}
+                  >
+                    <EditIcon sx={{ fontSize: 20 }} />
+                  </IconButton>
                 </CardContent>
               </Card>
             </Grid>
           ))}
         </Grid>
       </Box>
+
+      {/* Dialog for editing device name */}
+      <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth={true}>
+        <DialogTitle
+          sx={{ fontFamily: "JetBrains Mono", color: "primary.main" }}
+        >
+          Edit Device Name
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            fullWidth
+            value={deviceName}
+            onChange={(e) => setDeviceName(e.target.value)}
+            label="Device Name"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleCloseDialog}
+            color="primary"
+            sx={{ fontFamily: "JetBrains Mono" }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSave}
+            color="primary"
+            sx={{ fontFamily: "JetBrains Mono" }}
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
