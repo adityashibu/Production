@@ -60,7 +60,7 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleoggle = (deviceId) => () => {
+  const handleToggle = (deviceId) => () => {
     setChecked((prevChecked) => {
       const currentIndex = prevChecked.indexOf(deviceId);
       const newChecked = [...prevChecked];
