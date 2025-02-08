@@ -36,7 +36,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:8000/test");
+        const response = await fetch("http://localhost:8000/device_info");
         const result = await response.json();
 
         if (result && Array.isArray(result.smart_home_devices)) {
@@ -60,17 +60,36 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleToggle = (deviceId) => () => {
-    setChecked((prevChecked) => {
-      const currentIndex = prevChecked.indexOf(deviceId);
-      const newChecked = [...prevChecked];
-      if (currentIndex === -1) {
-        newChecked.push(deviceId);
-      } else {
-        newChecked.splice(currentIndex, 1);
+  const handleToggle = (deviceId) => async () => {
+    try {
+      // Send API request to toggle device status
+      const response = await fetch(
+        `http://localhost:8000/device/${deviceId}/status`,
+        {
+          method: "POST",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to change device status");
       }
-      return newChecked;
-    });
+
+      // Toggle switch state locally
+      setChecked((prevChecked) => {
+        const currentIndex = prevChecked.indexOf(deviceId);
+        const newChecked = [...prevChecked];
+
+        if (currentIndex === -1) {
+          newChecked.push(deviceId);
+        } else {
+          newChecked.splice(currentIndex, 1);
+        }
+
+        return newChecked;
+      });
+    } catch (error) {
+      console.error("Error updating device status:", error);
+    }
   };
 
   const totalPowerUsage = data.reduce(

@@ -26,8 +26,13 @@ async def startup_event():
 def root():
     return {"message": "Welcome to the Smart Home API!"}
 
-@app.get("/test")
-def test():
+@app.get("/device_info")
+def device_info():
     """Returns the current JSON data."""
     jsonData = dj.loadJSON()
     return jsonData
+
+@app.post("/device/{id}/status")
+def change_device_status(id: int):
+    """Changes the status of a device according to its ID."""
+    return dj.changeDeviceStatus(id)
