@@ -36,3 +36,9 @@ def device_info():
 def change_device_status(id: int):
     """Changes the status of a device according to its ID."""
     return dj.changeDeviceStatus(id)
+
+@app.post("/device/{id}/name/{new_name}")
+def change_device_name(id: int, new_name: str):
+    """Changes the name of a device according to its ID."""
+    result = dj.changeDeviceName(id, new_name)
+    return result
