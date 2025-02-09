@@ -3,12 +3,13 @@ import React, { useEffect, useState } from "react";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
-import { useTheme } from "@mui/material/styles"; // Import useTheme to access theme colors
+import { useMediaQuery, useTheme } from "@mui/material";
 
 export default function UpdateNotifier() {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
-  const theme = useTheme(); // Get theme object
+  const theme = useTheme();
+  const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
 
   useEffect(() => {
     const fetchUpdates = async () => {
@@ -38,7 +39,7 @@ export default function UpdateNotifier() {
       <Alert
         onClose={() => setOpen(false)}
         severity="success"
-        // variant="filled"
+        variant={isMdUp ? "outlined" : "filled"}
         sx={{
           width: "100%",
         }}
