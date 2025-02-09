@@ -2,7 +2,8 @@
 
 ## CI/CD Pipeline
 
-![Node Setup](https://github.com/PowerHouse-Project/Production/actions/workflows/devOps.yml/badge.svg)
+![Node Setup](https://github.com/PowerHouse-Project/Production/actions/workflows/node.yml/badge.svg)
+![Pytest Setup](https://github.com/PowerHouse-Project/Production/actions/workflows/python.yml/badge.svg)
 
 ## Sections
 
