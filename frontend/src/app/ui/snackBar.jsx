@@ -34,7 +34,7 @@ export default function UpdateNotifier() {
       open={open}
       autoHideDuration={4000}
       onClose={() => setOpen(false)}
-      anchorOrigin={{ vertical: "bottom", horizontal: "right" }} // Bottom-right position
+      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
     >
       <Alert
         onClose={() => setOpen(false)}
