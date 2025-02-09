@@ -63,8 +63,8 @@ const EnergyUsageChart = ({ data }) => {
         });
       }
 
-      setBuffer([]); // Clear buffer for next 5-minute cycle
-    }, 1000); // 5 minutes (300,000 ms)
+      setBuffer([]);
+    }, 1200);
 
     return () => clearInterval(interval);
   }, [buffer]);

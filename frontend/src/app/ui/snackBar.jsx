@@ -3,13 +3,12 @@ import React, { useEffect, useState } from "react";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
-import { useMediaQuery, useTheme } from "@mui/material";
+import { useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 export default function UpdateNotifier() {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
-  const theme = useTheme();
-  const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
 
   useEffect(() => {
     const fetchUpdates = async () => {
@@ -25,7 +24,7 @@ export default function UpdateNotifier() {
       }
     };
 
-    const interval = setInterval(fetchUpdates, 1000); // Poll every 1 sec
+    const interval = setInterval(fetchUpdates, 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -39,7 +38,7 @@ export default function UpdateNotifier() {
       <Alert
         onClose={() => setOpen(false)}
         severity="success"
-        variant={isMdUp ? "outlined" : "filled"}
+        variant="filled"
         sx={{
           width: "100%",
         }}
