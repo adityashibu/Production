@@ -7,7 +7,7 @@ import Link from "next/link";
 import Breadcrumb from "../ui/dashboard/breadcrumbs";
 
 import Grid from "@mui/material/Grid";
-import { Box } from "@mui/material";
+import { Box, ButtonGroup, Button } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -23,11 +23,11 @@ import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturi
 import IOSSwitch from "../ui/iosButton";
 import EnergyUsageChart from "../ui/energyChart";
 import { useTheme } from "@emotion/react";
-import UpdateNotifier from "../ui/snackBar";
 
 const Dashboard = () => {
   const [data, setData] = useState([]);
   const [checked, setChecked] = useState([]);
+  const [timeRange, setTimeRange] = useState("daily");
 
   const theme = useTheme();
   const boxShadow =
@@ -290,33 +290,69 @@ const Dashboard = () => {
         </Grid>
 
         <Grid item xs={12} md={8} sx={{ display: { xs: "none", md: "block" } }}>
-          <Link href="/energy" passHref legacyBehavior>
-            <Card
-              component="a"
+          <Card
+            component="a"
+            sx={{
+              height: "55vh",
+              display: "flex",
+              flexDirection: "column",
+              // boxShadow: boxShadow,
+              width: "100%",
+              textDecoration: "none", // Prevents underline
+              color: "inherit", // Keeps original text color
+              transition: "transform 0.2s ease-in-out",
+              "&:hover": { transform: "scale(1.01)" }, // Slight hover effect
+            }}
+          >
+            <CardContent
               sx={{
-                height: "55vh",
+                flex: 1,
                 display: "flex",
                 flexDirection: "column",
-                // boxShadow: boxShadow,
                 width: "100%",
-                textDecoration: "none", // Prevents underline
-                color: "inherit", // Keeps original text color
-                transition: "transform 0.2s ease-in-out",
-                "&:hover": { transform: "scale(1.01)" }, // Slight hover effect
               }}
             >
-              <CardContent
-                sx={{
-                  flex: 1,
-                  display: "flex",
-                  flexDirection: "column",
-                  width: "100%",
-                }}
+              <EnergyUsageChart data={data} />
+              <ButtonGroup
+                sx={{ marginTop: "auto", alignSelf: "center" }}
+                color="primary"
               >
-                <EnergyUsageChart data={data} />
-              </CardContent>
-            </Card>
-          </Link>
+                <Button
+                  onClick={() => setTimeRange("daily")}
+                  variant={timeRange === "daily" ? "contained" : "outlined"}
+                  sx={{
+                    fontFamily: "JetBrains Mono",
+                    fontWeight: 800,
+                    color: timeRange === "daily" ? "white" : "primary.main",
+                  }}
+                >
+                  Daily
+                </Button>
+                <Button
+                  onClick={() => setTimeRange("monthly")}
+                  variant={timeRange === "monthly" ? "contained" : "outlined"}
+                  sx={{
+                    fontFamily: "JetBrains Mono",
+                    fontWeight: 800,
+                    color: timeRange === "monthly" ? "white" : "primary.main",
+                  }}
+                >
+                  Monthly
+                </Button>
+                <Button
+                  onClick={() => setTimeRange("yearly")}
+                  variant={timeRange === "yearly" ? "contained" : "outlined"}
+                  sx={{
+                    fontFamily: "JetBrains Mono",
+                    fontWeight: 800,
+                    color: timeRange === "yearly" ? "white" : "primary.main",
+                  }}
+                >
+                  Yearly
+                </Button>
+              </ButtonGroup>
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
     </div>
