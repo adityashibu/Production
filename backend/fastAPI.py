@@ -42,3 +42,8 @@ def change_device_name(id: int, new_name: str):
     """Changes the name of a device according to its ID."""
     result = dj.changeDeviceName(id, new_name)
     return result
+
+@app.get("/updates")
+def get_updates():
+    """Returns the updates list."""
+    return {"updates": dj.getUpdates()}

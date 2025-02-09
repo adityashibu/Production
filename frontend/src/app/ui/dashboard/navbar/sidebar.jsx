@@ -77,7 +77,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "flex-end",
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
 
@@ -109,10 +108,12 @@ const Drawer = styled(MuiDrawer, {
 export default function Sidebar() {
   const updateOpen = useAppStore((state) => state.updateOpen);
   const open = useAppStore((state) => state.Open);
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
 
   const handleCloseDrawer = () => {
     if (open) {
-      updateOpen(false); // Close the drawer when navigating
+      updateOpen(false);
     }
   };
 
@@ -128,11 +129,29 @@ export default function Sidebar() {
               <ListItem
                 disablePadding
                 onClick={handleCloseDrawer} // Close drawer on click
-                className="hover:bg-main-light-blue-dark/20 ease-linear transition-all duration-300 group md:px-1"
+                className="ease-linear transition-all duration-300 md:px-1"
               >
-                <ListItemButton>
-                  <ListItemIcon className="text-main-dark-blue-inactive group-hover:text-main-light-blue-dark transition-all duration-300">
-                    <Icon className="group-hover:text-main-light-blue-dark transition-all duration-300" />
+                <ListItemButton
+                  className={`group transition-all duration-300 hover:bg-opacity-20 ${
+                    isDarkMode
+                      ? "hover:bg-main-light-blue-dark"
+                      : "hover:bg-main-dark-purple-light"
+                  }`}
+                >
+                  <ListItemIcon
+                    className={`transition-all duration-300 ${
+                      isDarkMode
+                        ? "text-main-dark-purple-light group-hover:text-main-dark-purple-light"
+                        : "text-main-dark-blue-inactive group-hover:text-main-light-blue-dark"
+                    }`}
+                  >
+                    <Icon
+                      className={`transition-all duration-300 ${
+                        isDarkMode
+                          ? "group-hover:text-main-dark-purple-light"
+                          : "group-hover:text-main-light-blue-dark"
+                      }`}
+                    />
                   </ListItemIcon>
                   <ListItemText
                     primary={
@@ -142,7 +161,11 @@ export default function Sidebar() {
                           fontWeight: 700,
                           fontSize: 14,
                         }}
-                        className="group-hover:text-main-light-blue-dark transition-all duration-300"
+                        className={`transition-all duration-300 ${
+                          isDarkMode
+                            ? "group-hover:text-main-dark-purple-light"
+                            : "group-hover:text-main-light-blue-dark"
+                        }`}
                       >
                         {Name}
                       </span>

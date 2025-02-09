@@ -8,6 +8,7 @@
 
 1. [Frontend Setup](#frontend-instructions)
 2. [Backend Setup](#backend-instructions)
+3. [Alternative Method](#alternative-method)
 
 ## Frontend Instructions
 
@@ -49,9 +50,29 @@
     python --version
     ```
 
-    It should print out your current python version, if Python is installed on your machine
+    It should print out your current python version, if Python is installed on your machine. If it says command not found then install Python from the official website at [python.org](https://www.python.org)
+
+  - Change directory to backend using
+
+    ```shell
+    cd backend
+    ```
 
   - Install the required dependencies using the following command
+
     ```shell
     pip install -r requirements.txt
     ```
+
+  - After installing all the required packages, start up the fastAPI server using uvicorn
+    ```shell
+    uvicorn fastAPI:app --reload
+    ```
+
+## Alternative Method
+
+- Alternatively, there is a script to run both backend and frontend using one command
+
+  ```shell
+  npm run start
+  ```

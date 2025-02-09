@@ -12,13 +12,12 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 
 import MenuIcon from "@mui/icons-material/Menu";
-import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import LightModeIcon from "@mui/icons-material/LightMode";
 
 import { useAppStore } from "@/app/appStore";
-import { Light } from "@mui/icons-material";
 import { useThemeMode } from "@/app/themeRegistery";
+import AccountMenu from "../accountMenu";
 
 const AppBar = styled(
   MuiAppBar,
@@ -58,7 +57,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
     width: "100%",
@@ -158,17 +156,8 @@ export default function Navbar() {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
+            {/* Add AccountMenu here instead of AccountCircle */}
+            <AccountMenu />
           </Box>
         </Toolbar>
       </AppBar>

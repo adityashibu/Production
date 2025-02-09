@@ -4,22 +4,23 @@ import random
 
 deviceFile = "devices_template.json"
 
-def loadJSON(): # Loads JSON file from devices_template
+updates = []  # Stores messages for frontend
+
+def loadJSON():
     try:
         with open(deviceFile, "r") as JSONfile:
             return json.load(JSONfile)
     except FileNotFoundError:
-        print("Error: devices.json not found!")
+        updates.append("Error: devices.json not found!")
         return {"smart_home_devices": []}
 
-def saveJSON(data): # Saves JSON file from devices_template
+def saveJSON(data):
     with open(deviceFile, "w") as JSONfile:
         json.dump(data, JSONfile, indent=2)
 
-def randomizeDevice(device): # Dummy function for simulating device usage
+def randomizeDevice(device):
     if device["status"] == "on":
         device["uptime"] += 1
-
         if "power_usage" in device:
             usualPower = int(device["power_rating"] * 0.75)
             device["power_usage"] = random.randint(usualPower, device["power_rating"])
@@ -32,15 +33,15 @@ def randomizeDevice(device): # Dummy function for simulating device usage
         device["acTemp"] = random.randint(65, 80)
 
     if "ovenTemp" in device and device["status"] == "on":
-        device["ovenTemp"] = random.randint(180, 300) 
+        device["ovenTemp"] = random.randint(180, 300)
 
     if "volume" in device and device["status"] == "on":
         device["volume"] = random.randint(0, 100)
 
     if "battery_level" in device and device["status"] == "on":
         device["battery_level"] = max(0, device["battery_level"] - random.randint(0, 2))
-        
-def setTimer(id, time): # Sets timer for device according to its ID in seconds
+
+def setTimer(id, time):
     data = loadJSON()
     devices = data.get("smart_home_devices", [])
 
@@ -49,31 +50,40 @@ def setTimer(id, time): # Sets timer for device according to its ID in seconds
             if "timer" in device and device["timer"] == 0:
                 device["timer"] = time
                 saveJSON(data)
-                return {"success": "Set timer for " + device["name"] + " to " + str(time) + " seconds"}
-            return {"error": "This device does not use a timer."}
-            
+                message = f"Set timer for {device['name']} to {time} seconds"
+                updates.append(message)
+                return {"success": message}
+            message = f"Error: {device['name']} does not support a timer."
+            updates.append(message)
+            return {"error": message}
+    return {"error": "ID not found!"}
 
-def handleTimer(device): # Dummy function for simulating device timer
+def handleTimer(device):
     if "timer" in device and device["timer"] > 0:
         device["timer"] -= 1
         if device["timer"] == 0:
             device["status"] = "off"
-            return {"success:" : "Turned off " + device["name"] + " after timer"}
+            message = f"Turned off {device['name']} after timer expired."
+            updates.append(message)
 
-def changeDeviceName(id, newName): # Changes device name according to its ID
+def changeDeviceName(id, newName):
     data = loadJSON()
     devices = data.get("smart_home_devices", [])
 
-    for device in devices:      
+    for device in devices:
         if device["id"] == id:
             if device["name"] == newName:
-                return {"error": "Can't use the same name!"}
+                message = f"Error: Can't use the same name for {newName}."
+                updates.append(message)
+                return {"error": message}
             device["name"] = newName
             saveJSON(data)
-            return {"success": "Changed device name to " + newName}
+            message = f"Changed device name to {newName}."
+            updates.append(message)
+            return {"success": message}
     return {"error": "ID not found!"}
 
-def changeDeviceStatus(id): # Changes device status according to its ID - similar to button press
+def changeDeviceStatus(id):
     data = loadJSON()
     devices = data.get("smart_home_devices", [])
 
@@ -81,28 +91,22 @@ def changeDeviceStatus(id): # Changes device status according to its ID - simila
         if device["id"] == id:
             device["status"] = "on" if device["status"] == "off" else "off"
             saveJSON(data)
-            return {"success": "Changed device status to " + device["status"]}
+            message = f"Changed {device['name']} status to {device['status']}."
+            updates.append(message)
+            return {"success": message}
     return {"error": "ID not found!"}
 
-def sumPower(): # Sums up power usage of all devices
+def sumPower():
     data = loadJSON()
     devices = data.get("smart_home_devices", [])
-    powerSum = 0
+    return sum(device["power_usage"] for device in devices)
 
-    for device in devices:
-        powerSum += device["power_usage"]
-    return powerSum
-
-def sumRating(): # Sums up all power ratings of devices - helper function for tips
+def sumRating():
     data = loadJSON()
     devices = data.get("smart_home_devices", [])
-    ratingSum = 0
+    return sum(device["power_rating"] for device in devices)
 
-    for device in devices:
-        ratingSum += device["power_rating"]
-    return ratingSum
-
-async def updateDevices(): # Updates device status every second
+async def updateDevices():
     while True:
         data = loadJSON()
         devices = data.get("smart_home_devices", [])
@@ -112,7 +116,11 @@ async def updateDevices(): # Updates device status every second
             handleTimer(device)
 
         saveJSON(data)
-        print("Updated JSON data...\n", json.dumps(data, indent=2))
 
         await asyncio.sleep(1)
 
+def getUpdates():
+    global updates
+    messages = updates[:]
+    updates.clear()
+    return messages
