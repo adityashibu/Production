@@ -19,6 +19,7 @@ import {
 import Breadcrumb from "@/app/ui/dashboard/breadcrumbs";
 import IOSSwitch from "../ui/iosButton";
 import EditIcon from "@mui/icons-material/Edit"; // Import Edit icon
+import UpdateNotifier from "../ui/snackBar";
 
 const Devices = () => {
   const [devices, setDevices] = useState([]);
@@ -111,6 +112,7 @@ const Devices = () => {
 
   return (
     <div>
+      <UpdateNotifier />
       <Breadcrumb />
       <Box sx={{ padding: 3 }}>
         <Grid container spacing={3}>
