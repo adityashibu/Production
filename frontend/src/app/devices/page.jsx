@@ -113,7 +113,7 @@ const Devices = () => {
   return (
     <div>
       <Breadcrumb />
-      <Box sx={{ padding: 3 }}>
+      <Box sx={{ paddingTop: 2 }}>
         <Grid container spacing={3}>
           {devices.map((device) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={device.id}>
