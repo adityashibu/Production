@@ -23,6 +23,7 @@ import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturi
 import IOSSwitch from "../ui/iosButton";
 import EnergyUsageChart from "../ui/energyChart";
 import { useTheme } from "@emotion/react";
+import UpdateNotifier from "../ui/snackBar";
 
 const Dashboard = () => {
   const [data, setData] = useState([]);

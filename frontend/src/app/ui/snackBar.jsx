@@ -1,10 +1,14 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import { useTheme } from "@mui/material/styles"; // Import useTheme to access theme colors
 
 export default function UpdateNotifier() {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
+  const theme = useTheme(); // Get theme object
 
   useEffect(() => {
     const fetchUpdates = async () => {
@@ -20,8 +24,7 @@ export default function UpdateNotifier() {
       }
     };
 
-    const interval = setInterval(fetchUpdates, 1000); // Poll every 5 sec
-
+    const interval = setInterval(fetchUpdates, 1000); // Poll every 1 sec
     return () => clearInterval(interval);
   }, []);
 
@@ -30,12 +33,18 @@ export default function UpdateNotifier() {
       open={open}
       autoHideDuration={4000}
       onClose={() => setOpen(false)}
+      anchorOrigin={{ vertical: "bottom", horizontal: "right" }} // Bottom-right position
     >
       <Alert
         onClose={() => setOpen(false)}
-        severity="info"
-        sx={{ width: "100%" }}
+        severity="success"
+        // variant="filled"
+        sx={{
+          width: "100%",
+        }}
+        color="info"
       >
+        <AlertTitle>Success</AlertTitle>
         {message}
       </Alert>
     </Snackbar>

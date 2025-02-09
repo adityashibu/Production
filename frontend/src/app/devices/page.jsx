@@ -112,7 +112,6 @@ const Devices = () => {
 
   return (
     <div>
-      <UpdateNotifier />
       <Breadcrumb />
       <Box sx={{ padding: 3 }}>
         <Grid container spacing={3}>
