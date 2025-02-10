@@ -3,10 +3,12 @@ import React, { useEffect, useState } from "react";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
+import { useTheme } from "@mui/material";
 
 export default function UpdateNotifier() {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
+  const theme = useTheme();
 
   useEffect(() => {
     const fetchUpdates = async () => {
@@ -22,7 +24,7 @@ export default function UpdateNotifier() {
       }
     };
 
-    const interval = setInterval(fetchUpdates, 1000);
+    const interval = setInterval(fetchUpdates, 20);
     return () => clearInterval(interval);
   }, []);
 
@@ -40,7 +42,7 @@ export default function UpdateNotifier() {
         sx={{
           width: "100%",
         }}
-        color="info"
+        color="primary"
       >
         <AlertTitle>Success</AlertTitle>
         {message}

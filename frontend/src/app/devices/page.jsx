@@ -18,8 +18,7 @@ import {
 } from "@mui/material";
 import Breadcrumb from "@/app/ui/dashboard/breadcrumbs";
 import IOSSwitch from "../ui/iosButton";
-import EditIcon from "@mui/icons-material/Edit"; // Import Edit icon
-import UpdateNotifier from "../ui/snackBar";
+import EditIcon from "@mui/icons-material/Edit";
 
 const Devices = () => {
   const [devices, setDevices] = useState([]);
