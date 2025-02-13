@@ -1,0 +1,89 @@
+{
+  "smart_home_devices": [
+    {
+      "id": 1,
+      "name": "Philips Hue Smart Bulb B",
+      "status": "on",
+      "power_rating": 10,
+      "power_usage": 9,
+      "uptime": 76229,
+      "ip": "192.168.1.1",
+      "connection_status": "connected"
+    },
+    {
+      "id": 2,
+      "name": "August Main Door Lock B",
+      "status": "on",
+      "battery_level": 0,
+      "power_rating": 2,
+      "power_usage": 1,
+      "uptime": 59166,
+      "ip": "192.168.1.2",
+      "connection_status": "connected"
+    },
+    {
+      "id": 3,
+      "name": "Nest Kitchen Thermostat",
+      "status": "on",
+      "temperature": 79,
+      "power_rating": 2,
+      "power_usage": 1,
+      "uptime": 82535,
+      "ip": "192.168.1.3",
+      "connection_status": "connected"
+    },
+    {
+      "id": 4,
+      "name": "Samsung Living Room TV",
+      "status": "on",
+      "volume": 19,
+      "power_rating": 2,
+      "power_usage": 2,
+      "uptime": 65239,
+      "ip": "192.168.1.4",
+      "connection_status": "connected"
+    },
+    {
+      "id": 5,
+      "name": "TP-Link Office Smart Plug",
+      "status": "on",
+      "power_rating": 2,
+      "power_usage": 2,
+      "uptime": 71798,
+      "ip": "192.168.1.5",
+      "connection_status": "connected"
+    },
+    {
+      "id": 6,
+      "name": "Amazon Alexa Echo Dot Model B",
+      "status": "on",
+      "power_rating": 2,
+      "power_usage": 1,
+      "uptime": 83434,
+      "ip": "192.168.1.6",
+      "connection_status": "connected"
+    },
+    {
+      "id": 7,
+      "name": "Siemens Model B Smart Oven",
+      "status": "on",
+      "temperature": 180,
+      "timer": 0,
+      "power_rating": 900,
+      "power_usage": 789,
+      "uptime": 97723,
+      "ip": "192.168.1.7",
+      "connection_status": "connected"
+    },
+    {
+      "id": 8,
+      "name": "Samsung Smart Fridge",
+      "status": "on",
+      "power_rating": 700,
+      "power_usage": 626,
+      "uptime": 122263,
+      "ip": "192.168.1.8",
+      "connection_status": "connected"
+    }
+  ]
+}
