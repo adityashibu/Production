@@ -2,7 +2,7 @@ import json
 import asyncio
 import random
 
-deviceFile = "devices_template.json"
+deviceFile = "devices.json"
 
 updates = []  # Stores messages for frontend
 
