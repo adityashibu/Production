@@ -19,6 +19,7 @@ import {
 import Breadcrumb from "@/app/ui/dashboard/breadcrumbs";
 import IOSSwitch from "../ui/iosButton";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const Devices = () => {
   const [devices, setDevices] = useState([]);
@@ -26,16 +27,25 @@ const Devices = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [deviceName, setDeviceName] = useState("");
   const [deviceId, setDeviceId] = useState(null);
+  const [disappearingDevices, setDisappearingDevices] = useState([]);
+
+  const disappearingStyle = {
+    opacity: 0,
+    transition: "opacity 0.3s ease-out",
+  };
 
   useEffect(() => {
     fetch("http://localhost:8000/device_info")
       .then((res) => res.json())
       .then((data) => {
-        console.log("Fetched data:", data); // Debugging
-        setDevices(data.smart_home_devices || []);
+        const connectedDevices = (data.smart_home_devices || []).filter(
+          (device) => device.connection_status === "connected"
+        );
+
+        setDevices(connectedDevices);
 
         setChecked(
-          (data.smart_home_devices || [])
+          connectedDevices
             .filter((device) => device.status === "on")
             .map((device) => device.id)
         );
@@ -73,12 +83,11 @@ const Devices = () => {
   const handleEdit = (id, name) => {
     setDeviceId(id);
     setDeviceName(name);
-    setOpenDialog(true); // Open the dialog when edit icon is clicked
+    setOpenDialog(true);
   };
 
   const handleSave = async () => {
     try {
-      // Modify the fetch request to match the updated API endpoint
       const response = await fetch(
         `http://localhost:8000/device/${deviceId}/name/${deviceName}`,
         {
@@ -89,14 +98,13 @@ const Devices = () => {
         }
       );
 
-      // Check if the response is successful
       if (response.ok) {
         setDevices((prevDevices) =>
           prevDevices.map((device) =>
             device.id === deviceId ? { ...device, name: deviceName } : device
           )
         );
-        setOpenDialog(false); // Close dialog after saving
+        setOpenDialog(false);
       } else {
         console.error("Error updating device name:", response.statusText);
       }
@@ -105,8 +113,36 @@ const Devices = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:8000/device/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        setDisappearingDevices((prev) => [...prev, id]);
+
+        setTimeout(() => {
+          setDevices((prevDevices) =>
+            prevDevices.filter((device) => device.id !== id)
+          );
+          setDisappearingDevices((prev) =>
+            prev.filter((deviceId) => deviceId !== id)
+          );
+        }, 300);
+      } else {
+        console.error(
+          "Error toggling device connection status:",
+          response.statusText
+        );
+      }
+    } catch (error) {
+      console.error("Error toggling device connection status:", error);
+    }
+  };
+
   const handleCloseDialog = () => {
-    setOpenDialog(false); // Close dialog without saving
+    setOpenDialog(false);
   };
 
   return (
@@ -125,6 +161,8 @@ const Devices = () => {
                   position: "relative",
                   transition: "transform 0.2s ease-in-out",
                   "&:hover": { transform: "scale(1.02)" },
+                  ...(disappearingDevices.includes(device.id) &&
+                    disappearingStyle), // Apply disappearing animation
                 }}
               >
                 <CardContent
@@ -142,7 +180,6 @@ const Devices = () => {
                       checked={checked.includes(device.id)}
                     />
 
-                    {/* Device Name + IP */}
                     <Box>
                       <Typography
                         variant="h6"
@@ -176,6 +213,12 @@ const Devices = () => {
                     onClick={() => handleEdit(device.id, device.name)}
                   >
                     <EditIcon sx={{ fontSize: 20 }} />
+                  </IconButton>
+                  <IconButton
+                    sx={{ position: "absolute", bottom: 8, right: 8 }}
+                    onClick={() => handleDelete(device.id)}
+                  >
+                    <DeleteIcon sx={{ fontSize: 20 }} />
                   </IconButton>
                 </CardContent>
               </Card>

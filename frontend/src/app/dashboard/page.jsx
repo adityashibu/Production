@@ -44,10 +44,12 @@ const Dashboard = () => {
         const result = await response.json();
 
         if (result && Array.isArray(result.smart_home_devices)) {
-          const devices = result.smart_home_devices;
-          setData(devices);
+          const connectedDevices = result.smart_home_devices.filter(
+            (device) => device.connection_status === "connected"
+          );
+          setData(connectedDevices);
 
-          const initialChecked = devices
+          const initialChecked = connectedDevices
             .filter((device) => device.status === "on")
             .map((device) => device.id);
           setChecked(initialChecked);
