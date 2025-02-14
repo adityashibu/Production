@@ -119,6 +119,20 @@ async def updateDevices():
 
         await asyncio.sleep(1)
 
+async def deleteDevices(id):
+    data = loadJSON()
+    devices = data.get("smart_home_devices", [])
+    
+    for device in devices:
+        if device["id"] == id:
+            device["connection_status"] = "not_connected" if device["connection_status"] == "connected" else "connected"
+            saveJSON(data)
+            message = f"Removed {device['name']} from the system."
+            updates.append(message)
+            return {"success": message}
+    return {"error": "ID not found!"}
+
+
 def getUpdates():
     global updates
     messages = updates[:]

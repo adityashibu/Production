@@ -4,13 +4,17 @@ from firebase_admin import firestore
 import json
 import os 
 
+from dotenv import load_dotenv
+
 cred = credentials.Certificate("/Users/annerinjeri/Downloads/powerhouse-62f4d-firebase-adminsdk-fbsvc-9a2e946c98.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
+load_dotenv()
+
 LAST_MODIFIED_TIME = 0
 
-def set_doc_data(coll_ref,file):
+def set_doc_data(coll_ref, file):
     rel_path=rel_path = os.path.join(os.path.dirname(__file__), f"../backend/{file}")
     JSONfile = open(rel_path, "r")
     data = json.load(JSONfile)
