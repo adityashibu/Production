@@ -1,6 +1,5 @@
 import pytest
 from unittest.mock import patch, mock_open, call
-import json
 import sys
 import os
 
