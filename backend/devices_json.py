@@ -119,19 +119,22 @@ async def updateDevices():
 
         await asyncio.sleep(1)
 
-async def deleteDevices(id):
+async def changeConnection(id):
     data = loadJSON()
     devices = data.get("smart_home_devices", [])
 
     for device in devices:
         if device["id"] == id:
-            # Toggle connection status
             device["connection_status"] = (
-                "not_connected" if device["connection_status"] == "connected" else "connected"
+                "connected" if device["connection_status"] == "not_connected" else "not_connected"
             )
 
-            saveJSON(data)  # Save the updated data
-            message = f"Disconnected {device['name']}."
+            saveJSON(data)
+            message = (
+                f"Connected {device['name']}." 
+                if device["connection_status"] == "connected" 
+                else f"Disconnected {device['name']}."
+            )
             updates.append(message)
             return {"success": message}
 
