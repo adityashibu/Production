@@ -81,4 +81,4 @@ def test_getUpdates(mock_load):
     devices_json.updates = ["Message 1", "Message 2"]
     result = devices_json.getUpdates()
     assert result == ["Message 1", "Message 2"]
-    assert devices_json.updates == []  # Ensure updates are cleared
+    assert devices_json.updates == []
