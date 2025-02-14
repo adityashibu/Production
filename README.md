@@ -2,20 +2,22 @@
 
 ## CI/CD Pipeline
 
-![Node Setup](https://github.com/PowerHouse-Project/Production/actions/workflows/devOps.yml/badge.svg)
+![Node Setup](https://github.com/PowerHouse-Project/Production/actions/workflows/node.yml/badge.svg)
+![Pytest Setup](https://github.com/PowerHouse-Project/Production/actions/workflows/python.yml/badge.svg)
 
 ## Sections
 
 1. [Frontend Setup](#frontend-instructions)
 2. [Backend Setup](#backend-instructions)
 3. [Alternative Method](#alternative-method)
+4. [Database Setup](#database-setup)
 
 ## Frontend Instructions
 
 - Tech Stack
 
-  - NextJS
   - React
+  - NextJS
   - Tailwind and MUI
 
 - Instructions to compile:
@@ -42,6 +44,11 @@
 
 ## Backend Instructions
 
+- Tech Stack
+
+  - Python
+  - FastAPI
+
 - Instructions to startup the FastAPI server
 
   - Make sure you have python installed on your machine, run:
@@ -58,6 +65,21 @@
     cd backend
     ```
 
+  - Create a virtual environment using the command
+
+    ```shell
+    python -m venv venv
+    ```
+
+  - Activate the virtual environment using the command
+    - For Windows
+      ```shell
+      venv\Scripts\Activate
+      ```
+    - For Linux and MacOS
+      ```shell
+      source venv/bin/Activate
+      ```
   - Install the required dependencies using the following command
 
     ```shell
@@ -76,3 +98,5 @@
   ```shell
   npm run start
   ```
+
+## Database Setup

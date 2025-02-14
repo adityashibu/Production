@@ -64,7 +64,7 @@ const EnergyUsageChart = ({ data }) => {
       }
 
       setBuffer([]);
-    }, 1200);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [buffer]);

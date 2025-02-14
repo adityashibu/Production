@@ -47,3 +47,9 @@ def change_device_name(id: int, new_name: str):
 def get_updates():
     """Returns the updates list."""
     return {"updates": dj.getUpdates()}
+
+@app.post("/device/{id}/connect")
+async def change_connection_status(id: int):
+    """Toggle the connection status of a device."""
+    result = await dj.changeConnection(id)
+    return result

@@ -1,8 +1,11 @@
 # JSON files
-devices_template.json
+devices.json
 
 # Venv files
 venv/
 
 Python cache files
 __pycache__/
+
+# Secrets
+.env

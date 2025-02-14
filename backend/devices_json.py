@@ -2,7 +2,7 @@ import json
 import asyncio
 import random
 
-deviceFile = "devices_template.json"
+deviceFile = "devices.json"
 
 updates = []  # Stores messages for frontend
 
@@ -118,6 +118,28 @@ async def updateDevices():
         saveJSON(data)
 
         await asyncio.sleep(1)
+
+async def changeConnection(id):
+    data = loadJSON()
+    devices = data.get("smart_home_devices", [])
+
+    for device in devices:
+        if device["id"] == id:
+            device["connection_status"] = (
+                "connected" if device["connection_status"] == "not_connected" else "not_connected"
+            )
+
+            saveJSON(data)
+            message = (
+                f"Connected {device['name']}." 
+                if device["connection_status"] == "connected" 
+                else f"Disconnected {device['name']}."
+            )
+            updates.append(message)
+            return {"success": message}
+
+    return {"error": "ID not found!"}
+
 
 def getUpdates():
     global updates
