@@ -35,9 +35,10 @@ const Devices = () => {
   const [disappearingDevices, setDisappearingDevices] = useState([]);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deviceToDelete, setDeviceToDelete] = useState(null);
-  const [openAddDialog, setOpenAddDialog] = useState(false); // State for Add Device dialog
-  const [notConnectedDevices, setNotConnectedDevices] = useState([]); // State for not-connected devices
-  const [selectedDeviceId, setSelectedDeviceId] = useState(null); // State for selected device ID
+  const [openAddDialog, setOpenAddDialog] = useState(false);
+  const [notConnectedDevices, setNotConnectedDevices] = useState([]);
+  const [selectedDeviceId, setSelectedDeviceId] = useState(null);
+  const [selectedDeviceName, setSelectedDeviceName] = useState("");
 
   const disappearingStyle = {
     opacity: 0,
@@ -54,11 +55,10 @@ const Devices = () => {
 
         setDevices(connectedDevices);
 
-        setChecked(
-          connectedDevices
-            .filter((device) => device.status === "on")
-            .map((device) => device.id)
-        );
+        const checkedDevices = connectedDevices
+          .filter((device) => device.status === "on")
+          .map((device) => device.id);
+        setChecked(checkedDevices);
       })
       .catch((err) => {
         console.error("Error fetching devices:", err);
@@ -192,11 +192,15 @@ const Devices = () => {
   const handleAddDeviceClick = async () => {
     await fetchNotConnectedDevices(); // Fetch not-connected devices
     setOpenAddDialog(true); // Open the Add Device dialog
+    setDeviceName(""); // Clear the device name field
   };
 
   const handleAddDeviceConfirm = async () => {
     if (selectedDeviceId) {
       try {
+        // Always use the name from the input field, even if it's empty
+        const nameToUse = deviceName.trim();
+
         // Update the device's connection status to "connected"
         const response = await fetch(
           `http://localhost:8000/device/${selectedDeviceId}/connect`,
@@ -205,7 +209,7 @@ const Devices = () => {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ name: deviceName || "" }), // Optional: Update the device name
+            body: JSON.stringify({ name: nameToUse }), // Use the name from the input field
           }
         );
 
@@ -220,10 +224,18 @@ const Devices = () => {
           ).filter((device) => device.connection_status === "connected");
           setDevices(connectedDevices);
 
+          // Update the checked state if the new device's status is "on"
+          const newDevice = connectedDevices.find(
+            (device) => device.id === selectedDeviceId
+          );
+          if (newDevice && newDevice.status === "on") {
+            setChecked((prevChecked) => [...prevChecked, newDevice.id]);
+          }
+
           // Reset states
           setOpenAddDialog(false);
           setSelectedDeviceId(null);
-          setDeviceName("");
+          setDeviceName(""); // Clear the device name field
         } else {
           console.error("Error connecting device:", response.statusText);
         }
@@ -236,7 +248,7 @@ const Devices = () => {
   const handleAddDeviceCancel = () => {
     setOpenAddDialog(false);
     setSelectedDeviceId(null);
-    setDeviceName("");
+    setDeviceName(""); // Clear the device name field
   };
 
   return (
@@ -436,7 +448,20 @@ const Devices = () => {
               labelId="device-select-label"
               id="device-select"
               value={selectedDeviceId || ""}
-              onChange={(e) => setSelectedDeviceId(e.target.value)}
+              onChange={(e) => {
+                const selectedId = e.target.value;
+                setSelectedDeviceId(selectedId);
+
+                // Only set the device name if the input field is empty
+                if (!deviceName.trim()) {
+                  const selectedDevice = notConnectedDevices.find(
+                    (device) => device.id === selectedId
+                  );
+                  if (selectedDevice) {
+                    setDeviceName(selectedDevice.name); // Set the device name to the selected device's name
+                  }
+                }
+              }}
               label="Select Device"
             >
               {notConnectedDevices.map((device) => (
@@ -446,14 +471,14 @@ const Devices = () => {
               ))}
             </Select>
           </FormControl>
-          <TextField
+          {/* <TextField
             autoFocus
             fullWidth
             label="Device Name"
             value={deviceName}
             onChange={(e) => setDeviceName(e.target.value)}
             sx={{ fontFamily: "JetBrains Mono" }}
-          />
+          /> */}
         </DialogContent>
         <DialogActions>
           <Button
