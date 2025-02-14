@@ -1,11 +1,14 @@
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+import json
+import os 
+
 cred = credentials.Certificate("/Users/annerinjeri/Downloads/powerhouse-62f4d-firebase-adminsdk-fbsvc-9a2e946c98.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
-import json
-import os 
+
+LAST_MODIFIED_TIME = 0
 
 def set_doc_data(coll_ref,file):
     rel_path=rel_path = os.path.join(os.path.dirname(__file__), f"../backend/{file}")
@@ -42,6 +45,15 @@ def delete_collection(coll_ref):
 
     if deleted >= coll_size:
         return delete_collection(coll_ref)
+    
+def is_json_updated(file):
+    global LAST_MODIFIED_TIME
+    current_modified_time = os.path.getmtime(file)
+    if current_modified_time > LAST_MODIFIED_TIME:
+        LAST_MODIFIED_TIME = current_modified_time
+        return True
+    return False
+
     
 delete_collection(db.collection("Devices"))
 set_doc_data(db.collection("Devices"),"devices.json")
