@@ -38,7 +38,7 @@ const Devices = () => {
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [notConnectedDevices, setNotConnectedDevices] = useState([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState(null);
-  const [selectedDeviceName, setSelectedDeviceName] = useState("");
+  // const [selectedDeviceName, setSelectedDeviceName] = useState("");
 
   const disappearingStyle = {
     opacity: 0,
@@ -190,18 +190,16 @@ const Devices = () => {
   };
 
   const handleAddDeviceClick = async () => {
-    await fetchNotConnectedDevices(); // Fetch not-connected devices
-    setOpenAddDialog(true); // Open the Add Device dialog
-    setDeviceName(""); // Clear the device name field
+    await fetchNotConnectedDevices();
+    setOpenAddDialog(true);
+    setDeviceName("");
   };
 
   const handleAddDeviceConfirm = async () => {
     if (selectedDeviceId) {
       try {
-        // Always use the name from the input field, even if it's empty
         const nameToUse = deviceName.trim();
 
-        // Update the device's connection status to "connected"
         const response = await fetch(
           `http://localhost:8000/device/${selectedDeviceId}/connect`,
           {
@@ -209,12 +207,11 @@ const Devices = () => {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ name: nameToUse }), // Use the name from the input field
+            body: JSON.stringify({ name: nameToUse }),
           }
         );
 
         if (response.ok) {
-          // Refresh the devices list
           const updatedResponse = await fetch(
             "http://localhost:8000/device_info"
           );
@@ -224,7 +221,6 @@ const Devices = () => {
           ).filter((device) => device.connection_status === "connected");
           setDevices(connectedDevices);
 
-          // Update the checked state if the new device's status is "on"
           const newDevice = connectedDevices.find(
             (device) => device.id === selectedDeviceId
           );
@@ -235,7 +231,7 @@ const Devices = () => {
           // Reset states
           setOpenAddDialog(false);
           setSelectedDeviceId(null);
-          setDeviceName(""); // Clear the device name field
+          setDeviceName("");
         } else {
           console.error("Error connecting device:", response.statusText);
         }
@@ -248,7 +244,7 @@ const Devices = () => {
   const handleAddDeviceCancel = () => {
     setOpenAddDialog(false);
     setSelectedDeviceId(null);
-    setDeviceName(""); // Clear the device name field
+    setDeviceName("");
   };
 
   return (
@@ -458,7 +454,7 @@ const Devices = () => {
                     (device) => device.id === selectedId
                   );
                   if (selectedDevice) {
-                    setDeviceName(selectedDevice.name); // Set the device name to the selected device's name
+                    setDeviceName(selectedDevice.name);
                   }
                 }
               }}
