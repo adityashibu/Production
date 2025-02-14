@@ -64,7 +64,7 @@ def test_sumRating(mock_load):
 @patch("devices_json.loadJSON", return_value={"smart_home_devices": [{"id": 1, "name": "Device1", "connection_status": "connected"}]})
 @patch("devices_json.saveJSON")
 async def test_deleteDevices(mock_save, mock_load):
-    result = await devices_json.deleteDevices(1)
+    result = await devices_json.changeConnection(1)
     assert result == {"success": "Disconnected Device1."}
     mock_save.assert_called_once()
 
@@ -72,8 +72,8 @@ async def test_deleteDevices(mock_save, mock_load):
 @patch("devices_json.loadJSON", return_value={"smart_home_devices": [{"id": 1, "name": "Device1", "connection_status": "not_connected"}]})
 @patch("devices_json.saveJSON")
 async def test_deleteDevices_reconnect(mock_save, mock_load):
-    result = await devices_json.deleteDevices(1)
-    assert result == {"success": "Disconnected Device1."}
+    result = await devices_json.changeConnection(1)
+    assert result == {"success": "Connected Device1."}
     mock_save.assert_called_once()
 
 @patch("devices_json.loadJSON", return_value={"smart_home_devices": [{"id": 1, "name": "Device1", "connection_status": "connected"}]})
