@@ -3,7 +3,6 @@ from unittest.mock import patch, mock_open, call
 import sys
 import os
 
-# Add the parent directory to the sys.path to import devices_json
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import devices_json
 
