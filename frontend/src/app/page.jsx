@@ -13,13 +13,37 @@ import {
 import LightModeIcon from "@mui/icons-material/LightMode";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import getTheme from "./theme";
-import Link from "next/link";
+
+// Auth Stuff
+import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { auth } from "@/app/firebase/config";
 
 const Homepage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
 
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // Create User
+  const [createUserWithEmailAndPassword] =
+    useCreateUserWithEmailAndPassword(auth);
+
   const theme = getTheme(darkMode ? "dark" : "light");
+
+  const handleSignUp = async () => {
+    event.preventDefault(); // Prevent page refresh
+    try {
+      const res = await createUserWithEmailAndPassword(email, password);
+      console.log({ res });
+      setUsername("");
+      setEmail("");
+      setPassword("");
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -109,49 +133,54 @@ const Homepage = () => {
             </Box>
 
             {/* Form Fields */}
-            <Link href="/dashboard">
-              <Box
-                component="form"
-                sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+            <Box
+              component="form"
+              sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+              onSubmit={isLogin ? undefined : handleSignUp} // Call handleSignUp only for SignUp
+            >
+              {/* {!isLogin && (
+                <TextField
+                  label="Username"
+                  variant="outlined"
+                  fullWidth
+                  required
+                  sx={{ fontFamily: "JetBrains Mono" }}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              )} */}
+              <TextField
+                label="Email"
+                type="email"
+                variant="outlined"
+                fullWidth
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <TextField
+                label="Password"
+                type="password"
+                variant="outlined"
+                fullWidth
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{
+                  fontFamily: "JetBrains Mono",
+                  fontWeight: 800,
+                  color: "white",
+                }}
               >
-                {!isLogin && (
-                  <TextField
-                    label="Username"
-                    variant="outlined"
-                    fullWidth
-                    required
-                    sx={{ fontFamily: "JetBrains Mono" }}
-                  />
-                )}
-                <TextField
-                  label="Email"
-                  type="email"
-                  variant="outlined"
-                  fullWidth
-                  required
-                />
-                <TextField
-                  label="Password"
-                  type="password"
-                  variant="outlined"
-                  fullWidth
-                  required
-                />
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  sx={{
-                    fontFamily: "JetBrains Mono",
-                    fontWeight: 800,
-                    color: "white",
-                  }}
-                >
-                  {isLogin ? "Login" : "Sign Up"}
-                </Button>
-              </Box>
-            </Link>
+                {isLogin ? "Login" : "Sign Up"}
+              </Button>
+            </Box>
           </Paper>
         </Container>
       </Box>
