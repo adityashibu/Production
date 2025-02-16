@@ -14,8 +14,13 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import getTheme from "./theme";
 
+import { useRouter } from "next/navigation";
+
 // Auth Stuff
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import {
+  useCreateUserWithEmailAndPassword,
+  useSignInWithEmailAndPassword,
+} from "react-firebase-hooks/auth";
 import { auth } from "@/app/firebase/config";
 
 const Homepage = () => {
@@ -26,9 +31,14 @@ const Homepage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const router = useRouter();
+
   // Create User
   const [createUserWithEmailAndPassword] =
     useCreateUserWithEmailAndPassword(auth);
+
+  // Sign In User
+  const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
 
   const theme = getTheme(darkMode ? "dark" : "light");
 
@@ -40,6 +50,19 @@ const Homepage = () => {
       setUsername("");
       setEmail("");
       setPassword("");
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleLogin = async () => {
+    event.preventDefault(); // Prevent page refresh
+    try {
+      const res = await signInWithEmailAndPassword(email, password);
+      console.log({ res });
+      setEmail("");
+      setPassword("");
+      router.push("/dashboard");
     } catch (e) {
       console.error(e);
     }
@@ -136,7 +159,7 @@ const Homepage = () => {
             <Box
               component="form"
               sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-              onSubmit={isLogin ? undefined : handleSignUp} // Call handleSignUp only for SignUp
+              onSubmit={isLogin ? handleLogin : handleSignUp}
             >
               {/* {!isLogin && (
                 <TextField
