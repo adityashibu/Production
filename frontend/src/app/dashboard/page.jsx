@@ -31,20 +31,20 @@ import { useRouter } from "next/navigation";
 
 const Dashboard = () => {
   const router = useRouter();
-  const userSession = sessionStorage.getItem("user");
-  // User stuff
-  const [user, loading] = useAuthState(auth);
+  // const userSession = sessionStorage.getItem("user");
+  // // User stuff
+  // const [user, loading] = useAuthState(auth);
 
-  useEffect(() => {
-    if (!loading && !user && !userSession) {
-      router.push("/");
-    }
-  }, [user, userSession, loading, router]);
+  // useEffect(() => {
+  //   if (!loading && !user && !userSession) {
+  //     router.push("/");
+  //   }
+  // }, [user, userSession, loading, router]);
 
-  // Prevent rendering until authentication is determined
-  if (loading) return null;
+  // // Prevent rendering until authentication is determined
+  // if (loading) return null;
 
-  if (!user && !userSession) return null;
+  // if (!user && !userSession) return null;
 
   const [data, setData] = useState([]);
   const [checked, setChecked] = useState([]);
