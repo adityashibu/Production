@@ -1,10 +1,8 @@
 import pytest
 from unittest.mock import patch, mock_open, call
-import json
 import sys
 import os
 
-# Add the parent directory to the sys.path to import devices_json
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import devices_json
 
@@ -64,7 +62,7 @@ def test_sumRating(mock_load):
 @patch("devices_json.loadJSON", return_value={"smart_home_devices": [{"id": 1, "name": "Device1", "connection_status": "connected"}]})
 @patch("devices_json.saveJSON")
 async def test_deleteDevices(mock_save, mock_load):
-    result = await devices_json.deleteDevices(1)
+    result = await devices_json.changeConnection(1)
     assert result == {"success": "Disconnected Device1."}
     mock_save.assert_called_once()
 
@@ -72,8 +70,8 @@ async def test_deleteDevices(mock_save, mock_load):
 @patch("devices_json.loadJSON", return_value={"smart_home_devices": [{"id": 1, "name": "Device1", "connection_status": "not_connected"}]})
 @patch("devices_json.saveJSON")
 async def test_deleteDevices_reconnect(mock_save, mock_load):
-    result = await devices_json.deleteDevices(1)
-    assert result == {"success": "Disconnected Device1."}
+    result = await devices_json.changeConnection(1)
+    assert result == {"success": "Connected Device1."}
     mock_save.assert_called_once()
 
 @patch("devices_json.loadJSON", return_value={"smart_home_devices": [{"id": 1, "name": "Device1", "connection_status": "connected"}]})
@@ -81,4 +79,4 @@ def test_getUpdates(mock_load):
     devices_json.updates = ["Message 1", "Message 2"]
     result = devices_json.getUpdates()
     assert result == ["Message 1", "Message 2"]
-    assert devices_json.updates == []  # Ensure updates are cleared
+    assert devices_json.updates == []
