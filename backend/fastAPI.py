@@ -47,3 +47,9 @@ def change_device_name(id: int, new_name: str):
 def get_updates():
     """Returns the updates list."""
     return {"updates": dj.getUpdates()}
+
+@app.delete("/device/{id}")
+async def delete_device(id: int):
+    """Toggle the connection status of a device."""
+    result = await dj.deleteDevices(id)
+    return result
