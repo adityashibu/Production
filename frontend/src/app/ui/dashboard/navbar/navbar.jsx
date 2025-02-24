@@ -156,7 +156,6 @@ export default function Navbar() {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            {/* Add AccountMenu here instead of AccountCircle */}
             <AccountMenu />
           </Box>
         </Toolbar>
