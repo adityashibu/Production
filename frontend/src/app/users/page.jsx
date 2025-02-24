@@ -14,7 +14,6 @@ import {
   DialogContent,
   DialogTitle,
   Button,
-  TextField,
 } from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import BackspaceIcon from "@mui/icons-material/Backspace";
@@ -106,14 +105,14 @@ const Users = () => {
   const [passwordInput, setPasswordInput] = useState("");
   const [passwordValid, setPasswordValid] = useState(null);
 
-  const router = useRouter(); // Initialize the router
+  const router = useRouter();
 
   const theme = getTheme(darkMode ? "dark" : "light");
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://localhost:8000/user_data"); // API endpoint
+        const response = await fetch("http://localhost:8000/user_data");
         const data = await response.json();
         setUsers(data.users || []);
       } catch (error) {
@@ -136,7 +135,6 @@ const Users = () => {
   const handlePasswordSubmit = () => {
     if (passwordInput === selectedUser.user_password) {
       setPasswordValid(true);
-      // Redirect to the dashboard page after successful password match
       router.push("/dashboard");
     } else {
       setPasswordValid(false);
@@ -169,7 +167,6 @@ const Users = () => {
           px: 2,
         }}
       >
-        {/* Theme Toggle Button */}
         <IconButton
           sx={{ position: "absolute", top: 16, right: 16 }}
           color="inherit"
@@ -178,7 +175,6 @@ const Users = () => {
           <LightModeIcon sx={{ color: "primary.main", fontSize: "1.5rem" }} />
         </IconButton>
 
-        {/* Title */}
         <Typography
           variant="h4"
           sx={{
@@ -192,7 +188,6 @@ const Users = () => {
           Users List
         </Typography>
 
-        {/* Loading State */}
         {loading ? (
           <CircularProgress color="primary" />
         ) : (
@@ -241,17 +236,14 @@ const Users = () => {
           </Container>
         )}
 
-        {/* Password Dialog */}
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
           <DialogTitle sx={{fontFamily: "JetBrains Mono", textAlign: "center"}}>Enter Password for {selectedUser?.user_name}</DialogTitle>
           <DialogContent>
-            {/* Custom Dot Input */}
             <DotInput value={passwordInput} maxLength={4} />
             <Typography variant="h6" sx={{ textAlign: "center", mt: 2, mb:2, fontFamily: "JetBrains Mono", fontSize: {xs: "15px", md:"24px"} }}>
               Please enter your 4-digit password:
             </Typography>
 
-            {/* On-Screen Keypad */}
             <Keypad
               onKeyPress={handleKeyPress}
               onClear={handleClear}

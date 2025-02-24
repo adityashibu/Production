@@ -43,7 +43,7 @@ const Homepage = () => {
   const theme = getTheme(darkMode ? "dark" : "light");
 
   const handleSignUp = async () => {
-    event.preventDefault(); // Prevent page refresh
+    event.preventDefault();
     try {
       const res = await createUserWithEmailAndPassword(email, password);
       console.log({ res });
@@ -57,7 +57,7 @@ const Homepage = () => {
   };
 
   const handleLogin = async () => {
-    event.preventDefault(); // Prevent page refresh
+    event.preventDefault();
     try {
       const res = await signInWithEmailAndPassword(email, password);
       console.log({ res });
@@ -84,7 +84,6 @@ const Homepage = () => {
           position: "relative",
         }}
       >
-        {/* Theme Toggle Button (Top Right) */}
         <IconButton
           sx={{ position: "absolute", top: 16, right: 16 }}
           color="inherit"
@@ -93,7 +92,6 @@ const Homepage = () => {
           <LightModeIcon sx={{ color: "primary.main", fontSize: "1.5rem" }} />
         </IconButton>
 
-        {/* Login/Signup Form */}
         <Container
           sx={{
             display: "flex",
@@ -102,7 +100,6 @@ const Homepage = () => {
             textAlign: "center",
           }}
         >
-          {/* PowerHouse Title */}
           <Typography
             variant="h4"
             sx={{
@@ -125,7 +122,6 @@ const Homepage = () => {
               bgcolor: "background.paper",
             }}
           >
-            {/* Toggle Buttons */}
             <Box sx={{ display: "flex", mb: 3 }}>
               <Button
                 fullWidth
@@ -157,7 +153,6 @@ const Homepage = () => {
               </Button>
             </Box>
 
-            {/* Form Fields */}
             <Box
               component="form"
               sx={{ display: "flex", flexDirection: "column", gap: 2 }}
