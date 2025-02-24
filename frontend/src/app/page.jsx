@@ -64,7 +64,7 @@ const Homepage = () => {
       sessionStorage.setItem("user", true);
       setEmail("");
       setPassword("");
-      router.push("/dashboard");
+      router.push("/users");
     } catch (e) {
       console.error(e);
     }
