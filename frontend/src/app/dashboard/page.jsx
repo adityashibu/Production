@@ -31,19 +31,15 @@ import { useRouter } from "next/navigation";
 
 const Dashboard = () => {
   const router = useRouter();
-  const [userSession, setUserSession] = useState(null);
-  const [user, loading] = useAuthState(auth);
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setUserSession(sessionStorage.getItem("user"));
-    }
-  }, []);
-  
-  useEffect(() => {
-    if (!loading && !user && !userSession) {
-      router.push("/");
-    }
-  }, [user, userSession, loading, router]);
+  if(typeof window !== 'undefined'){
+    const userSession = sessionStorage.getItem("user");
+    const [user, loading] = useAuthState(auth);
+    useEffect(() => {
+      if (!loading && !user && !userSession) {
+        router.push("/");
+      }
+    }, [user, userSession, loading, router]);
+  }
 
   // if (loading) return null;
 
