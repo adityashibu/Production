@@ -38,3 +38,16 @@ def changeAutomationStatus(id):
             updates.append(f"Changed status of {automation['name']} to {automation['enabled']}!")
             return
     updates.append("Error: Automation with specified ID not found (backend error!)")
+    return
+
+def deleteAutomation(id):
+    data = loadAutomations()
+    automations = data.get("automations", [])
+    for automation in automations:
+        if automation["id"] == id:
+            automations.remove(automation)
+            saveAutomations(data)
+            updates.append(f"Deleted {automation['name']} from the automation table!")
+            return
+    updates.append("Error: Automation with specified ID not found (backend error!)")
+    return
