@@ -30,14 +30,20 @@ const Homepage = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      const res = await signInWithGoogle();
-      console.log({ res });
+      const result = await signInWithGoogle();
+      if (!result) {
+        console.error("Google sign-in failed: No user result received.");
+        return;
+      }
+      
+      console.log("User signed in:", result.user);
       sessionStorage.setItem("user", true);
       router.push("/users");
-    } catch (e) {
-      console.error("Google sign-in failed:", e);
+    } catch (error) {
+      console.error("Google sign-in error:", error);
     }
   };
+  
 
   return (
     <ThemeProvider theme={theme}>
@@ -95,7 +101,7 @@ const Homepage = () => {
               gap: 2,
             }}
           >
-            <Typography variant="h6" sx={{ mb: 2 }}>
+            <Typography variant="h6" sx={{ mb: 2, fontFamily: "JetBrains Mono" }}>
               Sign in with Google
             </Typography>
 
