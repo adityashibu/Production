@@ -106,6 +106,9 @@ def sumRating():
     devices = data.get("smart_home_devices", [])
     return sum(device["power_rating"] for device in devices)
 
+def deviceFunctions(): # Returns the list of device functions for scheduling purposes and possibly miscellaneous purposes
+    return ["Set Oven Timer", "Change Device Status"]
+
 async def updateDevices():
     while True:
         data = loadJSON()
