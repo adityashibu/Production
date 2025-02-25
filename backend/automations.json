@@ -1,5 +1,10 @@
 {
-    "automations": [
-        
+    "automation_example": [
+        {
+        "name": "Name goes here",
+        "enabled": true,
+        "triggers": "time goes here (in 24 hour format)",
+        "action": "action goes here"
+        }
     ]
 }
