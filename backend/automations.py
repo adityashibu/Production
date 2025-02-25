@@ -25,3 +25,16 @@ def addAutomation(automation): # Add automation to automations.json
     automations.append(automation)
     saveAutomations(data)
     updates.append(f"Added {automation['name']} to the automation table!")
+
+
+# Manipulation of automation schedules down below
+def changeAutomationStatus(id):
+    data = loadAutomations()
+    automations = data.get("automations", [])
+    for automation in automations:
+        if automation["id"] == id:
+            automation["enabled"] = not automation["enabled"]
+            saveAutomations(data)
+            updates.append(f"Changed status of {automation['name']} to {automation['enabled']}!")
+            return
+    updates.append("Error: Automation with specified ID not found (backend error!)")
