@@ -1,6 +1,7 @@
 {
     "automation_example": [
         {
+        "id": 1,    
         "name": "Name goes here",
         "enabled": true,
         "triggers": "time goes here (in 24 hour format)",
