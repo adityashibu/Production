@@ -1,8 +1,13 @@
+import devices_json as dj
+import schedule
+
+automationFile = "automations.json"
+
 import json
 import schedule
 
 automationFile = "automations.json"
-updates = [] # For frontend
+updates = []
 
 
 def loadAutomations():
