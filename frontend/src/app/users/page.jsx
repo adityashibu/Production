@@ -46,8 +46,7 @@ const DotInput = ({ value, maxLength }) => {
   );
 };
 
-// Custom Keypad Component
-const Keypad = ({ onKeyPress, onClear, onSubmit }) => {
+const Keypad = ({ onKeyPress, onClear }) => {
   const handleButtonClick = (value) => {
     onKeyPress(value);
   };
