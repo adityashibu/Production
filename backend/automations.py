@@ -18,4 +18,10 @@ def saveAutomations(data):
     with open(automationFile, "w") as JSONfile:
         json.dump(data, JSONfile, indent=2)
 
-        
+
+def addAutomation(automation): # Add automation to automations.json
+    data = loadAutomations()
+    automations = data.get("automations", [])
+    automations.append(automation)
+    saveAutomations(data)
+    updates.append(f"Added {automation['name']} to the automation table!")
