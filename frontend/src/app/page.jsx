@@ -4,22 +4,46 @@ import { useState } from "react";
 import {
   Box,
   Button,
-  TextField,
   IconButton,
   Typography,
   Container,
   Paper,
 } from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode";
+import GoogleIcon from "@mui/icons-material/Google";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import getTheme from "./theme";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+// Firebase & Google Auth Hook
+import { useSignInWithGoogle } from "react-firebase-hooks/auth";
+import { auth } from "@/app/firebase/config";
 
 const Homepage = () => {
-  const [isLogin, setIsLogin] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
+  const router = useRouter();
+
+  // Google Authentication Hook
+  const [signInWithGoogle, user, loading, error] = useSignInWithGoogle(auth);
 
   const theme = getTheme(darkMode ? "dark" : "light");
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithGoogle();
+      if (!result) {
+        console.error("Google sign-in failed: No user result received.");
+        return;
+      }
+      
+      console.log("User signed in:", result.user);
+      sessionStorage.setItem("user", true);
+      router.push("/users");
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+    }
+  };
+  
 
   return (
     <ThemeProvider theme={theme}>
@@ -35,7 +59,6 @@ const Homepage = () => {
           position: "relative",
         }}
       >
-        {/* Theme Toggle Button (Top Right) */}
         <IconButton
           sx={{ position: "absolute", top: 16, right: 16 }}
           color="inherit"
@@ -44,7 +67,6 @@ const Homepage = () => {
           <LightModeIcon sx={{ color: "primary.main", fontSize: "1.5rem" }} />
         </IconButton>
 
-        {/* Login/Signup Form */}
         <Container
           sx={{
             display: "flex",
@@ -53,7 +75,6 @@ const Homepage = () => {
             textAlign: "center",
           }}
         >
-          {/* PowerHouse Title */}
           <Typography
             variant="h4"
             sx={{
@@ -74,84 +95,37 @@ const Homepage = () => {
               width: "100%",
               maxWidth: 400,
               bgcolor: "background.paper",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 2,
             }}
           >
-            {/* Toggle Buttons */}
-            <Box sx={{ display: "flex", mb: 3 }}>
-              <Button
-                fullWidth
-                variant={isLogin ? "contained" : "outlined"}
-                color="primary"
-                onClick={() => setIsLogin(true)}
-                sx={{
-                  fontFamily: "JetBrains Mono",
-                  fontWeight: 800,
-                  color: isLogin ? "white" : theme.palette.primary.main,
-                  borderColor: theme.palette.primary.main,
-                }}
-              >
-                Login
-              </Button>
-              <Button
-                fullWidth
-                variant={!isLogin ? "contained" : "outlined"}
-                color="primary"
-                onClick={() => setIsLogin(false)}
-                sx={{
-                  fontFamily: "JetBrains Mono",
-                  fontWeight: 800,
-                  color: !isLogin ? "white" : theme.palette.primary.main,
-                  borderColor: theme.palette.primary.main,
-                }}
-              >
-                Sign Up
-              </Button>
-            </Box>
+            <Typography variant="h6" sx={{ mb: 2, fontFamily: "JetBrains Mono" }}>
+              Sign in with Google
+            </Typography>
 
-            {/* Form Fields */}
-            <Link href="/dashboard">
-              <Box
-                component="form"
-                sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-              >
-                {!isLogin && (
-                  <TextField
-                    label="Username"
-                    variant="outlined"
-                    fullWidth
-                    required
-                    sx={{ fontFamily: "JetBrains Mono" }}
-                  />
-                )}
-                <TextField
-                  label="Email"
-                  type="email"
-                  variant="outlined"
-                  fullWidth
-                  required
-                />
-                <TextField
-                  label="Password"
-                  type="password"
-                  variant="outlined"
-                  fullWidth
-                  required
-                />
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  sx={{
-                    fontFamily: "JetBrains Mono",
-                    fontWeight: 800,
-                    color: "white",
-                  }}
-                >
-                  {isLogin ? "Login" : "Sign Up"}
-                </Button>
-              </Box>
-            </Link>
+            <Button
+              onClick={handleGoogleLogin}
+              variant="contained"
+              color="primary"
+              fullWidth
+              startIcon={<GoogleIcon />}
+              sx={{
+                fontFamily: "JetBrains Mono",
+                fontWeight: 800,
+                color: "white",
+              }}
+              disabled={loading}
+            >
+              {loading ? "Signing in..." : "Continue with Google"}
+            </Button>
+
+            {error && (
+              <Typography color="error" variant="body2">
+                {error.message}
+              </Typography>
+            )}
           </Paper>
         </Container>
       </Box>
