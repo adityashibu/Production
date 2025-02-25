@@ -32,7 +32,7 @@ export default function AccountMenu() {
     try {
       await signOut(auth); // Sign out the user
       sessionStorage.removeItem("user"); // Clear session
-      router.push("/"); // Redirect to home page
+      router.push("/");
     } catch (error) {
       console.error("Sign out error:", error);
     }
