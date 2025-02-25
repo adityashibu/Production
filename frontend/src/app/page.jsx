@@ -4,69 +4,38 @@ import { useState } from "react";
 import {
   Box,
   Button,
-  TextField,
   IconButton,
   Typography,
   Container,
   Paper,
 } from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode";
+import GoogleIcon from "@mui/icons-material/Google";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import getTheme from "./theme";
-
 import { useRouter } from "next/navigation";
 
-// Auth Stuff
-import {
-  useCreateUserWithEmailAndPassword,
-  useSignInWithEmailAndPassword,
-} from "react-firebase-hooks/auth";
+// Firebase & Google Auth Hook
+import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { auth } from "@/app/firebase/config";
 
 const Homepage = () => {
-  const [isLogin, setIsLogin] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
-
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
   const router = useRouter();
 
-  // Create User
-  const [createUserWithEmailAndPassword] =
-    useCreateUserWithEmailAndPassword(auth);
-
-  // Sign In User
-  const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
+  // Google Authentication Hook
+  const [signInWithGoogle, user, loading, error] = useSignInWithGoogle(auth);
 
   const theme = getTheme(darkMode ? "dark" : "light");
 
-  const handleSignUp = async () => {
-    event.preventDefault();
+  const handleGoogleLogin = async () => {
     try {
-      const res = await createUserWithEmailAndPassword(email, password);
+      const res = await signInWithGoogle();
       console.log({ res });
       sessionStorage.setItem("user", true);
-      setUsername("");
-      setEmail("");
-      setPassword("");
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const handleLogin = async () => {
-    event.preventDefault();
-    try {
-      const res = await signInWithEmailAndPassword(email, password);
-      console.log({ res });
-      sessionStorage.setItem("user", true);
-      setEmail("");
-      setPassword("");
       router.push("/users");
     } catch (e) {
-      console.error(e);
+      console.error("Google sign-in failed:", e);
     }
   };
 
@@ -120,87 +89,37 @@ const Homepage = () => {
               width: "100%",
               maxWidth: 400,
               bgcolor: "background.paper",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 2,
             }}
           >
-            <Box sx={{ display: "flex", mb: 3 }}>
-              <Button
-                fullWidth
-                variant={isLogin ? "contained" : "outlined"}
-                color="primary"
-                onClick={() => setIsLogin(true)}
-                sx={{
-                  fontFamily: "JetBrains Mono",
-                  fontWeight: 800,
-                  color: isLogin ? "white" : theme.palette.primary.main,
-                  borderColor: theme.palette.primary.main,
-                }}
-              >
-                Login
-              </Button>
-              <Button
-                fullWidth
-                variant={!isLogin ? "contained" : "outlined"}
-                color="primary"
-                onClick={() => setIsLogin(false)}
-                sx={{
-                  fontFamily: "JetBrains Mono",
-                  fontWeight: 800,
-                  color: !isLogin ? "white" : theme.palette.primary.main,
-                  borderColor: theme.palette.primary.main,
-                }}
-              >
-                Sign Up
-              </Button>
-            </Box>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Sign in with Google
+            </Typography>
 
-            <Box
-              component="form"
-              sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-              onSubmit={isLogin ? handleLogin : handleSignUp}
+            <Button
+              onClick={handleGoogleLogin}
+              variant="contained"
+              color="primary"
+              fullWidth
+              startIcon={<GoogleIcon />}
+              sx={{
+                fontFamily: "JetBrains Mono",
+                fontWeight: 800,
+                color: "white",
+              }}
+              disabled={loading}
             >
-              {/* {!isLogin && (
-                <TextField
-                  label="Username"
-                  variant="outlined"
-                  fullWidth
-                  required
-                  sx={{ fontFamily: "JetBrains Mono" }}
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-              )} */}
-              <TextField
-                label="Email"
-                type="email"
-                variant="outlined"
-                fullWidth
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <TextField
-                label="Password"
-                type="password"
-                variant="outlined"
-                fullWidth
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-                sx={{
-                  fontFamily: "JetBrains Mono",
-                  fontWeight: 800,
-                  color: "white",
-                }}
-              >
-                {isLogin ? "Login" : "Sign Up"}
-              </Button>
-            </Box>
+              {loading ? "Signing in..." : "Continue with Google"}
+            </Button>
+
+            {error && (
+              <Typography color="error" variant="body2">
+                {error.message}
+              </Typography>
+            )}
           </Paper>
         </Container>
       </Box>
