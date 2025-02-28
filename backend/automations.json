@@ -1,10 +1,12 @@
 {
     "automation_example": [
         {
+        "id": 1,
+        "device": "absolute device name goes here",    
         "name": "Name goes here",
         "enabled": true,
         "triggers": "time goes here (in 24 hour format)",
-        "action": "action goes here"
+        "action": "function call goes here"
         }
     ]
 }
