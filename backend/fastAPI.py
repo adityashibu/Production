@@ -1,8 +1,14 @@
 import devices_json as dj
 import asyncio
+import os
+import json
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+# Serve user data (Only for testing purposes)
+USER_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "database", "users_db.json")
+# print(USER_DB_PATH) # For testing purposes
 
 # FastAPI initialization and routes
 app = FastAPI()
@@ -53,3 +59,15 @@ async def change_connection_status(id: int):
     """Toggle the connection status of a device."""
     result = await dj.changeConnection(id)
     return result
+
+@app.get("/user_data")
+def get_user_data():
+    """Loads and returns the user data from the JSON file."""
+    try:
+        with open(USER_DB_PATH, "r") as file:
+            user_data = json.load(file)
+        return user_data
+    except FileNotFoundError:
+        return {"error": f"User database file not found"}
+    except json.JSONDecodeError:
+        return {"error": "Error decoding JSON data"}

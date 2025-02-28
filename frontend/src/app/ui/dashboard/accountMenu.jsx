@@ -15,7 +15,10 @@ import Logout from "@mui/icons-material/Logout";
 import { signOut } from "firebase/auth";
 import { auth } from "@/app/firebase/config";
 
+import { useRouter } from "next/navigation";
+
 export default function AccountMenu() {
+  const router = useRouter();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -24,6 +27,17 @@ export default function AccountMenu() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth); // Sign out the user
+      sessionStorage.removeItem("user"); // Clear session
+      router.push("/");
+    } catch (error) {
+      console.error("Sign out error:", error);
+    }
+  };
+  
   return (
     <React.Fragment>
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
@@ -100,13 +114,7 @@ export default function AccountMenu() {
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem
-          onClick={() => {
-            sessionStorage.removeItem("user");
-            signOut(auth);
-          }}
-          sx={{ fontFamily: "JetBrains Mono" }}
-        >
+        <MenuItem onClick={handleLogout} sx={{ fontFamily: "JetBrains Mono" }}>
           <ListItemIcon>
             <Logout fontSize="small" sx={{ color: "primary.main" }} />
           </ListItemIcon>
