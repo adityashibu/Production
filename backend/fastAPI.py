@@ -71,3 +71,8 @@ def get_user_data():
         return {"error": f"User database file not found"}
     except json.JSONDecodeError:
         return {"error": "Error decoding JSON data"}
+
+@app.get("/device_functions")
+def get_device_functions():
+    """Returns the list of device functions."""
+    return {"functions": dj.deviceFunctions()}
