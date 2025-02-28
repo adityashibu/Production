@@ -2,15 +2,35 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import json
 import os
-#rom dotenv import load_dotenv
+from dotenv import load_dotenv
 
-cred = credentials.Certificate("/Users/annerinjeri/Downloads/powerhouse-62f4d-firebase-adminsdk-fbsvc-9a2e946c98.json")
-firebase_admin.initialize_app(cred)
+# cred = credentials.Certificate("/Users/annerinjeri/Downloads/powerhouse-62f4d-firebase-adminsdk-fbsvc-9a2e946c98.json")
+# firebase_admin.initialize_app(cred)
+
+load_dotenv()
+FIREBASE_PROJECT_ID = os.getenv('FIREBASE_PROJECT_ID')
+FIREBASE_PRIVATE_KEY = os.getenv('FIREBASE_PRIVATE_KEY')
+FIREBASE_CLIENT_EMAIL = os.getenv('FIREBASE_CLIENT_EMAIL')
+# print(FIREBASE_PROJECT_ID)
+
+# Read Firebase credentials from .env
+firebase_config = {
+    "type": "service_account",
+    "project_id": FIREBASE_PROJECT_ID,
+    "private_key": FIREBASE_PRIVATE_KEY,
+    "client_email": FIREBASE_CLIENT_EMAIL,
+    "token_uri": "https://oauth2.googleapis.com/token"
+}
+
+# Initialize Firebase Admin SDK (check if already initialized)
+if not firebase_admin._apps:
+    cred = credentials.Certificate(firebase_config)
+    firebase_admin.initialize_app(cred)
+
+# Firestore database reference
 db = firestore.client()
 
-#load_dotenv()
-
-LAST_MODIFIED_TIME = 0
+LAST_MODIFIED_TIME = 0 
 
 def get_existing_devices(coll_ref):
     """Fetch existing devices from Firestore."""
@@ -65,14 +85,14 @@ def set_doc_data(coll_ref, file):
     for device_id in deleted_devices:
         print(f"Deleted outdated device: {device_id}")
 
-'''def is_json_updated(file):
+def is_json_updated(file):
     """Check if JSON file has been modified."""
     global LAST_MODIFIED_TIME
     current_modified_time = os.path.getmtime(file)
     if current_modified_time > LAST_MODIFIED_TIME:
         LAST_MODIFIED_TIME = current_modified_time
         return True
-    return False'''
+    return False
 
-#if is_json_updated("../backend/devices.json"):
-set_doc_data(db.collection("Devices"), "devices.json")
+if is_json_updated("../backend/devices.json"):
+    set_doc_data(db.collection("Devices"), "devices.json")
