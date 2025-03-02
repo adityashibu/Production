@@ -1,33 +1,36 @@
 {
     "users": [
         {
+            "user_id": 1,
             "user_name": "John Doe",
             "user_password": "1415",
             "allocated_devices": [
-                "device1",
-                "device2",
-                "device3",
-                "device4",
-                "device5",
-                "device6"
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6"
             ],
             "user_role": "super_user"
         },
         {
+            "user_id": 2,
             "user_name": "Jane Doe",
             "user_password": "2005",
             "allocated_devices": [
-                "device3",
-                "device4"
+                "3",
+                "4"
             ],
             "user_role": "sub_user"
         },
         {
+            "user_id": 3,
             "user_name": "John Smith",
             "user_password": "0007",
             "allocated_devices": [
-                "device5",
-                "device6"
+                "5",
+                "6"
             ],
             "user_role": "sub_user"
         }
