@@ -94,7 +94,7 @@ def get_selected_user():
     """Returns the selected user"""
     return users.get_selected_user()
 
-@app.get("/updates/users")
-def get_updates():
-    """Returns the updates list."""
-    return {"updates": users.getUpdates()}
+@app.post("/add_user/{user_name}/{user_password}")
+def add_new_user(user_name: str, user_password: str):
+    """Adds a new user with the given name and password."""
+    return users.add_user(user_name, user_password)

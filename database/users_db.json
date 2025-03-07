@@ -33,6 +33,13 @@
                 "6"
             ],
             "user_role": "sub_user"
+        },
+        {
+            "user_id": 4,
+            "user_name": "Aditya",
+            "user_password": "7777",
+            "allocated_devices": [],
+            "user_role": "sub_user"
         }
     ]
 }

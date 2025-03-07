@@ -115,26 +115,34 @@ const Users = () => {
       setError("Username must not be empty and password must be a 4-digit number.");
       return;
     }
-
+  
     try {
-      const response = await fetch("http://localhost:8000/add_user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_name: newUsername, user_password: newPassword }),
-      });
-
+      const response = await fetch(
+        `http://localhost:8000/add_user/${encodeURIComponent(newUsername)}/${encodeURIComponent(newPassword)}`,
+        {
+          method: "POST",
+        }
+      );
+  
       if (!response.ok) {
-        setError("Failed to add user.");
+        const errorMessage = await response.text();
+        setError(`Failed to add user: ${errorMessage}`);
         return;
       }
-
-      setUsers([...users, { user_name: newUsername, user_password: newPassword }]);
+  
+      const newUser = await response.json();
+  
+      // Update users list with response data
+      setUsers((prevUsers) => [...prevUsers, newUser]);
+  
+      // Close dialog and reset form
       setOpenNewUserDialog(false);
       setNewUsername("");
       setNewPassword("");
       setError("");
     } catch (error) {
       console.error("Error adding user:", error);
+      setError("An error occurred while adding the user.");
     }
   };
 
