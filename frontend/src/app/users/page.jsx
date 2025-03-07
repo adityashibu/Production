@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import BackspaceIcon from "@mui/icons-material/Backspace";
-import { ThemeProvider, CssBaseline } from "@mui/material";
+import { ThemeProvider, CssBaseline, TextField, MenuItem } from "@mui/material";
 import getTheme from "../theme";
 import { useRouter } from "next/navigation";
 
@@ -95,6 +95,8 @@ const Keypad = ({ onKeyPress, onClear }) => {
   );
 };
 
+
+
 const Users = () => {
   const [darkMode, setDarkMode] = useState(true);
   const [users, setUsers] = useState([]);
@@ -103,6 +105,38 @@ const Users = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [passwordInput, setPasswordInput] = useState("");
   const [passwordValid, setPasswordValid] = useState(null);
+  const [openNewUserDialog, setOpenNewUserDialog] = useState(false);
+  const [newUsername, setNewUsername] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleNewUserSubmit = async () => {
+    if (newUsername.trim() === "" || newPassword.length !== 4 || isNaN(newPassword)) {
+      setError("Username must not be empty and password must be a 4-digit number.");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8000/add_user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_name: newUsername, user_password: newPassword }),
+      });
+
+      if (!response.ok) {
+        setError("Failed to add user.");
+        return;
+      }
+
+      setUsers([...users, { user_name: newUsername, user_password: newPassword }]);
+      setOpenNewUserDialog(false);
+      setNewUsername("");
+      setNewPassword("");
+      setError("");
+    } catch (error) {
+      console.error("Error adding user:", error);
+    }
+  };
 
   const router = useRouter();
 
@@ -136,7 +170,6 @@ const Users = () => {
       setPasswordValid(true);
   
       try {
-        // Now, only set the selected user AFTER successful login
         const response = await fetch(`http://localhost:8000/select_user/${selectedUser.user_name}`, {
           method: "POST",
         });
@@ -146,12 +179,10 @@ const Users = () => {
           return;
         }
   
-        // Fetch to verify if the user was actually set
         const selectedResponse = await fetch("http://localhost:8000/selected_user");
         const selectedData = await selectedResponse.json();
         console.log("Selected user from API:", selectedData);
   
-        // Redirect to dashboard after successful login
         router.push("/dashboard");
       } catch (error) {
         console.error("Error setting selected user:", error);
@@ -298,6 +329,53 @@ const Users = () => {
             </Button>
           </DialogActions>
         </Dialog>
+
+        <Dialog open={openNewUserDialog} onClose={() => setOpenNewUserDialog(false)}>
+          <DialogTitle sx={{fontFamily: "Jetbrains Mono", color: "primary.main"}}>Add New User</DialogTitle>
+          <DialogContent>
+            <Typography variant="body1" sx={{ mb: 2, fontFamily: "JetBrains Mono" }}>
+              Enter a username and a 4-digit password.
+            </Typography>
+            <TextField
+              label="Username"
+              variant="outlined"
+              fullWidth
+              required
+              value={newUsername}
+              onChange={(e) => setNewUsername(e.target.value)}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              label="4-digit Password"
+              variant="outlined"
+              fullWidth
+              required
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              inputProps={{ maxLength: 4, pattern: "[0-9]*", inputMode: "numeric" }} 
+              sx={{ mb: 2 }}
+            />
+            {error && <Typography color="error">{error}</Typography>}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenNewUserDialog(false)} color="primary" sx={{ fontFamily: "JetBrains Mono" }}>
+              Cancel
+            </Button>
+            <Button onClick={handleNewUserSubmit} color="primary" sx={{ fontFamily: "JetBrains Mono" }}>
+              Submit
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ mt: 5, fontFamily: "JetBrains Mono", color: "white" }}
+          onClick={() => setOpenNewUserDialog(true)}
+        >
+          Add New User
+        </Button>
       </Box>
     </ThemeProvider>
   );
