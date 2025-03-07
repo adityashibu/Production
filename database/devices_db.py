@@ -132,4 +132,3 @@ def start_file_watcher():
 if __name__ == "__main__":
     print("Starting file watcher for devices.json...")
     start_file_watcher()
-

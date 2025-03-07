@@ -1,4 +1,6 @@
 import devices_json as dj
+import users
+
 import asyncio
 import os
 import json
@@ -16,7 +18,7 @@ app = FastAPI()
 # Add CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -51,8 +53,13 @@ def change_device_name(id: int, new_name: str):
 
 @app.get("/updates")
 def get_updates():
-    """Returns the updates list."""
-    return {"updates": dj.getUpdates()}
+    """Returns combined updates from devices and users."""
+    device_updates = dj.getUpdates()
+    user_updates = users.getUpdates()
+
+    all_updates = device_updates + user_updates
+
+    return {"updates": all_updates}
 
 @app.post("/device/{id}/connect")
 async def change_connection_status(id: int):
@@ -76,3 +83,18 @@ def get_user_data():
 def get_device_functions():
     """Returns the list of device functions."""
     return {"functions": dj.deviceFunctions()}
+
+@app.post("/select_user/{user}")
+def set_selected_user(user: str):
+    """Sets the selected user"""
+    return users.select_user(user)
+
+@app.get("/selected_user")
+def get_selected_user():
+    """Returns the selected user"""
+    return users.get_selected_user()
+
+@app.get("/updates/users")
+def get_updates():
+    """Returns the updates list."""
+    return {"updates": users.getUpdates()}
