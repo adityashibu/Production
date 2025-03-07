@@ -47,7 +47,7 @@ const Dashboard = () => {
 
   const [data, setData] = useState([]);
   const [checked, setChecked] = useState([]);
-  const [timeRange, setTimeRange] = useState("daily");
+  const [timeRange, setTimeRange] = useState("realtime");
 
   const theme = useTheme();
   const boxShadow =
@@ -340,6 +340,17 @@ const Dashboard = () => {
                 color="primary"
               >
                 <Button
+                  onClick={() => setTimeRange("realtime")}
+                  variant={timeRange === "realtime" ? "contained" : "outlined"}
+                  sx={{
+                    fontFamily: "JetBrains Mono",
+                    fontWeight: 800,
+                    color: timeRange === "realtime" ? "white" : "primary.main",
+                  }}
+                >
+                  RealTime
+                </Button>
+                <Button
                   onClick={() => setTimeRange("daily")}
                   variant={timeRange === "daily" ? "contained" : "outlined"}
                   sx={{
@@ -360,17 +371,6 @@ const Dashboard = () => {
                   }}
                 >
                   Monthly
-                </Button>
-                <Button
-                  onClick={() => setTimeRange("yearly")}
-                  variant={timeRange === "yearly" ? "contained" : "outlined"}
-                  sx={{
-                    fontFamily: "JetBrains Mono",
-                    fontWeight: 800,
-                    color: timeRange === "yearly" ? "white" : "primary.main",
-                  }}
-                >
-                  Yearly
                 </Button>
               </ButtonGroup>
             </CardContent>

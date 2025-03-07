@@ -20,10 +20,14 @@ import { useRouter } from "next/navigation";
 export default function AccountMenu() {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [selectedUser, setSelectedUser] = React.useState("Loading...");
+
   const open = Boolean(anchorEl);
+  
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+  
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -37,7 +41,26 @@ export default function AccountMenu() {
       console.error("Sign out error:", error);
     }
   };
-  
+
+  // Fetch selected user from the backend
+  React.useEffect(() => {
+    const fetchSelectedUser = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/selected_user");
+        if (!response.ok) {
+          throw new Error("Failed to fetch user");
+        }
+        const data = await response.json();
+        setSelectedUser(data.selected_user || "Unknown User");
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        setSelectedUser("Error fetching user");
+      }
+    };
+
+    fetchSelectedUser();
+  }, []);
+
   return (
     <React.Fragment>
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
@@ -50,7 +73,7 @@ export default function AccountMenu() {
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+            <Avatar sx={{ width: 32, height: 32 }}>{selectedUser.charAt(0)}</Avatar>
           </IconButton>
         </Tooltip>
       </Box>
@@ -99,7 +122,7 @@ export default function AccountMenu() {
             color: "primary.main",
           }}
         >
-          <Avatar /> Profile
+          <Avatar /> {selectedUser}
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleClose} sx={{ fontFamily: "JetBrains Mono" }}>

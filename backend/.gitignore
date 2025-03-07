@@ -1,5 +1,6 @@
 # JSON files
 devices.json
+selected_user.json
 
 # Venv files
 venv/
