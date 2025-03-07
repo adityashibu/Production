@@ -53,8 +53,13 @@ def change_device_name(id: int, new_name: str):
 
 @app.get("/updates")
 def get_updates():
-    """Returns the updates list."""
-    return {"updates": dj.getUpdates()}
+    """Returns combined updates from devices and users."""
+    device_updates = dj.getUpdates()
+    user_updates = users.getUpdates()
+
+    all_updates = device_updates + user_updates
+
+    return {"updates": all_updates}
 
 @app.post("/device/{id}/connect")
 async def change_connection_status(id: int):
@@ -88,3 +93,8 @@ def set_selected_user(user: str):
 def get_selected_user():
     """Returns the selected user"""
     return users.get_selected_user()
+
+@app.get("/updates/users")
+def get_updates():
+    """Returns the updates list."""
+    return {"updates": users.getUpdates()}

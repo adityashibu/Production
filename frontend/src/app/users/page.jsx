@@ -124,35 +124,38 @@ const Users = () => {
     fetchUsers();
   }, []);
 
-  const handleUserClick = async (user) => {
+  const handleUserClick = (user) => {
     setSelectedUser(user);
     setOpenDialog(true);
     setPasswordInput("");
     setPasswordValid(null);
-  
-    try {
-      const response = await fetch(`http://localhost:8000/select_user/${user.user_name}`, {
-        method: "POST",
-      });
-  
-      if (!response.ok) {
-        console.error("Failed to set selected user");
-      }
-  
-      // Fetch to verify if the user was actually set
-      const selectedResponse = await fetch("http://localhost:8000/selected_user");
-      const selectedData = await selectedResponse.json();
-      console.log("Selected user from API:", selectedData);
-    } catch (error) {
-      console.error("Error setting selected user:", error);
-    }
   };
   
-
-  const handlePasswordSubmit = () => {
-    if (passwordInput === selectedUser.user_password) {
+  const handlePasswordSubmit = async () => {
+    if (selectedUser && passwordInput === selectedUser.user_password) {
       setPasswordValid(true);
-      router.push("/dashboard");
+  
+      try {
+        // Now, only set the selected user AFTER successful login
+        const response = await fetch(`http://localhost:8000/select_user/${selectedUser.user_name}`, {
+          method: "POST",
+        });
+  
+        if (!response.ok) {
+          console.error("Failed to set selected user");
+          return;
+        }
+  
+        // Fetch to verify if the user was actually set
+        const selectedResponse = await fetch("http://localhost:8000/selected_user");
+        const selectedData = await selectedResponse.json();
+        console.log("Selected user from API:", selectedData);
+  
+        // Redirect to dashboard after successful login
+        router.push("/dashboard");
+      } catch (error) {
+        console.error("Error setting selected user:", error);
+      }
     } else {
       setPasswordValid(false);
     }

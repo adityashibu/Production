@@ -2,6 +2,7 @@ import json
 import os
 
 SELECTED_USER_FILE = "selected_user.json"
+updates = []
 
 def select_user(user: str):
     """Set the selected user and persist it."""
@@ -21,3 +22,9 @@ def get_selected_user():
             data = json.load(f)
             selected_user = data.get("selected_user", "")
     return {"selected_user": selected_user}
+
+def getUpdates():
+    global updates
+    messages = updates[:]
+    updates.clear()
+    return messages
