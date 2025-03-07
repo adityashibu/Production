@@ -124,12 +124,30 @@ const Users = () => {
     fetchUsers();
   }, []);
 
-  const handleUserClick = (user) => {
+  const handleUserClick = async (user) => {
     setSelectedUser(user);
     setOpenDialog(true);
     setPasswordInput("");
     setPasswordValid(null);
+  
+    try {
+      const response = await fetch(`http://localhost:8000/select_user/${user.user_name}`, {
+        method: "POST",
+      });
+  
+      if (!response.ok) {
+        console.error("Failed to set selected user");
+      }
+  
+      // Fetch to verify if the user was actually set
+      const selectedResponse = await fetch("http://localhost:8000/selected_user");
+      const selectedData = await selectedResponse.json();
+      console.log("Selected user from API:", selectedData);
+    } catch (error) {
+      console.error("Error setting selected user:", error);
+    }
   };
+  
 
   const handlePasswordSubmit = () => {
     if (passwordInput === selectedUser.user_password) {
@@ -236,7 +254,9 @@ const Users = () => {
         )}
 
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-          <DialogTitle sx={{fontFamily: "JetBrains Mono", textAlign: "center"}}>Enter Password for {selectedUser?.user_name}</DialogTitle>
+        <DialogTitle>
+            Enter Password for {selectedUser ? selectedUser.user_name : "User"}
+        </DialogTitle>
           <DialogContent>
             <DotInput value={passwordInput} maxLength={4} />
             <Typography variant="h6" sx={{ textAlign: "center", mt: 2, mb:2, fontFamily: "JetBrains Mono", fontSize: {xs: "15px", md:"24px"} }}>

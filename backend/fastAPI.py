@@ -1,4 +1,6 @@
 import devices_json as dj
+import users
+
 import asyncio
 import os
 import json
@@ -16,10 +18,10 @@ app = FastAPI()
 # Add CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],  # Allow all origins (or specify ["http://localhost:3000"])
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
 )
 
 @app.on_event("startup")
@@ -76,3 +78,13 @@ def get_user_data():
 def get_device_functions():
     """Returns the list of device functions."""
     return {"functions": dj.deviceFunctions()}
+
+@app.post("/select_user/{user}")
+def set_selected_user(user: str):
+    """Sets the selected user"""
+    return users.select_user(user)
+
+@app.get("/selected_user")
+def get_selected_user():
+    """Returns the selected user"""
+    return users.get_selected_user()
