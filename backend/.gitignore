@@ -5,7 +5,7 @@ selected_user.json
 # Venv files
 venv/
 
-Python cache files
+# Python cache files
 __pycache__/
 
 # Secrets
