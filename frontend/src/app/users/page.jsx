@@ -21,6 +21,9 @@ import { ThemeProvider, CssBaseline, TextField, MenuItem } from "@mui/material";
 import getTheme from "../theme";
 import { useRouter } from "next/navigation";
 
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+
 // Custom Dot Component for iOS-style Password
 const DotInput = ({ value, maxLength }) => {
   const dots = Array(maxLength).fill(false);
@@ -132,10 +135,8 @@ const Users = () => {
   
       const newUser = await response.json();
   
-      // Update users list with response data
       setUsers((prevUsers) => [...prevUsers, newUser]);
   
-      // Close dialog and reset form
       setOpenNewUserDialog(false);
       setNewUsername("");
       setNewPassword("");
@@ -270,10 +271,10 @@ const Users = () => {
                     boxShadow: 6,
                     borderRadius: 3,
                     cursor: "pointer",
+                    position: "relative",
                   }}
-                  onClick={() => handleUserClick(user)}
                 >
-                  <CardContent>
+                  <CardContent onClick={() => handleUserClick(user)}>
                     <Typography
                       variant="h6"
                       sx={{
@@ -285,6 +286,19 @@ const Users = () => {
                       {user.user_name}
                     </Typography>
                   </CardContent>
+
+                  {/* Delete Button */}
+                  <IconButton
+                    sx={{
+                      position: "absolute",
+                      bottom: 8,
+                      right: 8,
+                      color: "text.secondary",
+                    }}
+                    onClick={() => handleDeleteUser(user.user_name)}
+                  >
+                    <DeleteIcon sx={{ fontSize: 20 }} />
+                  </IconButton>
                 </Card>
               ))
             ) : (
