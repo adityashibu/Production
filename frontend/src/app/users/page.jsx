@@ -124,12 +124,28 @@ const Users = () => {
     setDeleteDialogOpen(true);
   };
 
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/user_data");
+      const data = await response.json();
+      setUsers(data.users || []);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
   const handleNewUserSubmit = async () => {
     if (newUsername.trim() === "" || newPassword.length !== 4 || isNaN(newPassword)) {
       setError("Username must not be empty and password must be a 4-digit number.");
       return;
     }
-  
+
     try {
       const response = await fetch(
         `http://localhost:8000/add_user/${encodeURIComponent(newUsername)}/${encodeURIComponent(newPassword)}`,
@@ -137,21 +153,19 @@ const Users = () => {
           method: "POST",
         }
       );
-  
+
       if (!response.ok) {
         const errorMessage = await response.text();
         setError(`Failed to add user: ${errorMessage}`);
         return;
       }
-  
-      const newUser = await response.json();
-  
-      setUsers((prevUsers) => [...prevUsers, newUser]);
-  
+
       setOpenNewUserDialog(false);
       setNewUsername("");
       setNewPassword("");
       setError("");
+
+      fetchUsers();
     } catch (error) {
       console.error("Error adding user:", error);
       setError("An error occurred while adding the user.");
@@ -178,10 +192,8 @@ const Users = () => {
         return;
       }
 
-      // Remove user from the list after successful deletion
       setUsers((prevUsers) => prevUsers.filter((user) => user.user_name !== userToDelete.user_name));
 
-      // Close dialog
       setDeleteDialogOpen(false);
       setUserToDelete(null);
     } catch (error) {
@@ -194,22 +206,6 @@ const Users = () => {
   const router = useRouter();
 
   const theme = getTheme(darkMode ? "dark" : "light");
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/user_data");
-        const data = await response.json();
-        setUsers(data.users || []);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
 
   const handleUserClick = (user) => {
     setSelectedUser(user);
