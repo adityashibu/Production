@@ -70,6 +70,7 @@ def add_user(user_name: str, user_password: str):
 def delete_user(user_name: str, user_password: str):
     """Deletes a user from the system if the given password matches. If deleting the super user, assign the position to the next user"""
     users = load_users()
+    available_devices = load_devices()
     user_to_delete = next((u for u in users if u["user_name"] == user_name), None)
 
     if not user_to_delete:
@@ -86,7 +87,7 @@ def delete_user(user_name: str, user_password: str):
     if user_to_delete["user_role"] == "super_user" and users:
         next_super_user = min(users, key=lambda u: u["user_id"])
         next_super_user["user_role"] = "super_user"
-        next_super_user["allocated_devices"] = ["1", "2", "3", "4", "5", "6"]
+        next_super_user["allocated_devices"] = available_devices
         message += f" {next_super_user['user_name']} is now the super user."
 
     save_users(users)
