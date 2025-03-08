@@ -1,11 +1,22 @@
 import json
 import os
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Get current script directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SELECTED_USER_FILE = "selected_user.json"
-# print(os.path.abspath(os.path.join(BASE_DIR, "../database/users_db.json")))
 USER_DB_FILE = os.path.abspath(os.path.join(BASE_DIR, "../database/users_db.json"))
+DEVICE_DB_FILE = os.path.abspath(os.path.join(BASE_DIR, "../backend/devices.json"))
+# print(os.path.abspath(os.path.join(BASE_DIR, "../backend/devices.json")))
 updates = []
+
+def load_devices():
+    """Load smart home devices data from devices.json."""
+    if os.path.exists(DEVICE_DB_FILE):
+        with open(DEVICE_DB_FILE, "r") as f:
+            try:
+                data = json.load(f)
+                return [str(device["id"]) for device in data.get("smart_home_devices", [])]
+            except json.JSONDecodeError:
+                return []
 
 def load_users():
     """Load user data from users_db.json."""
@@ -27,10 +38,11 @@ def save_users(users):
 def add_user(user_name: str, user_password: str):
     """Adds a new user with correct role and allocated devices."""
     users = load_users()
+    available_devices = load_devices()
 
     if not users:
         user_role = "super_user"
-        allocated_devices = ["1", "2", "3", "4", "5", "6"]
+        allocated_devices = available_devices
     else:
         user_role = "sub_user"
         allocated_devices = []
@@ -45,17 +57,22 @@ def add_user(user_name: str, user_password: str):
         "user_role": user_role
     }
 
+    print(new_user)
+
     users.append(new_user)
     save_users(users)
 
-    message = f"New user added: {user_name} ({user_role})"
+    message = f"New user added: {user_name} with role {'Super User' if user_role == 'super_user' else 'Sub User'}"
     updates.append(message)
 
     return {"success": message, "user": new_user}
 
 def delete_user(user_name: str, user_password: str):
-    """Deletes a user from the system if the given password matches. If deleting the super user, assign the position to the next user"""
+    """Deletes a user from the system if the given password matches. If deleting the super user, assign the position to the next user.
+       Re-indexes user IDs to maintain sequential order.
+    """
     users = load_users()
+    available_devices = load_devices()
     user_to_delete = next((u for u in users if u["user_name"] == user_name), None)
 
     if not user_to_delete:
@@ -68,12 +85,15 @@ def delete_user(user_name: str, user_password: str):
 
     users.remove(user_to_delete)
     message = f"User {user_name} deleted."
-    
+
     if user_to_delete["user_role"] == "super_user" and users:
         next_super_user = min(users, key=lambda u: u["user_id"])
         next_super_user["user_role"] = "super_user"
-        next_super_user["allocated_devices"] = ["1", "2", "3", "4", "5", "6"]
+        next_super_user["allocated_devices"] = available_devices
         message += f" {next_super_user['user_name']} is now the super user."
+
+    for index, user in enumerate(users, start=1):
+        user["user_id"] = index 
 
     save_users(users)
     updates.append(message)
@@ -98,6 +118,35 @@ def get_selected_user():
             selected_user = data.get("selected_user", "")
     return {"selected_user": selected_user}
 
+## USERS DEVICE MANAGEMENT ##
+def create_selected_user_devices_json():
+    """Create a JSON file with the selected users allocated devices"""
+    selected_user_data = get_selected_user()
+    selected_user_name = selected_user_data.get("selected_user")
+
+    if not selected_user_name:
+        return {"error": "No user selected."}
+    
+    users = load_users()
+    devices = load_devices(full_details=True)
+
+    selected_user = next((u for u in users if u["user_name"] == selected_user_name), None)
+
+    if not selected_user:
+        return {"error": f"User {selected_user_name} not found."}
+    
+    allocated_device_ids = set(selected_user.get("allocated_devices", []))
+
+    allocated_devices = [device for device in devices if str(device["id"]) in allocated_device_ids]
+
+    if not allocated_devices:
+        message = f"No devices allocated to {selected_user_name}."
+        updates.append(message)
+        return {"error": f"No devices allocated to {selected_user_name}."}
+    
+    with open(SELECTED_USER_FILE, "w") as f:
+        json.dump({"user"})
+
 def getUpdates():
     global updates
     messages = updates[:]
@@ -106,3 +155,4 @@ def getUpdates():
 
 # DEBUGGING SHIT DONT MIND
 # load_users()
+# add_user("Aditya S", "0000")
