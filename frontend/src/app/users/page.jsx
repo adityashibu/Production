@@ -333,7 +333,7 @@ const Users = () => {
                       position: "absolute",
                       bottom: 8,
                       right: 8,
-                      color: "text.secondary",
+                      color: "primary.main",
                     }}
                     onClick={() => handleDeleteClick(user)}
                   >
