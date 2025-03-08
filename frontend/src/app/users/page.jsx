@@ -192,7 +192,8 @@ const Users = () => {
         return;
       }
 
-      setUsers((prevUsers) => prevUsers.filter((user) => user.user_name !== userToDelete.user_name));
+      // Fetch users again to update the UI correctly
+      await fetchUsers();
 
       setDeleteDialogOpen(false);
       setUserToDelete(null);
@@ -201,7 +202,6 @@ const Users = () => {
       setDeleteError("An error occurred while deleting the user.");
     }
   };
-
 
   const router = useRouter();
 
