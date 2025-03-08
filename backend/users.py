@@ -57,7 +57,7 @@ def add_user(user_name: str, user_password: str):
         "user_role": user_role
     }
 
-    print(new_user)
+    # print(new_user)
 
     users.append(new_user)
     save_users(users)
