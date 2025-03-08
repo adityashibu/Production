@@ -1,11 +1,22 @@
 import json
 import os
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Get current script directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SELECTED_USER_FILE = "selected_user.json"
-# print(os.path.abspath(os.path.join(BASE_DIR, "../database/users_db.json")))
 USER_DB_FILE = os.path.abspath(os.path.join(BASE_DIR, "../database/users_db.json"))
+DEVICE_DB_FILE = os.path.abspath(os.path.join(BASE_DIR, "../backend/devices.json"))
+# print(os.path.abspath(os.path.join(BASE_DIR, "../backend/devices.json")))
 updates = []
+
+def load_devices():
+    """Load smart home devices data from devices.json."""
+    if os.path.exists(DEVICE_DB_FILE):
+        with open(DEVICE_DB_FILE, "r") as f:
+            try:
+                data = json.load(f)
+                return [str(device["id"]) for device in data.get("smart_home_devices", [])]
+            except json.JSONDecodeError:
+                return []
 
 def load_users():
     """Load user data from users_db.json."""
@@ -27,10 +38,11 @@ def save_users(users):
 def add_user(user_name: str, user_password: str):
     """Adds a new user with correct role and allocated devices."""
     users = load_users()
+    available_devices = load_devices()
 
     if not users:
         user_role = "super_user"
-        allocated_devices = ["1", "2", "3", "4", "5", "6"]
+        allocated_devices = available_devices
     else:
         user_role = "sub_user"
         allocated_devices = []
@@ -44,6 +56,8 @@ def add_user(user_name: str, user_password: str):
         "allocated_devices": allocated_devices,
         "user_role": user_role
     }
+
+    print(new_user)
 
     users.append(new_user)
     save_users(users)
@@ -106,3 +120,4 @@ def getUpdates():
 
 # DEBUGGING SHIT DONT MIND
 # load_users()
+# add_user("Aditya S", "0000")
