@@ -112,6 +112,17 @@ const Users = () => {
   const [newUsername, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [error, setError] = useState("");
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+
+  const handleDeleteClick = (user) => {
+    setUserToDelete(user);
+    setDeletePassword("");
+    setDeleteError("");
+    setDeleteDialogOpen(true);
+  };
 
   const handleNewUserSubmit = async () => {
     if (newUsername.trim() === "" || newPassword.length !== 4 || isNaN(newPassword)) {
@@ -146,6 +157,39 @@ const Users = () => {
       setError("An error occurred while adding the user.");
     }
   };
+
+  const handleConfirmDelete = async () => {
+    if (!userToDelete || deletePassword.length !== 4 || isNaN(deletePassword)) {
+      setDeleteError("Please enter a valid 4-digit password.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/delete_user/${encodeURIComponent(userToDelete.user_name)}/${encodeURIComponent(deletePassword)}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        setDeleteError(`Failed to delete user: ${errorMessage}`);
+        return;
+      }
+
+      // Remove user from the list after successful deletion
+      setUsers((prevUsers) => prevUsers.filter((user) => user.user_name !== userToDelete.user_name));
+
+      // Close dialog
+      setDeleteDialogOpen(false);
+      setUserToDelete(null);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      setDeleteError("An error occurred while deleting the user.");
+    }
+  };
+
 
   const router = useRouter();
 
@@ -295,7 +339,7 @@ const Users = () => {
                       right: 8,
                       color: "text.secondary",
                     }}
-                    onClick={() => handleDeleteUser(user.user_name)}
+                    onClick={() => handleDeleteClick(user)}
                   >
                     <DeleteIcon sx={{ fontSize: 20 }} />
                   </IconButton>
@@ -386,6 +430,37 @@ const Users = () => {
             </Button>
             <Button onClick={handleNewUserSubmit} color="primary" sx={{ fontFamily: "JetBrains Mono" }}>
               Submit
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+          <DialogTitle sx={{ fontFamily: "JetBrains Mono", color: "primary.main" }}>
+            Confirm Delete
+          </DialogTitle>
+          <DialogContent>
+            <Typography variant="body1" sx={{ mb: 2, fontFamily: "JetBrains Mono" }}>
+              Selected user to delete: <strong>{userToDelete?.user_name}</strong>
+            </Typography>
+            <TextField
+              label="Enter 4-digit Password"
+              variant="outlined"
+              fullWidth
+              required
+              type="password"
+              value={deletePassword}
+              onChange={(e) => setDeletePassword(e.target.value)}
+              inputProps={{ maxLength: 4, pattern: "[0-9]*", inputMode: "numeric" }}
+              sx={{ mb: 2 }}
+            />
+            {deleteError && <Typography color="error">{deleteError}</Typography>}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setDeleteDialogOpen(false)} color="primary" sx={{ fontFamily: "JetBrains Mono" }}>
+              Cancel
+            </Button>
+            <Button onClick={handleConfirmDelete} color="error" sx={{ fontFamily: "JetBrains Mono" }}>
+              Delete
             </Button>
           </DialogActions>
         </Dialog>

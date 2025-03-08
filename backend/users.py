@@ -113,6 +113,35 @@ def get_selected_user():
             selected_user = data.get("selected_user", "")
     return {"selected_user": selected_user}
 
+## USERS DEVICE MANAGEMENT ##
+def create_selected_user_devices_json():
+    """Create a JSON file with the selected users allocated devices"""
+    selected_user_data = get_selected_user()
+    selected_user_name = selected_user_data.get("selected_user")
+
+    if not selected_user_name:
+        return {"error": "No user selected."}
+    
+    users = load_users()
+    devices = load_devices(full_details=True)
+
+    selected_user = next((u for u in users if u["user_name"] == selected_user_name), None)
+
+    if not selected_user:
+        return {"error": f"User {selected_user_name} not found."}
+    
+    allocated_device_ids = set(selected_user.get("allocated_devices", []))
+
+    allocated_devices = [device for device in devices if str(device["id"]) in allocated_device_ids]
+
+    if not allocated_devices:
+        message = f"No devices allocated to {selected_user_name}."
+        updates.append(message)
+        return {"error": f"No devices allocated to {selected_user_name}."}
+    
+    with open(SELECTED_USER_FILE, "w") as f:
+        json.dump({"user"})
+
 def getUpdates():
     global updates
     messages = updates[:]

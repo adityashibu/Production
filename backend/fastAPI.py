@@ -98,3 +98,8 @@ def get_selected_user():
 def add_new_user(user_name: str, user_password: str):
     """Adds a new user with the given name and password."""
     return users.add_user(user_name, user_password)
+
+@app.delete("/delete_user/{user_name}/{user_password}")
+def delete_user(user_name: str, user_password: str):
+    """Deletes a user with the given name and password."""
+    return users.delete_user(user_name, user_password)
