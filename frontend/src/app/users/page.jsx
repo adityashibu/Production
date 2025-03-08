@@ -306,8 +306,8 @@ const Users = () => {
                   sx={{
                     bgcolor: "background.paper",
                     color: "text.primary",
-                    p: 2,
                     textAlign: "center",
+                    p: 2,
                     boxShadow: 6,
                     borderRadius: 3,
                     cursor: "pointer",

@@ -62,7 +62,7 @@ def add_user(user_name: str, user_password: str):
     users.append(new_user)
     save_users(users)
 
-    message = f"New user added: {user_name} ({user_role})"
+    message = f"New user added: {user_name} with role {'Super User' if user_role == 'super_user' else 'Sub User'}"
     updates.append(message)
 
     return {"success": message, "user": new_user}
