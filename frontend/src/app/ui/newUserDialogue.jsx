@@ -40,13 +40,23 @@ const AddUserDialog = ({ open, onClose, onSave }) => {
 
   const handleSubmit = () => {
     const newUser = {
-      username,
-      password,
-      devices: selectedDevices,
+      user_name: username,
+      user_password: password,
+      allocated_devices: selectedDevices.map(String), // Ensure they are strings
     };
 
-    onSave(newUser);
-    onClose();
+    fetch("http://localhost:8000/add_user/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newUser),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        handleClose();
+      })
+      .catch((err) => console.error("Error adding user:", err));
   };
 
   const handleClose = () => {
