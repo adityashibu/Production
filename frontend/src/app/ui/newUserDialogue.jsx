@@ -98,7 +98,7 @@ const AddUserDialog = ({ open, onClose, onSave }) => {
             {devices.map((device) => (
               <MenuItem key={device.id} value={device.id}>
                 <Checkbox checked={selectedDevices.includes(device.id)} />
-                <ListItemText primary={device.name} />
+                <ListItemText sx={{fontFamily: "Jetbrains Mono"}} primary={device.name} />
               </MenuItem>
             ))}
           </Select>
