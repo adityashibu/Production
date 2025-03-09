@@ -14,7 +14,6 @@ from fastapi.middleware.cors import CORSMiddleware
 USER_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "database", "users_db.json")
 # print(USER_DB_PATH) # For testing purposes
 
-# FastAPI initialization and routes
 app = FastAPI()
 
 # Add CORS Middleware
