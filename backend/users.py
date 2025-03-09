@@ -100,23 +100,38 @@ def delete_user(user_name: str, user_password: str):
     return {"success": message}
 
 def select_user(user: str):
-    """Set the selected user and persist it."""
+    """Set the selected user and persist it along with their role."""
     global selected_user
     selected_user = user
+
+    users = load_users()
+    selected_user_data = next((u for u in users if u["user_name"] == selected_user), None)
+
+    if selected_user_data:
+        user_role = selected_user_data["user_role"]
+    else:
+        user_role = "unknown"
+
     with open(SELECTED_USER_FILE, "w") as f:
-        json.dump({"selected_user": selected_user}, f)
+        json.dump({"selected_user": selected_user, "user_role": user_role}, f)
+
     message = f"Logged in as {selected_user}"
     updates.append(message)
-    return {"success": message}
+    
+    return {"success": message, "selected_user": selected_user, "user_role": user_role}
 
 def get_selected_user():
-    """Retrieve the currently selected user."""
+    """Retrieve the currently selected user and their role."""
     global selected_user
+    user_role = ""
+
     if os.path.exists(SELECTED_USER_FILE):
         with open(SELECTED_USER_FILE, "r") as f:
             data = json.load(f)
             selected_user = data.get("selected_user", "")
-    return {"selected_user": selected_user}
+            user_role = data.get("user_role", "")
+
+    return {"selected_user": selected_user, "user_role": user_role}
 
 ## USERS DEVICE MANAGEMENT ##
 def create_selected_user_devices_json():

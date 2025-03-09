@@ -21,6 +21,7 @@ export default function AccountMenu() {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selectedUser, setSelectedUser] = React.useState("Loading...");
+  const [isSuperUser, setIsSuperUser] = React.useState(false);
 
   const open = Boolean(anchorEl);
   
@@ -42,7 +43,6 @@ export default function AccountMenu() {
     }
   };
 
-  // Fetch selected user from the backend
   React.useEffect(() => {
     const fetchSelectedUser = async () => {
       try {
@@ -52,6 +52,8 @@ export default function AccountMenu() {
         }
         const data = await response.json();
         setSelectedUser(data.selected_user || "Unknown User");
+        setIsSuperUser(data.user_role === "super_user");
+        console.log("Fetched user role:", data.user_role);
       } catch (error) {
         console.error("Error fetching user:", error);
         setSelectedUser("Error fetching user");
@@ -60,6 +62,9 @@ export default function AccountMenu() {
 
     fetchSelectedUser();
   }, []);
+
+  // Log just before rendering
+  // console.log("isSuperUser:", isSuperUser);
 
   return (
     <React.Fragment>
@@ -122,15 +127,17 @@ export default function AccountMenu() {
             color: "primary.main",
           }}
         >
-          <Avatar /> {selectedUser}
+          <Avatar sx={{pt: 0.5}}>{selectedUser.charAt(0)}</Avatar> {selectedUser}
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleClose} sx={{ fontFamily: "JetBrains Mono" }}>
-          <ListItemIcon>
-            <PersonAdd fontSize="small" sx={{ color: "primary.main" }} />
-          </ListItemIcon>
-          Add another account
-        </MenuItem>
+        {isSuperUser && (
+          <MenuItem onClick={handleClose} sx={{ fontFamily: "JetBrains Mono" }}>
+            <ListItemIcon>
+              <PersonAdd fontSize="small" sx={{ color: "primary.main" }} />
+            </ListItemIcon>
+            Add another account
+          </MenuItem>
+        )}
         <MenuItem onClick={handleClose} sx={{ fontFamily: "JetBrains Mono" }}>
           <ListItemIcon>
             <Settings fontSize="small" sx={{ color: "primary.main" }} />
