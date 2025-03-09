@@ -82,7 +82,7 @@ const AddUserDialog = ({ open, onClose, onSave }) => {
         />
 
         {/* Device Selection */}
-        <FormControl fullWidth sx={{ marginTop: 2 }}>
+        <FormControl fullWidth sx={{ marginTop: 1 }}>
           <InputLabel id="device-select-label">Select Devices</InputLabel>
           <Select
             labelId="device-select-label"
