@@ -66,6 +66,9 @@ const AddUserDialog = ({ open, onClose, onSave }) => {
           autoFocus
           margin="dense"
           label="Username"
+          InputLabelProps={{
+            sx: { fontFamily: "Jetbrains Mono" }
+          }}
           fullWidth
           value={username}
           onChange={(e) => setUsername(e.target.value)}
@@ -74,6 +77,9 @@ const AddUserDialog = ({ open, onClose, onSave }) => {
         <TextField
           margin="dense"
           label="Password"
+          InputLabelProps={{
+            sx: { fontFamily: "Jetbrains Mono" }
+          }}
           type="password"
           fullWidth
           value={password}
@@ -83,7 +89,7 @@ const AddUserDialog = ({ open, onClose, onSave }) => {
 
         {/* Device Selection */}
         <FormControl fullWidth sx={{ marginTop: 1 }}>
-          <InputLabel id="device-select-label">Select Devices</InputLabel>
+          <InputLabel id="device-select-label" sx={{fontFamily: "Jetbrains Mono"}}>Select Devices</InputLabel>
           <Select
             labelId="device-select-label"
             multiple
@@ -94,10 +100,11 @@ const AddUserDialog = ({ open, onClose, onSave }) => {
                 .map((id) => devices.find((device) => device.id === id)?.name)
                 .join(", ")
             }
+            sx={{ fontFamily: "Jetbrains Mono" }}
           >
             {devices.map((device) => (
-              <MenuItem key={device.id} value={device.id}>
-                <Checkbox checked={selectedDevices.includes(device.id)} />
+              <MenuItem key={device.id} value={device.id} sx={{fontFamily: "Jetbrains Mono"}}> {/* Ensure font applied here too */}
+                <Checkbox sx={{fontFamily: "Jetbrains Mono"}} checked={selectedDevices.includes(device.id)} />
                 <ListItemText sx={{fontFamily: "Jetbrains Mono"}} primary={device.name} />
               </MenuItem>
             ))}
