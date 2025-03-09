@@ -81,7 +81,7 @@ export default function AccountMenu() {
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32, pt:0.5 }}>{selectedUser.charAt(0)}</Avatar>
+            <Avatar sx={{ width: 32, height: 32, fontFamily: "Jetbrains Mono" }}>{selectedUser.charAt(0)}</Avatar>
           </IconButton>
         </Tooltip>
       </Box>
@@ -130,7 +130,7 @@ export default function AccountMenu() {
             color: "primary.main",
           }}
         >
-          <Avatar sx={{pt: 0.5}}>{selectedUser.charAt(0)}</Avatar> {selectedUser}
+          <Avatar sx={{ fontFamily: "Jetbrains Mono" }}>{selectedUser.charAt(0)}</Avatar> {selectedUser}
         </MenuItem>
         <Divider />
         {isSuperUser && (
