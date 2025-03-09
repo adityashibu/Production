@@ -120,3 +120,7 @@ def fetch_energy_usage(range: str):
         return ej.get_energy_data("monthly")
     else:
         raise HTTPException(status_code=400, detail="Invalid range")
+    
+@app.get("/energy_usage/{time_range}")
+def fetch_energy_usage(time_range: str):
+    return ej.get_energy_data(time_range)

@@ -13,7 +13,6 @@ import { useTheme } from "@emotion/react";
 
 const EnergyUsageChart = ({ data, timeRange }) => {
   const [dataPoints, setDataPoints] = useState([]);
-  const [buffer, setBuffer] = useState([]);
   const chartRef = useRef(null);
 
   const theme = useTheme();
@@ -44,7 +43,6 @@ const EnergyUsageChart = ({ data, timeRange }) => {
 
   useEffect(() => {
     if (timeRange === "daily" || timeRange === "monthly") {
-      // Fetch historical data for daily or monthly
       const fetchHistoricalData = async () => {
         try {
           const response = await fetch(
@@ -95,6 +93,8 @@ const EnergyUsageChart = ({ data, timeRange }) => {
               dataKey="time"
               tickFormatter={(time) =>
                 timeRange === "monthly"
+                  ? dayjs(time).format("MMM DD")
+                  : timeRange === "daily"
                   ? dayjs(time).format("MMM DD")
                   : dayjs(time).format("HH:mm")
               }
