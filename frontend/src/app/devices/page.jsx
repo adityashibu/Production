@@ -350,13 +350,14 @@ const Devices = () => {
                     }}
                     onClick={() => handleEdit(device.id, device.name)}
                   >
-                    <EditIcon sx={{ fontSize: 20 }} />
+                    {isSuperUser && <EditIcon sx={{ fontSize: 20 }} />}
                   </IconButton>
+
                   <IconButton
                     sx={{ position: "absolute", bottom: 8, right: 8 }}
                     onClick={() => handleDeleteClick(device.id)}
                   >
-                    <DeleteIcon sx={{ fontSize: 20 }} />
+                    {isSuperUser && <DeleteIcon sx={{ fontSize: 20 }} />}
                   </IconButton>
                 </CardContent>
               </Card>
