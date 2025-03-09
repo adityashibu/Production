@@ -1,3 +1,5 @@
+from typing import List, Optional
+from pydantic import BaseModel
 import devices_json as dj
 import users
 
@@ -12,7 +14,6 @@ from fastapi.middleware.cors import CORSMiddleware
 USER_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "database", "users_db.json")
 # print(USER_DB_PATH) # For testing purposes
 
-# FastAPI initialization and routes
 app = FastAPI()
 
 # Add CORS Middleware
@@ -23,6 +24,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+class UserRequest(BaseModel):
+    user_name: str
+    user_password: str
+    allocated_devices: Optional[List[str]] = None
 
 @app.on_event("startup")
 async def startup_event():
@@ -94,10 +100,10 @@ def get_selected_user():
     """Returns the selected user"""
     return users.get_selected_user()
 
-@app.post("/add_user/{user_name}/{user_password}")
-def add_new_user(user_name: str, user_password: str):
-    """Adds a new user with the given name and password."""
-    return users.add_user(user_name, user_password)
+@app.post("/add_user/")
+def add_new_user(user: UserRequest):
+    """Adds a new user with the given name, password, and optional allocated devices."""
+    return users.add_user(user.user_name, user.user_password, user.allocated_devices or [])
 
 @app.delete("/delete_user/{user_name}/{user_password}")
 def delete_user(user_name: str, user_password: str):
