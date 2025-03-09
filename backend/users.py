@@ -18,6 +18,7 @@ def load_devices():
             except json.JSONDecodeError:
                 return []
 
+
 def load_users():
     """Load user data from users_db.json."""
     if os.path.exists(USER_DB_FILE):
@@ -30,12 +31,14 @@ def load_users():
                 return []
     return []
 
+
 def save_users(users):
     """Save updated user data back to users_db.json."""
     with open(USER_DB_FILE, "w") as f:
         json.dump({"users": users}, f, indent=4)
 
-def add_user(user_name: str, user_password: str):
+
+def add_user(user_name: str, user_password: str, allocated_device_ids: list = None):
     """Adds a new user with correct role and allocated devices."""
     users = load_users()
     available_devices = load_devices()
@@ -45,7 +48,10 @@ def add_user(user_name: str, user_password: str):
         allocated_devices = available_devices
     else:
         user_role = "sub_user"
-        allocated_devices = []
+        if allocated_device_ids:
+            allocated_devices = [str(device_id) for device_id in allocated_device_ids]
+        else:
+            allocated_devices = []
 
     new_user_id = (max(user["user_id"] for user in users) + 1) if users else 1
 
@@ -57,8 +63,6 @@ def add_user(user_name: str, user_password: str):
         "user_role": user_role
     }
 
-    # print(new_user)
-
     users.append(new_user)
     save_users(users)
 
@@ -66,6 +70,7 @@ def add_user(user_name: str, user_password: str):
     updates.append(message)
 
     return {"success": message, "user": new_user}
+
 
 def delete_user(user_name: str, user_password: str):
     """Deletes a user from the system if the given password matches. If deleting the super user, assign the position to the next user.
@@ -99,6 +104,7 @@ def delete_user(user_name: str, user_password: str):
     updates.append(message)
     return {"success": message}
 
+
 def select_user(user: str):
     """Set the selected user and persist it along with their role."""
     global selected_user
@@ -120,6 +126,7 @@ def select_user(user: str):
     
     return {"success": message, "selected_user": selected_user, "user_role": user_role}
 
+
 def get_selected_user():
     """Retrieve the currently selected user and their role."""
     global selected_user
@@ -132,6 +139,7 @@ def get_selected_user():
             user_role = data.get("user_role", "")
 
     return {"selected_user": selected_user, "user_role": user_role}
+
 
 ## USERS DEVICE MANAGEMENT ##
 def create_selected_user_devices_json():
@@ -162,6 +170,7 @@ def create_selected_user_devices_json():
     with open(SELECTED_USER_FILE, "w") as f:
         json.dump({"user"})
 
+
 def getUpdates():
     global updates
     messages = updates[:]
@@ -170,4 +179,4 @@ def getUpdates():
 
 # DEBUGGING SHIT DONT MIND
 # load_users()
-# add_user("Aditya S", "0000")
+# add_user("Aditya S", "0000", [1, 2, 3, 4])

@@ -29,6 +29,18 @@
             "user_password": "9999",
             "allocated_devices": [],
             "user_role": "sub_user"
+        },
+        {
+            "user_id": 4,
+            "user_name": "Aditya S",
+            "user_password": "0000",
+            "allocated_devices": [
+                "1",
+                "2",
+                "3",
+                "4"
+            ],
+            "user_role": "sub_user"
         }
     ]
 }
