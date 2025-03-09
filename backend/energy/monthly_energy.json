@@ -1,0 +1,14 @@
+[
+  { "timestamp": "2024-01-01T00:00:00", "power_usage": 150000 },
+  { "timestamp": "2024-02-01T00:00:00", "power_usage": 155000 },
+  { "timestamp": "2024-03-01T00:00:00", "power_usage": 160000 },
+  { "timestamp": "2024-04-01T00:00:00", "power_usage": 165000 },
+  { "timestamp": "2024-05-01T00:00:00", "power_usage": 170000 },
+  { "timestamp": "2024-06-01T00:00:00", "power_usage": 175000 },
+  { "timestamp": "2024-07-01T00:00:00", "power_usage": 180000 },
+  { "timestamp": "2024-08-01T00:00:00", "power_usage": 185000 },
+  { "timestamp": "2024-09-01T00:00:00", "power_usage": 190000 },
+  { "timestamp": "2024-10-01T00:00:00", "power_usage": 195000 },
+  { "timestamp": "2024-11-01T00:00:00", "power_usage": 200000 },
+  { "timestamp": "2024-12-01T00:00:00", "power_usage": 205000 }
+]

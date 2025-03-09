@@ -48,6 +48,7 @@ const Dashboard = () => {
   const [data, setData] = useState([]);
   const [checked, setChecked] = useState([]);
   const [timeRange, setTimeRange] = useState("realtime");
+  const [energyData, setEnergyData] = useState({ daily: [], monthly: [] });
 
   const theme = useTheme();
   const boxShadow =
@@ -60,11 +61,12 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:8000/device_info");
-        const result = await response.json();
+        // Fetch device data
+        const deviceResponse = await fetch("http://localhost:8000/device_info");
+        const deviceResult = await deviceResponse.json();
 
-        if (result && Array.isArray(result.smart_home_devices)) {
-          const connectedDevices = result.smart_home_devices.filter(
+        if (deviceResult && Array.isArray(deviceResult.smart_home_devices)) {
+          const connectedDevices = deviceResult.smart_home_devices.filter(
             (device) => device.connection_status === "connected"
           );
           setData(connectedDevices);
@@ -74,15 +76,26 @@ const Dashboard = () => {
             .map((device) => device.id);
           setChecked(initialChecked);
         } else {
-          console.error("Invalid response structure", result);
+          console.error("Invalid response structure", deviceResult);
         }
+
+        const dailyResponse = await fetch("http://localhost:8000/energy_usage/daily");
+        const dailyResult = await dailyResponse.json();
+
+        const monthlyResponse = await fetch("http://localhost:8000/energy_usage/monthly");
+        const monthlyResult = await monthlyResponse.json();
+
+        setEnergyData({
+          daily: dailyResult,
+          monthly: monthlyResult,
+        });
       } catch (error) {
-        console.error("Error fetching smart home devices:", error);
+        console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 1000);
+    const interval = setInterval(fetchData, 1000); // Update every 10 seconds
     return () => clearInterval(interval);
   }, []);
 
@@ -334,7 +347,10 @@ const Dashboard = () => {
                 width: "100%",
               }}
             >
-              <EnergyUsageChart data={data} timeRange={timeRange} />
+              <EnergyUsageChart
+                data={timeRange === "daily" ? energyData.daily : timeRange === "monthly" ? energyData.monthly : data}
+                timeRange={timeRange}
+              />
               <ButtonGroup
                 sx={{ marginTop: "auto", alignSelf: "center" }}
                 color="primary"
