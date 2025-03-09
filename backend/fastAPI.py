@@ -1,13 +1,15 @@
 from typing import List, Optional
 from pydantic import BaseModel
+
 import devices_json as dj
 import users
+import energy_json as ej
 
 import asyncio
 import os
 import json
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 # Serve user data (Only for testing purposes)
@@ -109,3 +111,16 @@ def add_new_user(user: UserRequest):
 def delete_user(user_name: str, user_password: str):
     """Deletes a user with the given name and password."""
     return users.delete_user(user_name, user_password)
+
+@app.get("/energy_usage")
+def fetch_energy_usage(range: str):
+    if range == "daily":
+        return ej.get_energy_data("daily")
+    elif range == "monthly":
+        return ej.get_energy_data("monthly")
+    else:
+        raise HTTPException(status_code=400, detail="Invalid range")
+    
+@app.get("/energy_usage/{time_range}")
+def fetch_energy_usage(time_range: str):
+    return ej.get_energy_data(time_range)

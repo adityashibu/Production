@@ -1,8 +1,15 @@
 import json
 import asyncio
 import random
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 deviceFile = "devices.json"
+selectedUserFile = "selected_user.json"
+usersDBFile = os.path.abspath(os.path.join(BASE_DIR, "../database/users_db.json"))
+
+selected_user_devices = "selected_user_devices.json"
 
 updates = []  # Stores messages for frontend
 
