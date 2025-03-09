@@ -1,3 +1,4 @@
+from typing import List
 import devices_json as dj
 import users
 
@@ -95,9 +96,9 @@ def get_selected_user():
     return users.get_selected_user()
 
 @app.post("/add_user/{user_name}/{user_password}")
-def add_new_user(user_name: str, user_password: str):
+def add_new_user(user_name: str, user_password: str, user_info: List[str]):
     """Adds a new user with the given name and password."""
-    return users.add_user(user_name, user_password)
+    return users.add_user(user_name, user_password, user_info)
 
 @app.delete("/delete_user/{user_name}/{user_password}")
 def delete_user(user_name: str, user_password: str):
