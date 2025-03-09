@@ -12,6 +12,8 @@ import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 
+import AddUserDialog from "../newUserDialogue";
+
 import { signOut } from "firebase/auth";
 import { auth } from "@/app/firebase/config";
 
@@ -22,6 +24,7 @@ export default function AccountMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selectedUser, setSelectedUser] = React.useState("Loading...");
   const [isSuperUser, setIsSuperUser] = React.useState(false);
+  const [openUserDialog, setOpenUserDialog] = React.useState(false);
 
   const open = Boolean(anchorEl);
   
@@ -131,7 +134,7 @@ export default function AccountMenu() {
         </MenuItem>
         <Divider />
         {isSuperUser && (
-          <MenuItem onClick={handleClose} sx={{ fontFamily: "JetBrains Mono" }}>
+          <MenuItem onClick={() => setOpenUserDialog(true)} sx={{ fontFamily: "JetBrains Mono" }}>
             <ListItemIcon>
               <PersonAdd fontSize="small" sx={{ color: "primary.main" }} />
             </ListItemIcon>
@@ -151,6 +154,12 @@ export default function AccountMenu() {
           Logout
         </MenuItem>
       </Menu>
+
+      <AddUserDialog
+        open={openUserDialog}
+        onClose={() => setOpenUserDialog(false)}
+        // onSave={handleSaveUser}
+      />
     </React.Fragment>
   );
 }
