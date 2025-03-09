@@ -232,7 +232,7 @@ const Dashboard = () => {
                 textDecoration: "none",
                 color: "inherit",
                 transition: "transform 0.2s ease-in-out",
-                "&:hover": { transform: "scale(1.01)" }, // Slight hover effect
+                "&:hover": { transform: "scale(1.01)" },
               }}
             >
               <CardContent
@@ -320,10 +320,10 @@ const Dashboard = () => {
               flexDirection: "column",
               // boxShadow: boxShadow,
               width: "100%",
-              textDecoration: "none", // Prevents underline
-              color: "inherit", // Keeps original text color
+              textDecoration: "none",
+              color: "inherit",
               transition: "transform 0.2s ease-in-out",
-              "&:hover": { transform: "scale(1.01)" }, // Slight hover effect
+              "&:hover": { transform: "scale(1.01)" },
             }}
           >
             <CardContent
@@ -334,7 +334,7 @@ const Dashboard = () => {
                 width: "100%",
               }}
             >
-              <EnergyUsageChart data={data} />
+              <EnergyUsageChart data={data} timeRange={timeRange} />
               <ButtonGroup
                 sx={{ marginTop: "auto", alignSelf: "center" }}
                 color="primary"
