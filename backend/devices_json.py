@@ -8,21 +8,68 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 deviceFile = "devices.json"
 selectedUserFile = "selected_user.json"
 usersDBFile = os.path.abspath(os.path.join(BASE_DIR, "../database/users_db.json"))
-
-selected_user_devices = "selected_user_devices.json"
+selectedUserDevicesFile = "selected_user_devices.json"
 
 updates = []  # Stores messages for frontend
 
 def loadJSON():
+    """Creates selected_user_devices.json based on allocated devices of the selected user."""
     try:
-        with open(deviceFile, "r") as JSONfile:
+        with open(usersDBFile, "r") as users_file:
+            users_data = json.load(users_file)
+
+        with open(selectedUserFile, "r") as selected_user_file:
+            selected_user_data = json.load(selected_user_file)
+
+        selected_user_name = selected_user_data.get("selected_user")
+
+        # Find the selected user in users_db.json
+        selected_user = next((user for user in users_data["users"] if user["user_name"].strip() == selected_user_name.strip()), None)
+
+        if not selected_user:
+            updates.append("Error: Selected user not found!")
+            print("DEBUG: Selected user not found!")
+            return {"smart_home_devices": []}
+
+        allocated_device_ids = set(map(str, selected_user.get("allocated_devices", [])))  # Ensure string conversion
+
+        print(f"DEBUG: Allocated devices for {selected_user_name}: {allocated_device_ids}")
+
+        # Load all devices
+        with open(deviceFile, "r") as devices_file:
+            devices_data = json.load(devices_file)
+
+        if "smart_home_devices" not in devices_data:
+            print("DEBUG: smart_home_devices key missing in devices.json")
+            return {"smart_home_devices": []}
+
+        # Filter only the allocated devices
+        filtered_devices = [device for device in devices_data["smart_home_devices"] if str(device["id"]) in allocated_device_ids]
+
+        print(f"DEBUG: Filtered devices: {filtered_devices}")
+
+        # Always overwrite selected_user_devices.json
+        with open(selectedUserDevicesFile, "w") as selected_devices_file:
+            json.dump({"smart_home_devices": filtered_devices}, selected_devices_file, indent=2)
+
+        return {"smart_home_devices": filtered_devices}
+
+    except FileNotFoundError as e:
+        updates.append(f"Error: {str(e)}")
+        print(f"DEBUG: FileNotFoundError - {str(e)}")
+
+
+def loadDevicesJSON():
+    """Loads devices from selected_user_devices.json for all device operations."""
+    try:
+        with open(selectedUserDevicesFile, "r") as JSONfile:
             return json.load(JSONfile)
     except FileNotFoundError:
-        updates.append("Error: devices.json not found!")
+        updates.append("Error: selected_user_devices.json not found!")
         return {"smart_home_devices": []}
 
 def saveJSON(data):
-    with open(deviceFile, "w") as JSONfile:
+    with open(selectedUserDevicesFile, "w") as JSONfile:
         json.dump(data, JSONfile, indent=2)
 
 def randomizeDevice(device):
@@ -118,15 +165,14 @@ def deviceFunctions(): # Returns the list of device functions for scheduling pur
 
 async def updateDevices():
     while True:
-        data = loadJSON()
+        data = loadDevicesJSON()  # Use the new function
         devices = data.get("smart_home_devices", [])
 
         for device in devices:
             randomizeDevice(device)
             handleTimer(device)
 
-        saveJSON(data)
-
+        saveJSON(data)  # Save back to selected_user_devices.json
         await asyncio.sleep(1)
 
 async def changeConnection(id):
@@ -156,3 +202,5 @@ def getUpdates():
     messages = updates[:]
     updates.clear()
     return messages
+
+loadJSON()

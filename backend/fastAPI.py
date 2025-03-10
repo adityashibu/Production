@@ -45,7 +45,7 @@ def root():
 @app.get("/device_info")
 def device_info():
     """Returns the current JSON data."""
-    jsonData = dj.loadJSON()
+    jsonData = dj.loadDevicesJSON()
     return jsonData
 
 @app.post("/device/{id}/status")
