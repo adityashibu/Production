@@ -102,7 +102,7 @@ def get_selected_user():
     """Returns the selected user"""
     return users.get_selected_user()
 
-@app.post("/add_user/")
+@app.post("/add_user")
 def add_new_user(user: UserRequest):
     """Adds a new user with the given name, password, and optional allocated devices."""
     return users.add_user(user.user_name, user.user_password, user.allocated_devices or [])

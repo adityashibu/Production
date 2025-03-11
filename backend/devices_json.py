@@ -11,6 +11,7 @@ usersDBFile = os.path.abspath(os.path.join(BASE_DIR, "../database/users_db.json"
 selectedUserDevicesFile = "selected_user_devices.json"
 
 updates = []  # Stores messages for frontend
+last_selected_user = None  # Keeps track of the last selected user
 
 def loadJSON():
     """Creates selected_user_devices.json based on allocated devices of the selected user."""
@@ -60,10 +61,26 @@ def loadJSON():
 
 
 def loadDevicesJSON():
-    """Loads devices from selected_user_devices.json for all device operations."""
+    """Checks if the selected user has changed and updates selected_user_devices.json if necessary."""
+    global last_selected_user
+
     try:
+        # Load selected user
+        with open(selectedUserFile, "r") as selected_user_file:
+            selected_user_data = json.load(selected_user_file)
+        
+        selected_user_name = selected_user_data.get("selected_user")
+
+        # If the selected user has changed, reload the devices
+        if selected_user_name != last_selected_user:
+            print("DEBUG: Selected user changed. Reloading devices...")
+            loadJSON()  # Refresh selected_user_devices.json
+            last_selected_user = selected_user_name  # Update the last tracked user
+
+        # Now load the updated devices
         with open(selectedUserDevicesFile, "r") as JSONfile:
             return json.load(JSONfile)
+
     except FileNotFoundError:
         updates.append("Error: selected_user_devices.json not found!")
         return {"smart_home_devices": []}
