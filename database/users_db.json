@@ -30,7 +30,11 @@
             "user_id": 3,
             "user_name": "Ann E",
             "user_password": "9999",
-            "allocated_devices": [],
+            "allocated_devices": [
+                "1",
+                "4",
+                "7"
+            ],
             "user_role": "sub_user"
         }
     ]

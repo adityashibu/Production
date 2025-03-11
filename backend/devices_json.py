@@ -193,7 +193,7 @@ async def updateDevices():
         await asyncio.sleep(1)
 
 async def changeConnection(id):
-    data = loadJSON()
+    data = loadDevicesJSON()
     devices = data.get("smart_home_devices", [])
 
     for device in devices:

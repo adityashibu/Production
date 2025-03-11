@@ -11,6 +11,7 @@ import Tooltip from "@mui/material/Tooltip";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
+import DevicesIcon from "@mui/icons-material/Devices";
 
 import AddUserDialog from "../newUserDialogue";
 
@@ -133,6 +134,14 @@ export default function AccountMenu() {
           <Avatar sx={{ fontFamily: "Jetbrains Mono" }}>{selectedUser.charAt(0)}</Avatar> {selectedUser}
         </MenuItem>
         <Divider />
+        {isSuperUser && (
+          <MenuItem sx={{ fontFamily: "JetBrains Mono" }}>
+            <ListItemIcon>
+              <DevicesIcon fontSize="small" sx={{ color: "primary.main" }} />
+            </ListItemIcon>
+            Allocate devices
+          </MenuItem>
+        )}
         {isSuperUser && (
           <MenuItem onClick={() => setOpenUserDialog(true)} sx={{ fontFamily: "JetBrains Mono" }}>
             <ListItemIcon>
