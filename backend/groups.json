@@ -1,0 +1,29 @@
+{
+    "groups": [
+        {
+            "group_id": "1",
+            "group_name": "Lights",
+            "allocated_devices": [
+                "1",
+                "2",
+                "3"
+            ]
+        },
+        {
+            "group_id": "2",
+            "group_name": "Kitchen",
+            "allocated_devices": [
+                "3",
+                "7",
+                "8"
+            ]
+        },
+        {
+            "group_id": "3",
+            "group_name": "John Doe",
+            "allocated_devices": [
+                "1",
+                "2",
+                "3"
+            ],
+        },

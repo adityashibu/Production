@@ -11,7 +11,7 @@ from watchdog.events import FileSystemEventHandler
 # Load environment variables
 load_dotenv()
 
-# Read Firebase credentials from .env
+# Firebase configuration
 firebase_config = {
     "type": "service_account",
     "project_id": os.getenv("FIREBASE_PROJECT_ID"),
@@ -27,83 +27,94 @@ if not firebase_admin._apps:
 
 db = firestore.client()
 
+# Path to the JSON file
+JSON_FILE_PATH = os.path.join(os.path.dirname(__file__), "../database/users_db.json")
+
 # Hash password function
 def hash_password(password):
     """Hash password using bcrypt."""
     salt = bcrypt.gensalt()
     return bcrypt.hashpw(password.encode(), salt).decode()
 
-# Get existing users from Firestore
+# Fetch existing users from Firestore
 def get_existing_users(coll_ref):
-    """Fetch existing users from Firestore."""
+    """Fetch existing users and their password hashes."""
     return {doc.id: doc.to_dict() for doc in coll_ref.stream()}
 
 # Function to update Firestore
-def set_users_data(coll_ref, file):
-    """Compare JSON data with Firestore and update only necessary records."""
-    rel_path = os.path.join(os.path.dirname(__file__), f"../database/{file}")
-    
-    if not os.path.exists(rel_path):
-        print(f"Error: {file} not found at {rel_path}")
+def set_users_data():
+    """Sync users_db.json data with Firestore, ensuring password consistency."""
+    if not os.path.exists(JSON_FILE_PATH):
+        print(f"Error: {JSON_FILE_PATH} not found.")
         return
-    
-    with open(rel_path, "r") as JSONfile:
+
+    with open(JSON_FILE_PATH, "r") as JSONfile:
         data = json.load(JSONfile)
 
-    # Convert allocated device IDs to Firestore document references
-    def get_device_refs(device_ids):
-        return [db.collection("Devices").document(str(device_id)) for device_id in device_ids]
-    
-    filtered_users = {
-        str(user["user_id"]): {
+    existing_users = get_existing_users(db.collection("Users"))
+    filtered_users = {}
+
+    for user in data.get("users", []):
+        user_id = str(user["user_id"])
+        new_password = user["user_password"]
+
+        # Preserve password hash if the password hasn't changed
+        if user_id in existing_users and bcrypt.checkpw(new_password.encode(), existing_users[user_id]["user_password"].encode()):
+            hashed_password = existing_users[user_id]["user_password"]  # Keep existing hash
+        else:
+            hashed_password = hash_password(new_password)  # Generate new hash
+
+        # Convert allocated device IDs to Firestore references
+        allocated_devices = [
+            db.collection("Devices").document(str(device_id))
+            for device_id in user.get("allocated_devices", [])
+        ]
+
+        filtered_users[user_id] = {
             "user_id": user["user_id"],
             "user_name": user["user_name"],
-            "user_password": hash_password(user["user_password"]),  # Hash password
-            "allocated_devices": get_device_refs(user.get("allocated_devices", [])),
+            "user_password": hashed_password,  # Use existing hash if unchanged
+            "allocated_devices": allocated_devices,
             "user_role": user["user_role"]
         }
-        for user in data.get("users", [])
-    }
-
-    existing_users = get_existing_users(coll_ref)
 
     added_users, modified_users, deleted_users = [], [], []
 
     # Add or update users
     for user_id, user_data in filtered_users.items():
         if user_id not in existing_users:
-            coll_ref.document(user_id).set(user_data)
+            db.collection("Users").document(user_id).set(user_data)
             added_users.append(user_data)
         elif existing_users[user_id] != user_data:
-            coll_ref.document(user_id).set(user_data)
+            db.collection("Users").document(user_id).set(user_data)
             modified_users.append(user_data)
 
     # Delete outdated users no longer in the JSON
     for user_id in existing_users.keys():
         if user_id not in filtered_users:
-            coll_ref.document(user_id).delete()
+            db.collection("Users").document(user_id).delete()
             deleted_users.append(user_id)
 
     # Logging changes
-    for user in added_users:
-        print(f"Added user: {user}")
-    for user in modified_users:
-        print(f"Updated user: {user}")
-    for user_id in deleted_users:
-        print(f"Deleted outdated user: {user_id}")
+    if added_users:
+        print(f"Added users: {added_users}")
+    if modified_users:
+        print(f"Updated users: {modified_users}")
+    if deleted_users:
+        print(f"Deleted outdated users: {deleted_users}")
 
 # Watchdog Event Handler
 class UsersFileHandler(FileSystemEventHandler):
     def on_modified(self, event):
-        """Triggered when users_db.json is modified"""
+        """Triggered when users_db.json is modified."""
         if event.src_path.endswith("users_db.json"):
             print("Detected changes in users_db.json, updating Firestore...")
-            set_users_data(db.collection("Users"), "users_db.json")
+            set_users_data()
 
 # Watchdog Observer
 def watch_users_file():
     """Monitor users_db.json for changes and update Firestore in real-time."""
-    users_file_path = os.path.join(os.path.dirname(__file__), "../database")
+    users_file_path = os.path.dirname(JSON_FILE_PATH)
     
     event_handler = UsersFileHandler()
     observer = Observer()
@@ -122,7 +133,7 @@ def watch_users_file():
 
 # Run initial Firestore sync
 print("Syncing Firestore with users_db.json on startup...")
-set_users_data(db.collection("Users"), "users_db.json")
+set_users_data()
 
 # Run the watchdog file watcher
 watch_users_file()

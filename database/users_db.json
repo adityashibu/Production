@@ -17,7 +17,7 @@
         {
             "user_id": 2,
             "user_name": "Jane Doe",
-            "user_password": "2005",
+            "user_password": "2004",
             "allocated_devices": [
                 "3",
                 "4"
