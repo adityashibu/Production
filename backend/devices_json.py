@@ -138,13 +138,13 @@ def changeDeviceName(id, newName):
     return {"error": "ID not found!"}
 
 def changeDeviceStatus(id):
-    data = loadJSON()
+    data = loadDevicesJSON()  # Load from selected_user_devices.json
     devices = data.get("smart_home_devices", [])
 
     for device in devices:
         if device["id"] == id:
             device["status"] = "on" if device["status"] == "off" else "off"
-            saveJSON(data)
+            saveJSON(data)  # Save the updated data
             message = f"Changed {device['name']} status to {device['status']}."
             updates.append(message)
             return {"success": message}
