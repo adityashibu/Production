@@ -44,7 +44,6 @@ const AllocateDevicesDialog = ({ open, onClose }) => {
       .then((res) => res.json())
       .then((data) => {
         if (data.smart_home_devices && Array.isArray(data.smart_home_devices)) {
-          // Filter devices that are not already allocated to the selected user
           const allocatedDevices = users.find((user) => user.user_id === selectedUser)?.allocated_devices || [];
           const availableDevices = data.smart_home_devices.filter(
             (device) => !allocatedDevices.includes(device.id.toString())
@@ -59,7 +58,7 @@ const AllocateDevicesDialog = ({ open, onClose }) => {
         console.error("Error fetching devices:", err);
         setDevices([]);
       });
-  }, [selectedUser, users]); // Run the effect when the selectedUser or users change
+  }, [selectedUser, users]);
 
   const handleDeviceChange = (event) => {
     setSelectedDevices(event.target.value);
@@ -68,14 +67,11 @@ const AllocateDevicesDialog = ({ open, onClose }) => {
   const handleSubmit = () => {
     if (!selectedUser) return;
 
-    // Find the user object to get the already allocated devices
     const user = users.find((user) => user.user_id === selectedUser);
     const existingAllocatedDevices = user?.allocated_devices || [];
 
-    // Combine existing allocated devices with the newly selected devices
     const updatedDevices = [...new Set([...existingAllocatedDevices, ...selectedDevices])];
 
-    // Send the updated list of device IDs
     fetch("http://localhost:8000/allocate_devices", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -144,14 +140,15 @@ const AllocateDevicesDialog = ({ open, onClose }) => {
                 onDelete={() =>
                   setSelectedDevices((prev) => prev.filter((id) => id !== deviceId))
                 }
+                sx={{ fontFamily: "JetBrains Mono" }}
               />
             );
           })}
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleSubmit} variant="contained" color="primary">
+        <Button onClick={handleClose} sx={{fontFamily: "Jetbrains Mono"}}>Cancel</Button>
+        <Button onClick={handleSubmit} variant="contained" color="primary" sx={{ fontFamily: "JetBrains Mono" }}>
           Allocate
         </Button>
       </DialogActions>
