@@ -45,10 +45,8 @@ def root():
 @app.get("/device_info")
 async def device_info():
     """Returns the current JSON data."""
-    while(True):
-        jsonData = dj.loadDevicesJSON()
-        await asyncio.sleep(0.5)
-        return jsonData
+    jsonData = dj.loadDevicesJSON()
+    return jsonData
 
 @app.post("/device/{id}/status")
 def change_device_status(id: int):
