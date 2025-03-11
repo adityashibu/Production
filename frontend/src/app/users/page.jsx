@@ -155,7 +155,7 @@ const Users = () => {
         body: JSON.stringify({
           user_name: newUsername,
           user_password: newPassword,
-          allocated_devices: [], // Send an empty list if no devices are allocated
+          allocated_devices: [],
         }),
       });
 
