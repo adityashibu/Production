@@ -3,7 +3,6 @@ anyio==4.8.0
 certifi==2025.1.31
 click==8.1.8
 colorama==0.4.6
-cv-bridge==3.2.1
 exceptiongroup==1.2.2
 fastapi==0.115.8
 h11==0.14.0
@@ -12,11 +11,6 @@ httpx==0.28.1
 idna==3.10
 image-geometry==3.2.1
 iniconfig==2.0.0
-lark==1.2.2
-laser-geometry==2.4.0
-packaging==24.2
-pendulum-msgs==0.20.5
-pluggy==1.5.0
 pydantic==2.10.6
 pydantic_core==2.27.2
 pytest==8.3.4
@@ -24,11 +18,6 @@ pytest-asyncio==0.25.3
 pytest-mock==3.14.0
 python-qt-binding==1.1.2
 PyYAML==6.0.2
-qt-dotgraph==2.2.3
-qt-gui==2.2.3
-qt-gui-cpp==2.2.3
-qt-gui-py-common==2.2.3
-quality-of-service-demo-py==0.20.5
 rpyutils==0.2.1
 starlette==0.45.3
 tomli==2.2.1
