@@ -18,7 +18,6 @@ pytest-mock==3.14.0
 PyYAML==6.0.2
 starlette==0.45.3
 tomli==2.2.1
-turtlesim==1.4.2
 typing_extensions==4.12.2
 unique-identifier-msgs==2.2.1
 uvicorn==0.34.0
