@@ -32,6 +32,10 @@ class UserRequest(BaseModel):
     user_password: str
     allocated_devices: Optional[List[str]] = None
 
+class DeviceAllocation(BaseModel):
+    user_id: int
+    device_ids: List[int]
+
 @app.on_event("startup")
 async def startup_event():
     """Starts device updates when the FastAPI server starts."""
@@ -111,6 +115,11 @@ def add_new_user(user: UserRequest):
 def delete_user(user_name: str, user_password: str):
     """Deletes a user with the given name and password."""
     return users.delete_user(user_name, user_password)
+
+@app.post("/allocate_devices")
+def allocate_devices(request: DeviceAllocation):
+    """Allocates devices to a user based on their user ID."""
+    return users.allocate_devices(request.user_id, request.device_ids)
 
 @app.get("/energy_usage")
 def fetch_energy_usage(range: str):

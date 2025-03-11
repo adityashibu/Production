@@ -22,7 +22,10 @@
             "user_password": "1415",
             "allocated_devices": [
                 "1",
-                "8"
+                "8",
+                "2",
+                "3",
+                "4"
             ],
             "user_role": "sub_user"
         },
@@ -32,8 +35,9 @@
             "user_password": "9999",
             "allocated_devices": [
                 "1",
-                "4",
-                "7"
+                "2",
+                "3",
+                "4"
             ],
             "user_role": "sub_user"
         }
