@@ -122,6 +122,11 @@ def allocate_devices(request: DeviceAllocation):
     """Allocates devices to a user based on their user ID."""
     return u.allocate_devices(request.user_id, request.device_ids)
 
+@app.get("/devices/oven/{device_id}/timer/{timer}")
+def set_oven_timer(device_id: int, timer: int):
+    """Set the timer for an oven device."""
+    return dj.setOvenTimer(device_id, timer)
+
 @app.get("/energy_usage")
 def fetch_energy_usage(range: str):
     if range == "daily":
