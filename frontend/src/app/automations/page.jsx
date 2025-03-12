@@ -86,8 +86,8 @@ const Automations = () => {
   }, []);
 
   const getDeviceName = (deviceId) => {
-      const device = devices.find((d) => String(d.id) === String(deviceId));
-      return device ? device.name : "Unknown Device";
+    const device = devices.find((d) => String(d.id) === String(deviceId));
+    return device ? device.name : "Unknown Device";
   };
 
   useEffect(() => {
@@ -140,11 +140,14 @@ const Automations = () => {
     try {
       let response;
       if (editingAutomation) {
-        response = await fetch(`http://localhost:8000/automations/${editingAutomation.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(automationData),
-        });
+        response = await fetch(
+          `http://localhost:8000/automations/${editingAutomation.id}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(automationData),
+          }
+        );
       } else {
         response = await fetch("http://localhost:8000/automations", {
           method: "POST",
@@ -173,13 +176,18 @@ const Automations = () => {
     const newStatus = !automation.enabled;
 
     try {
-      const response = await fetch(`http://localhost:8000/automations/${id}/${newStatus}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await fetch(
+        `http://localhost:8000/automations/${id}/${newStatus}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       if (!response.ok) {
-        throw new Error(`Failed to update status. Server responded with ${response.status}`);
+        throw new Error(
+          `Failed to update status. Server responded with ${response.status}`
+        );
       }
 
       setAutomations((prev) =>
@@ -264,7 +272,12 @@ const Automations = () => {
                 />
 
                 {/* Toggle Switch */}
-                <Stack direction="row" alignItems="center" spacing={2} sx={{ mt: 2 }}>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={2}
+                  sx={{ mt: 2 }}
+                >
                   <Typography variant="body2" fontFamily={"JetBrains Mono"}>
                     Enabled
                   </Typography>
@@ -277,15 +290,18 @@ const Automations = () => {
 
               {/* Edit & Delete Buttons */}
               <IconButton
-                sx={{ position: "absolute", top: 8, right: 8, color: "text.secondary" }}
+                sx={{
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                  color: "text.secondary",
+                }}
                 onClick={() => handleOpenDialog(automation)}
               >
                 <EditIcon sx={{ fontSize: 20 }} />
               </IconButton>
 
-              <IconButton
-                sx={{ position: "absolute", bottom: 8, right: 8 }}
-              >
+              <IconButton sx={{ position: "absolute", bottom: 8, right: 8 }}>
                 <DeleteIcon sx={{ fontSize: 20 }} />
               </IconButton>
             </Card>
@@ -294,9 +310,18 @@ const Automations = () => {
       </Grid>
 
       {/* Dialog for Adding Automation */}
-      <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ fontFamily: "JetBrains Mono" }}>Add Schedule</DialogTitle>
-        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle sx={{ fontFamily: "JetBrains Mono" }}>
+          Add Schedule
+        </DialogTitle>
+        <DialogContent
+          sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}
+        >
           {/* Name Input */}
           <TextField
             label="Automation Name"
@@ -356,9 +381,16 @@ const Automations = () => {
               </TextField>
 
               {/* Device On/Off Toggle (Using IOSSwitch) */}
-              <Box display="flex" alignItems="center" justifyContent="space-between">
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+              >
                 <span>Device Status:</span>
-                <IOSSwitch checked={deviceStatus} onChange={(e) => setDeviceStatus(e.target.checked)} />
+                <IOSSwitch
+                  checked={deviceStatus}
+                  onChange={(e) => setDeviceStatus(e.target.checked)}
+                />
               </Box>
             </>
           )}
@@ -366,10 +398,19 @@ const Automations = () => {
 
         {/* Dialog Actions */}
         <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary" sx={{ fontFamily: "JetBrains Mono" }}>
+          <Button
+            onClick={handleCloseDialog}
+            color="primary"
+            sx={{ fontFamily: "JetBrains Mono" }}
+          >
             Cancel
           </Button>
-          <Button onClick={handleSave} variant="contained" color="primary" sx={{ fontFamily: "JetBrains Mono" }}>
+          <Button
+            onClick={handleSave}
+            variant="contained"
+            color="primary"
+            sx={{ fontFamily: "JetBrains Mono" }}
+          >
             Save
           </Button>
         </DialogActions>
