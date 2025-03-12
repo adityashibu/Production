@@ -20,14 +20,25 @@
             "user_id": 2,
             "user_name": "David F",
             "user_password": "1415",
-            "allocated_devices": ["7", "8"],
+            "allocated_devices": [
+                "1",
+                "8",
+                "2",
+                "3",
+                "7"
+            ],
             "user_role": "sub_user"
         },
         {
             "user_id": 3,
             "user_name": "Ann E",
             "user_password": "9999",
-            "allocated_devices": [],
+            "allocated_devices": [
+                "1",
+                "2",
+                "3",
+                "4"
+            ],
             "user_role": "sub_user"
         }
     ]

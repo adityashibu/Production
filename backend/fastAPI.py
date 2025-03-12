@@ -32,6 +32,10 @@ class UserRequest(BaseModel):
     user_password: str
     allocated_devices: Optional[List[str]] = None
 
+class DeviceAllocation(BaseModel):
+    user_id: int
+    device_ids: List[int]
+
 @app.on_event("startup")
 async def startup_event():
     """Starts device updates when the FastAPI server starts."""
@@ -43,9 +47,9 @@ def root():
     return {"message": "Welcome to the Smart Home API!"}
 
 @app.get("/device_info")
-def device_info():
+async def device_info():
     """Returns the current JSON data."""
-    jsonData = dj.loadJSON()
+    jsonData = dj.loadDevicesJSON()
     return jsonData
 
 @app.post("/device/{id}/status")
@@ -102,7 +106,7 @@ def get_selected_user():
     """Returns the selected user"""
     return users.get_selected_user()
 
-@app.post("/add_user/")
+@app.post("/add_user")
 def add_new_user(user: UserRequest):
     """Adds a new user with the given name, password, and optional allocated devices."""
     return users.add_user(user.user_name, user.user_password, user.allocated_devices or [])
@@ -111,6 +115,11 @@ def add_new_user(user: UserRequest):
 def delete_user(user_name: str, user_password: str):
     """Deletes a user with the given name and password."""
     return users.delete_user(user_name, user_password)
+
+@app.post("/allocate_devices")
+def allocate_devices(request: DeviceAllocation):
+    """Allocates devices to a user based on their user ID."""
+    return users.allocate_devices(request.user_id, request.device_ids)
 
 @app.get("/energy_usage")
 def fetch_energy_usage(range: str):

@@ -11,8 +11,10 @@ import Tooltip from "@mui/material/Tooltip";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
+import DevicesIcon from "@mui/icons-material/Devices";
 
 import AddUserDialog from "../newUserDialogue";
+import AllocateDevicesDialog from "../allocateDevices";
 
 import { signOut } from "firebase/auth";
 import { auth } from "@/app/firebase/config";
@@ -25,6 +27,7 @@ export default function AccountMenu() {
   const [selectedUser, setSelectedUser] = React.useState("Loading...");
   const [isSuperUser, setIsSuperUser] = React.useState(false);
   const [openUserDialog, setOpenUserDialog] = React.useState(false);
+  const [openAllocateDialog, setOpenAllocateDialog] = React.useState(false);
 
   const open = Boolean(anchorEl);
   
@@ -134,6 +137,14 @@ export default function AccountMenu() {
         </MenuItem>
         <Divider />
         {isSuperUser && (
+          <MenuItem onClick={() => setOpenAllocateDialog(true)} sx={{ fontFamily: "JetBrains Mono" }}>
+            <ListItemIcon>
+              <DevicesIcon fontSize="small" sx={{ color: "primary.main" }} />
+            </ListItemIcon>
+            Allocate devices
+          </MenuItem>
+        )}
+        {isSuperUser && (
           <MenuItem onClick={() => setOpenUserDialog(true)} sx={{ fontFamily: "JetBrains Mono" }}>
             <ListItemIcon>
               <PersonAdd fontSize="small" sx={{ color: "primary.main" }} />
@@ -160,6 +171,7 @@ export default function AccountMenu() {
         onClose={() => setOpenUserDialog(false)}
         // onSave={handleSaveUser}
       />
+      <AllocateDevicesDialog open={openAllocateDialog} onClose={() => setOpenAllocateDialog(false)} />
     </React.Fragment>
   );
 }

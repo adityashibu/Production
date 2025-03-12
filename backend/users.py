@@ -170,6 +170,27 @@ def create_selected_user_devices_json():
     with open(SELECTED_USER_FILE, "w") as f:
         json.dump({"user"})
 
+def allocate_devices(user_id: int, device_ids: list):
+    """Allocates devices to a user based on their User ID"""
+    users = load_users()
+    available_devices = load_devices()
+
+    user = next((u for u in users if u["user_id"] == user_id), None)
+    if not user:
+        updates.append(f"User with ID {user_id} not found.")
+        return {"error": f"User with ID {user_id} not found."}
+    
+    valid_device_ids = [str(device_id) for device_id in device_ids if str(device_id) in available_devices]
+    
+    user["allocated_devices"] = valid_device_ids
+
+    save_users(users)
+
+    message = f"Allocated devices {valid_device_ids} to user {user['user_name']}."
+    updates.append(message)
+
+    return {"success": message, "user": user}
+
 
 def getUpdates():
     global updates
@@ -180,3 +201,4 @@ def getUpdates():
 # DEBUGGING SHIT DONT MIND
 # load_users()
 # add_user("Aditya S", "0000", [1, 2, 3, 4])
+# allocate_devices(3, [1, 4, 7])
