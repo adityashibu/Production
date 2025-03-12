@@ -39,6 +39,7 @@ const Automations = () => {
   const [selectedDevice, setSelectedDevice] = useState("");
   const [deviceStatus, setDeviceStatus] = useState(false);
   const [automations, setAutomations] = useState([]);
+  const [editingAutomation, setEditingAutomation] = useState(null);
 
   const conditions = ["At time"];
 
@@ -98,12 +99,28 @@ const Automations = () => {
     }
   }, [selectedDevice, devices]);
 
-  const handleOpenDialog = () => {
+  const handleOpenDialog = (automation = null) => {
+    if (automation) {
+      setEditingAutomation(automation);
+      setName(automation.name);
+      setTrigger(dayjs(automation.trigger_time));
+      setCondition("At time"); // Force "At time" selection
+      setSelectedDevice(getDeviceName(automation.device_id));
+      setDeviceStatus(automation.device_status);
+    } else {
+      setEditingAutomation(null);
+      setName("");
+      setTrigger(dayjs());
+      setCondition("At time"); // Ensure "At time" is default on new automation
+      setSelectedDevice("");
+      setDeviceStatus(false);
+    }
     setOpenDialog(true);
   };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
+    setEditingAutomation(null);
     setName("");
     setTrigger(dayjs());
     setCondition("");
@@ -111,34 +128,69 @@ const Automations = () => {
     setDeviceStatus(false);
   };
 
-  const handleSave = () => {
-    console.log("Saving Automation:", { name, trigger, condition, selectedDevice, deviceStatus });
+  const handleSave = async () => {
+    const automationData = {
+      name,
+      trigger_time: trigger.format("HH:mm"), // Format for backend storage
+      condition,
+      device_id: devices.find((d) => d.name === selectedDevice)?.id || null,
+      device_status: deviceStatus,
+    };
+
+    try {
+      let response;
+      if (editingAutomation) {
+        // Update existing automation
+        response = await fetch(`http://localhost:8000/automations/${editingAutomation.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(automationData),
+        });
+      } else {
+        // Create new automation
+        response = await fetch("http://localhost:8000/automations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(automationData),
+        });
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const updatedAutomations = await response.json();
+      setAutomations(updatedAutomations.automations || []);
+    } catch (error) {
+      console.error("Error saving automation:", error);
+    }
+
     handleCloseDialog();
   };
 
   const handleToggle = async (id) => {
-  const automation = automations.find((a) => a.id === id);
-  if (!automation) return;
+    const automation = automations.find((a) => a.id === id);
+    if (!automation) return;
 
-  const newStatus = !automation.enabled;
+    const newStatus = !automation.enabled;
 
-  try {
-    const response = await fetch(`http://localhost:8000/automations/${id}/${newStatus}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-    });
+    try {
+      const response = await fetch(`http://localhost:8000/automations/${id}/${newStatus}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
 
-    if (!response.ok) {
-      throw new Error(`Failed to update status. Server responded with ${response.status}`);
+      if (!response.ok) {
+        throw new Error(`Failed to update status. Server responded with ${response.status}`);
+      }
+
+      setAutomations((prev) =>
+        prev.map((a) => (a.id === id ? { ...a, enabled: newStatus } : a))
+      );
+    } catch (error) {
+      console.error("Error updating automation status:", error);
     }
-
-    setAutomations((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, enabled: newStatus } : a))
-    );
-  } catch (error) {
-    console.error("Error updating automation status:", error);
-  }
-};
+  };
 
   return (
     <div>
@@ -227,12 +279,8 @@ const Automations = () => {
 
               {/* Edit & Delete Buttons */}
               <IconButton
-                sx={{
-                  position: "absolute",
-                  top: 8,
-                  right: 8,
-                  color: "text.secondary",
-                }}
+                sx={{ position: "absolute", top: 8, right: 8, color: "text.secondary" }}
+                onClick={() => handleOpenDialog(automation)}
               >
                 <EditIcon sx={{ fontSize: 20 }} />
               </IconButton>

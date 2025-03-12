@@ -140,6 +140,9 @@ async def get_automations():
     """Returns the current automation rules"""
     return am.loadAutomations()
 
+@app.post("/automations/add_automation/{name}/{device_id}/{trigger_time}/{status}")
+
+
 @app.post("/automations/{automation_id}/{status}")
 def update_automation_status(automation_id: int, status: bool):
     """Update the 'enabled' status of an automation by ID"""

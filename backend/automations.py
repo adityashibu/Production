@@ -35,6 +35,29 @@ def updateAutomationStatus(automation_id, status):
     except (FileNotFoundError, json.JSONDecodeError):
         print("Failed to update automation status.")
 
+def addAutomation(name, device_id, trigger_time, status):
+    """Add a new automation rule to the JSON file."""
+    try:
+        with open(AUTOMATION_FILE, "r") as file:
+            data = json.load(file)
+            automations = data.get("automations", [])
+            new_id = max([automation["id"] for automation in automations] + [0]) + 1
+            automations.append({
+                "id": new_id,
+                "name": name,
+                "device_id": device_id,
+                "triggers": trigger_time,
+                "enabled": status
+            })
+            data["automations"] = automations
+
+        with open(AUTOMATION_FILE, "w") as file:
+            json.dump(data, file, indent=4)
+
+        print(f"New automation rule added: {name} at {trigger_time}.")
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("Failed to add new automation rule.")
+
 async def automation_scheduler():
     """Continuously checks automations and triggers device status change."""
     while True:
