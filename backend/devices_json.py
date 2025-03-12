@@ -29,27 +29,25 @@ def loadJSON():
 
         if not selected_user:
             updates.append("Error: Selected user not found!")
-            print("DEBUG: Selected user not found!")
+            # print("DEBUG: Selected user not found!")
             return {"smart_home_devices": []}
 
         allocated_device_ids = set(map(str, selected_user.get("allocated_devices", [])))  # Ensure string conversion
 
-        print(f"DEBUG: Allocated devices for {selected_user_name}: {allocated_device_ids}")
+        # print(f"DEBUG: Allocated devices for {selected_user_name}: {allocated_device_ids}")
 
         # Load all devices
         with open(deviceFile, "r") as devices_file:
             devices_data = json.load(devices_file)
 
         if "smart_home_devices" not in devices_data:
-            print("DEBUG: smart_home_devices key missing in devices.json")
+            # print("DEBUG: smart_home_devices key missing in devices.json")
             return {"smart_home_devices": []}
 
-        # Filter only the allocated devices
         filtered_devices = [device for device in devices_data["smart_home_devices"] if str(device["id"]) in allocated_device_ids]
 
-        print(f"DEBUG: Filtered devices: {filtered_devices}")
+        # print(f"DEBUG: Filtered devices: {filtered_devices}")
 
-        # Always overwrite selected_user_devices.json
         with open(selectedUserDevicesFile, "w") as selected_devices_file:
             json.dump({"smart_home_devices": filtered_devices}, selected_devices_file, indent=2)
 
@@ -57,7 +55,7 @@ def loadJSON():
 
     except FileNotFoundError as e:
         updates.append(f"Error: {str(e)}")
-        print(f"DEBUG: FileNotFoundError - {str(e)}")
+        # print(f"DEBUG: FileNotFoundError - {str(e)}")
 
 
 def loadDevicesJSON():
@@ -65,19 +63,16 @@ def loadDevicesJSON():
     global last_selected_user
 
     try:
-        # Load selected user
         with open(selectedUserFile, "r") as selected_user_file:
             selected_user_data = json.load(selected_user_file)
         
         selected_user_name = selected_user_data.get("selected_user")
 
-        # If the selected user has changed, reload the devices
         if selected_user_name != last_selected_user:
-            print("DEBUG: Selected user changed. Reloading devices...")
-            loadJSON()  # Refresh selected_user_devices.json
-            last_selected_user = selected_user_name  # Update the last tracked user
+            # print("DEBUG: Selected user changed. Reloading devices...")
+            loadJSON()
+            last_selected_user = selected_user_name
 
-        # Now load the updated devices
         with open(selectedUserDevicesFile, "r") as JSONfile:
             return json.load(JSONfile)
 
@@ -155,13 +150,13 @@ def changeDeviceName(id, newName):
     return {"error": "ID not found!"}
 
 def changeDeviceStatus(id):
-    data = loadDevicesJSON()  # Load from selected_user_devices.json
+    data = loadDevicesJSON()
     devices = data.get("smart_home_devices", [])
 
     for device in devices:
         if device["id"] == id:
             device["status"] = "on" if device["status"] == "off" else "off"
-            saveJSON(data)  # Save the updated data
+            saveJSON(data)
             message = f"Changed {device['name']} status to {device['status']}."
             updates.append(message)
             return {"success": message}

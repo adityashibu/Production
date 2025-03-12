@@ -1,58 +1,32 @@
-import devices_json as dj
-import schedule
-
-automationFile = "automations.json"
-
+import asyncio
 import json
-import schedule
+from datetime import datetime
+from devices_json import changeDeviceStatus, loadDevicesJSON
 
-automationFile = "automations.json"
-updates = []
-
+AUTOMATION_FILE = "automations.json"
 
 def loadAutomations():
+    """Load automation rules from JSON and ensure correct types."""
     try:
-        with open(automationFile, "r") as JSONfile:
-            return json.load(JSONfile)
-    except FileNotFoundError:
-        updates.append("Error: automations.json not found!")
+        with open(AUTOMATION_FILE, "r") as file:
+            data = json.load(file)
+            for automation in data.get("automations", []):
+                automation["device_id"] = int(automation["device_id"])
+            return data
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("No automation file found or invalid JSON, returning empty list.")
         return {"automations": []}
-    
 
-def saveAutomations(data):
-    with open(automationFile, "w") as JSONfile:
-        json.dump(data, JSONfile, indent=2)
+async def automation_scheduler():
+    """Continuously checks automations and triggers device status change."""
+    while True:
+        automations = loadAutomations().get("automations", [])
+        current_time = datetime.now().strftime("%H:%M")
 
+        for automation in automations:
+            if automation["enabled"] and automation["triggers"] == current_time:
+                changeDeviceStatus(automation["device_id"])
 
-def addAutomation(automation): # Add automation to automations.json
-    data = loadAutomations()
-    automations = data.get("automations", [])
-    automations.append(automation)
-    saveAutomations(data)
-    updates.append(f"Added {automation['name']} to the automation table!")
+        await asyncio.sleep(60)
 
-
-# Manipulation of automation schedules down below
-def changeAutomationStatus(id):
-    data = loadAutomations()
-    automations = data.get("automations", [])
-    for automation in automations:
-        if automation["id"] == id:
-            automation["enabled"] = not automation["enabled"]
-            saveAutomations(data)
-            updates.append(f"Changed status of {automation['name']} to {automation['enabled']}!")
-            return
-    updates.append("Error: Automation with specified ID not found (backend error!)")
-    return
-
-def deleteAutomation(id):
-    data = loadAutomations()
-    automations = data.get("automations", [])
-    for automation in automations:
-        if automation["id"] == id:
-            automations.remove(automation)
-            saveAutomations(data)
-            updates.append(f"Deleted {automation['name']} from the automation table!")
-            return
-    updates.append("Error: Automation with specified ID not found (backend error!)")
-    return
+loadAutomations()

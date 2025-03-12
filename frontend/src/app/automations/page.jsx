@@ -2,6 +2,13 @@
 import React, { useState, useEffect } from "react";
 import Breadcrumb from "../ui/dashboard/breadcrumbs";
 import {
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Stack,
+  IconButton,
+  Chip,
   Box,
   Button,
   Dialog,
@@ -10,11 +17,12 @@ import {
   DialogActions,
   TextField,
   MenuItem,
-  Switch,
-  FormControlLabel,
 } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -30,6 +38,7 @@ const Automations = () => {
   const [devices, setDevices] = useState([]);
   const [selectedDevice, setSelectedDevice] = useState("");
   const [deviceStatus, setDeviceStatus] = useState(false);
+  const [automations, setAutomations] = useState([]);
 
   const conditions = ["At time"];
 
@@ -37,7 +46,7 @@ const Automations = () => {
     const fetchDevices = async () => {
       try {
         const response = await fetch("http://localhost:8000/device_info");
-        
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -58,8 +67,27 @@ const Automations = () => {
       }
     };
 
+    const fetchAutomations = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/automations");
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        setAutomations(data.automations || []);
+      } catch (error) {
+        console.error("Error fetching automation data:", error);
+      }
+    };
+
     fetchDevices();
-  }, []);
+    fetchAutomations();
+  }, []); // <-- Corrected dependency array
+
+  const getDeviceName = (deviceId) => {
+      const device = devices.find((d) => String(d.id) === String(deviceId));
+      return device ? device.name : "Unknown Device";
+  };
 
   useEffect(() => {
     if (selectedDevice) {
@@ -88,6 +116,27 @@ const Automations = () => {
     handleCloseDialog();
   };
 
+  const handleToggle = async (id) => {
+    setAutomations((prev) =>
+      prev.map((automation) =>
+        automation.id === id ? { ...automation, enabled: !automation.enabled } : automation
+      )
+    );
+
+    // Make a PUT request to update the automation status in the backend
+    try {
+      await fetch(`http://localhost:8000/automations/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          enabled: !automations.find((a) => a.id === id).enabled,
+        }),
+      });
+    } catch (error) {
+      console.error("Error updating automation status:", error);
+    }
+  };
+
   return (
     <div>
       <Breadcrumb />
@@ -111,10 +160,89 @@ const Automations = () => {
               color: "white",
             }}
           >
-            Add Automation Schedule
+            Add Schedule
           </Button>
         </Box>
       </Box>
+
+      <Grid container spacing={3}>
+        {automations.map((automation) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={automation.id}>
+            <Card
+              sx={{
+                height: { xs: "20vh", md: "15vh" },
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
+                transition: "transform 0.2s ease-in-out",
+                "&:hover": { transform: "scale(1.02)" },
+              }}
+            >
+              <CardContent
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "80%",
+                  flexDirection: "column",
+                  textAlign: "center",
+                }}
+              >
+                {/* Automation Name */}
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontSize: { xs: 16, md: 20 },
+                    fontWeight: 600,
+                    fontFamily: "JetBrains Mono",
+                    color: "primary.main",
+                  }}
+                >
+                  {automation.name}
+                </Typography>
+
+                {/* Device Name as Chip */}
+                <Chip
+                  label={getDeviceName(automation.device_id)}
+                  color="primary"
+                  variant="outlined"
+                  sx={{ mt: 1, fontFamily: "JetBrains Mono" }}
+                />
+
+                {/* Toggle Switch */}
+                <Stack direction="row" alignItems="center" spacing={2} sx={{ mt: 2 }}>
+                  <Typography variant="body2" fontFamily={"JetBrains Mono"}>
+                    Enabled
+                  </Typography>
+                  <IOSSwitch
+                    checked={automation.enabled}
+                    onChange={() => handleToggle(automation.id)}
+                  />
+                </Stack>
+              </CardContent>
+
+              {/* Edit & Delete Buttons */}
+              <IconButton
+                sx={{
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                  color: "text.secondary",
+                }}
+              >
+                <EditIcon sx={{ fontSize: 20 }} />
+              </IconButton>
+
+              <IconButton
+                sx={{ position: "absolute", bottom: 8, right: 8 }}
+              >
+                <DeleteIcon sx={{ fontSize: 20 }} />
+              </IconButton>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
 
       {/* Dialog for Adding Automation */}
       <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="sm">

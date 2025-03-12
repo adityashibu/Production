@@ -2,8 +2,9 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 import devices_json as dj
-import users
+import users as u
 import energy_json as ej
+import automations as am
 
 import asyncio
 import os
@@ -41,6 +42,7 @@ async def startup_event():
     """Starts device updates when the FastAPI server starts."""
     loop = asyncio.get_event_loop()
     loop.create_task(dj.updateDevices())
+    asyncio.create_task(am.automation_scheduler())
 
 @app.get("/")
 def root():
@@ -67,7 +69,7 @@ def change_device_name(id: int, new_name: str):
 def get_updates():
     """Returns combined updates from devices and users."""
     device_updates = dj.getUpdates()
-    user_updates = users.getUpdates()
+    user_updates = u.getUpdates()
 
     all_updates = device_updates + user_updates
 
@@ -99,27 +101,27 @@ def get_device_functions():
 @app.post("/select_user/{user}")
 def set_selected_user(user: str):
     """Sets the selected user"""
-    return users.select_user(user)
+    return u.select_user(user)
 
 @app.get("/selected_user")
 def get_selected_user():
     """Returns the selected user"""
-    return users.get_selected_user()
+    return u.get_selected_user()
 
 @app.post("/add_user")
 def add_new_user(user: UserRequest):
     """Adds a new user with the given name, password, and optional allocated devices."""
-    return users.add_user(user.user_name, user.user_password, user.allocated_devices or [])
+    return u.add_user(user.user_name, user.user_password, user.allocated_devices or [])
 
 @app.delete("/delete_user/{user_name}/{user_password}")
 def delete_user(user_name: str, user_password: str):
     """Deletes a user with the given name and password."""
-    return users.delete_user(user_name, user_password)
+    return u.delete_user(user_name, user_password)
 
 @app.post("/allocate_devices")
 def allocate_devices(request: DeviceAllocation):
     """Allocates devices to a user based on their user ID."""
-    return users.allocate_devices(request.user_id, request.device_ids)
+    return u.allocate_devices(request.user_id, request.device_ids)
 
 @app.get("/energy_usage")
 def fetch_energy_usage(range: str):
@@ -133,3 +135,8 @@ def fetch_energy_usage(range: str):
 @app.get("/energy_usage/{time_range}")
 def fetch_energy_usage(time_range: str):
     return ej.get_energy_data(time_range)
+
+@app.get("/automations")
+async def get_automations():
+    """Returns the current automation rules"""
+    return am.loadAutomations()
