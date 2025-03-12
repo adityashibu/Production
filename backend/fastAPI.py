@@ -19,7 +19,6 @@ USER_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "d
 
 app = FastAPI()
 
-# Add CORS Middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
