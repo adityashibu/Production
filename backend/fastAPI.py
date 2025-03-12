@@ -141,9 +141,17 @@ async def get_automations():
     return am.loadAutomations()
 
 @app.post("/automations/add_automation/{name}/{device_id}/{trigger_time}/{status}")
+def add_automation(name: str, device_id: int, trigger_time: str, status: bool):
+    """Add a new automation rule to the JSON file"""
+    return am.addAutomation(name, device_id, trigger_time, status)
 
 
 @app.post("/automations/{automation_id}/{status}")
 def update_automation_status(automation_id: int, status: bool):
     """Update the 'enabled' status of an automation by ID"""
     return am.updateAutomationStatus(automation_id, status)
+
+@app.delete("/automations/{automation_id}")
+def delete_automation(automation_id: int):
+    """Delete an automation rule by ID"""
+    return am.deleteAutomation(automation_id)
