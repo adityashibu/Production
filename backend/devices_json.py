@@ -107,6 +107,14 @@ def randomizeDevice(device):
     if "battery_level" in device and device["status"] == "on":
         device["battery_level"] = max(0, device["battery_level"] - random.randint(0, 2))
 
+    if "timer" in device and device["timer"] > 0:
+        device["timer"] -= 1
+
+    if "timer" in device and device["timer"] == 0:
+        device["status"] = "off"
+        message = f"Turned off {device['name']} after timer expired."
+        updates.append(message)            
+
 def setTimer(id, time):
     data = loadJSON()
     devices = data.get("smart_home_devices", [])
