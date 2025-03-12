@@ -83,7 +83,7 @@ const Automations = () => {
 
     fetchDevices();
     fetchAutomations();
-  }, []); // <-- Corrected dependency array
+  }, []);
 
   const getDeviceName = (deviceId) => {
       const device = devices.find((d) => String(d.id) === String(deviceId));
@@ -104,14 +104,14 @@ const Automations = () => {
       setEditingAutomation(automation);
       setName(automation.name);
       setTrigger(dayjs(automation.trigger_time));
-      setCondition("At time"); // Force "At time" selection
+      setCondition("At time");
       setSelectedDevice(getDeviceName(automation.device_id));
       setDeviceStatus(automation.device_status);
     } else {
       setEditingAutomation(null);
       setName("");
       setTrigger(dayjs());
-      setCondition("At time"); // Ensure "At time" is default on new automation
+      setCondition("At time");
       setSelectedDevice("");
       setDeviceStatus(false);
     }
@@ -131,7 +131,7 @@ const Automations = () => {
   const handleSave = async () => {
     const automationData = {
       name,
-      trigger_time: trigger.format("HH:mm"), // Format for backend storage
+      trigger_time: trigger.format("HH:mm"),
       condition,
       device_id: devices.find((d) => d.name === selectedDevice)?.id || null,
       device_status: deviceStatus,
@@ -140,14 +140,12 @@ const Automations = () => {
     try {
       let response;
       if (editingAutomation) {
-        // Update existing automation
         response = await fetch(`http://localhost:8000/automations/${editingAutomation.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(automationData),
         });
       } else {
-        // Create new automation
         response = await fetch("http://localhost:8000/automations", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
