@@ -68,6 +68,6 @@ async def automation_scheduler():
             if automation["enabled"] and automation["triggers"] == current_time:
                 changeDeviceStatus(automation["device_id"])
 
-        await asyncio.sleep(60)
+        await asyncio.sleep(60) # This causes problems, what if the automation scheduler doesn't start exactly at a new minute? Results will be delayed
 
 loadAutomations()
