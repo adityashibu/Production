@@ -112,17 +112,13 @@ def setTimer(id, time):
     devices = data.get("smart_home_devices", [])
 
     for device in devices:
-        if device["id"] == id:
-            if "timer" in device and device["timer"] == 0:
-                device["timer"] = time
-                saveJSON(data)
-                message = f"Set timer for {device['name']} to {time} seconds"
-                updates.append(message)
-                return {"success": message}
-            message = f"Error: {device['name']} does not support a timer."
+        if device["id"] == id & device["timer"] in device:
+            device["timer"] = time
+            saveJSON(data)
+            message = f"Set timer for {device['name']} to {time} seconds."
             updates.append(message)
-            return {"error": message}
-    return {"error": "ID not found!"}
+            return {"success": message}
+    return {"error": "ID not found or selected device does not support a timer!"}
 
 def handleTimer(device):
     if "timer" in device and device["timer"] > 0:
