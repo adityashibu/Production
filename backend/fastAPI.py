@@ -140,3 +140,8 @@ def fetch_energy_usage(time_range: str):
 async def get_automations():
     """Returns the current automation rules"""
     return am.loadAutomations()
+
+@app.post("/automations/{automation_id}/{status}")
+def update_automation_status(automation_id: int, status: bool):
+    """Update the 'enabled' status of an automation by ID"""
+    return am.updateAutomationStatus(automation_id, status)

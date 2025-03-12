@@ -1,20 +1,20 @@
 {
     "automations": [
         {
-        "id": 1,
-        "name": "Test",
-        "device_id": "1",    
-        "enabled": true,
-        "triggers": "8:45",
-        "status": "off"
+            "id": 1,
+            "name": "Test",
+            "device_id": "1",
+            "enabled": true,
+            "triggers": "8:45",
+            "status": "off"
         },
         {
-        "id": 2,
-        "name": "Test2",
-        "device_id": "2",
-        "enabled": true,
-        "triggers": "8:45",
-        "status": "off"
+            "id": 2,
+            "name": "Test2",
+            "device_id": "2",
+            "enabled": true,
+            "triggers": "8:45",
+            "status": "off"
         }
     ]
 }

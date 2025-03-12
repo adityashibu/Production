@@ -117,25 +117,28 @@ const Automations = () => {
   };
 
   const handleToggle = async (id) => {
-    setAutomations((prev) =>
-      prev.map((automation) =>
-        automation.id === id ? { ...automation, enabled: !automation.enabled } : automation
-      )
-    );
+  const automation = automations.find((a) => a.id === id);
+  if (!automation) return;
 
-    // Make a PUT request to update the automation status in the backend
-    try {
-      await fetch(`http://localhost:8000/automations/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          enabled: !automations.find((a) => a.id === id).enabled,
-        }),
-      });
-    } catch (error) {
-      console.error("Error updating automation status:", error);
+  const newStatus = !automation.enabled;
+
+  try {
+    const response = await fetch(`http://localhost:8000/automations/${id}/${newStatus}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to update status. Server responded with ${response.status}`);
     }
-  };
+
+    setAutomations((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, enabled: newStatus } : a))
+    );
+  } catch (error) {
+    console.error("Error updating automation status:", error);
+  }
+};
 
   return (
     <div>
