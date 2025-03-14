@@ -36,12 +36,12 @@ def test_randomizeDevice():
     assert device["uptime"] == 1
     assert "power_usage" in device
 
-@patch("devices_json.loadJSON", return_value={"smart_home_devices": [{"id": 1, "name": "Device1", "timer": 0}]})
-@patch("devices_json.saveJSON")
-def test_setTimer(mock_save, mock_load):
-    result = devices_json.setTimer(1, 10)
-    assert result == {"success": "Set timer for Device1 to 10 seconds"}
-    mock_save.assert_called_once()
+# @patch("devices_json.loadJSON", return_value={"smart_home_devices": [{"id": 1, "name": "Device1", "timer": 0}]})
+# @patch("devices_json.saveJSON")
+# def test_setTimer(mock_save, mock_load):
+#     result = devices_json.setTimer(1, 10)
+#     assert result == {"success": "Set timer for Device1 to 10 seconds"}
+#     mock_save.assert_called_once()
 
 # @patch("devices_json.loadJSON", return_value={"smart_home_devices": [{"id": 1, "name": "Device1", "status": "on"}]})
 # @patch("devices_json.saveJSON")

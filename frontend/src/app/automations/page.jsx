@@ -103,10 +103,13 @@ const Automations = () => {
     if (automation) {
       setEditingAutomation(automation);
       setName(automation.name);
-      setTrigger(dayjs(automation.trigger_time));
+
+      const triggerTime = dayjs(automation.triggers, "HH:mm");
+      setTrigger(triggerTime.isValid() ? triggerTime : dayjs());
+
       setCondition("At time");
       setSelectedDevice(getDeviceName(automation.device_id));
-      setDeviceStatus(automation.device_status);
+      setDeviceStatus(automation.status === "on");
     } else {
       setEditingAutomation(null);
       setName("");
@@ -129,39 +132,39 @@ const Automations = () => {
   };
 
   const handleSave = async () => {
-    const automationData = {
-      name,
-      trigger_time: trigger.format("HH:mm"),
-      condition,
-      device_id: devices.find((d) => d.name === selectedDevice)?.id || null,
-      device_status: deviceStatus,
-    };
+    const device = devices.find((d) => d.name === selectedDevice);
+    if (!device) {
+      console.error("Invalid device selected");
+      return;
+    }
+
+    const apiUrl = editingAutomation
+      ? `http://localhost:8000/automations/edit_automation/${
+          editingAutomation.id
+        }/${encodeURIComponent(name)}/${device.id}/${trigger.format(
+          "HH:mm"
+        )}/${deviceStatus}`
+      : `http://localhost:8000/automations/add_automation/${encodeURIComponent(
+          name
+        )}/${device.id}/${trigger.format("HH:mm")}/${deviceStatus}`;
 
     try {
-      let response;
-      if (editingAutomation) {
-        response = await fetch(
-          `http://localhost:8000/automations/${editingAutomation.id}`,
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(automationData),
-          }
-        );
-      } else {
-        response = await fetch("http://localhost:8000/automations", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(automationData),
-        });
-      }
+      const response = await fetch(apiUrl, {
+        method: editingAutomation ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      const updatedAutomations = await response.json();
-      setAutomations(updatedAutomations.automations || []);
+      const updatedResponse = await fetch("http://localhost:8000/automations");
+      if (!updatedResponse.ok) {
+        throw new Error(`HTTP error! Status: ${updatedResponse.status}`);
+      }
+
+      const updatedData = await updatedResponse.json();
+      setAutomations(updatedData.automations || []);
     } catch (error) {
       console.error("Error saving automation:", error);
     }

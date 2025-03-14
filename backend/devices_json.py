@@ -105,36 +105,7 @@ def randomizeDevice(device):
         device["volume"] = random.randint(0, 100)
 
     if "battery_level" in device and device["status"] == "on":
-        device["battery_level"] = max(0, device["battery_level"] - random.randint(0, 2))
-
-    if "timer" in device and device["timer"] > 0:
-        device["timer"] -= 1
-
-    if "timer" in device and device["timer"] == 0:
-        device["status"] = "off"
-        message = f"Turned off {device['name']} after timer expired."
-        updates.append(message)            
-
-def setTimer(id, time):
-    data = loadJSON()
-    devices = data.get("smart_home_devices", [])
-
-    for device in devices:
-        if device["id"] == id & device["timer"] in device:
-            device["timer"] = time
-            saveJSON(data)
-            message = f"Set timer for {device['name']} to {time} seconds."
-            updates.append(message)
-            return {"success": message}
-    return {"error": "ID not found or selected device does not support a timer!"}
-
-def handleTimer(device):
-    if "timer" in device and device["timer"] > 0:
-        device["timer"] -= 1
-        if device["timer"] == 0:
-            device["status"] = "off"
-            message = f"Turned off {device['name']} after timer expired."
-            updates.append(message)
+        device["battery_level"] = max(0, device["battery_level"] - random.randint(0, 2))           
 
 def changeDeviceName(id, newName):
     data = loadJSON()
@@ -176,19 +147,18 @@ def sumRating():
     devices = data.get("smart_home_devices", [])
     return sum(device["power_rating"] for device in devices)
 
-def deviceFunctions(): # Returns the list of device functions for scheduling purposes and possibly miscellaneous purposes
+def deviceFunctions():
     return ["Set Oven Timer", "Change Device Status"]
 
 async def updateDevices():
     while True:
-        data = loadDevicesJSON()  # Use the new function
+        data = loadDevicesJSON()
         devices = data.get("smart_home_devices", [])
 
         for device in devices:
             randomizeDevice(device)
-            handleTimer(device)
 
-        saveJSON(data)  # Save back to selected_user_devices.json
+        saveJSON(data)
         await asyncio.sleep(1)
 
 async def changeConnection(id):
@@ -219,4 +189,4 @@ def getUpdates():
     updates.clear()
     return messages
 
-loadJSON()
+# loadJSON()
