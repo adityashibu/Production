@@ -51,7 +51,7 @@ def set_users_data():
     with open(JSON_FILE_PATH, "r") as JSONfile:
         data = json.load(JSONfile)
 
-    existing_users = get_existing_users(db.collection("Users"))
+    existing_users = get_existing_users(db.collection("Profile"))
     filtered_users = {}
 
     for user in data.get("users", []):
@@ -66,7 +66,7 @@ def set_users_data():
 
         # Convert allocated device IDs to Firestore references
         allocated_devices = [
-            db.collection("Devices").document(str(device_id))
+            db.collection("Device").document(str(device_id))
             for device_id in user.get("allocated_devices", [])
         ]
 
@@ -83,16 +83,16 @@ def set_users_data():
     # Add or update users
     for user_id, user_data in filtered_users.items():
         if user_id not in existing_users:
-            db.collection("Users").document(user_id).set(user_data)
+            db.collection("Profile").document(user_id).set(user_data)
             added_users.append(user_data)
         elif existing_users[user_id] != user_data:
-            db.collection("Users").document(user_id).set(user_data)
+            db.collection("Profile").document(user_id).set(user_data)
             modified_users.append(user_data)
 
     # Delete outdated users no longer in the JSON
     for user_id in existing_users.keys():
         if user_id not in filtered_users:
-            db.collection("Users").document(user_id).delete()
+            db.collection("Profile").document(user_id).delete()
             deleted_users.append(user_id)
 
     # Logging changes

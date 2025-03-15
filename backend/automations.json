@@ -1,12 +1,20 @@
 {
     "automations": [
         {
-        "id": 1,
-        "device": "1",    
-        "name": "LIGHT ON",
-        "enabled": true,
-        "trigger": "time goes here (in 24 hour format)",
-        "action": "function call goes here"
+            "id": 1,
+            "name": "Test",
+            "device_id": ["1", "2"],
+            "enabled": true,
+            "triggers": "8:45" ,
+            "status": "off"
+        },
+        {
+            "id": 2,
+            "name": "Test2",
+            "device_id": "2",
+            "enabled": true,
+            "triggers": "8:45",
+            "status": "off"
         }
     ]
 }
