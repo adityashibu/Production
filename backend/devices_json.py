@@ -137,6 +137,19 @@ def changeDeviceStatus(id):
             return {"success": message}
     return {"error": "ID not found!"}
 
+def changeDeviceStatus(id, status): #Overloading previous function to persist change the status regardless of what it is
+    data = loadDevicesJSON()
+    devices = data.get("smart_home_devices", [])
+
+    for device in devices:
+        if device["id"] == id:
+            device["status"] = status
+            saveJSON(data)
+            message = f"Changed {device['name']} status to {status}."
+            updates.append(message)
+            return {"success": message}
+    return {"error": "ID not found!"}
+
 def sumPower():
     data = loadJSON()
     devices = data.get("smart_home_devices", [])
