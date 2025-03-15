@@ -151,7 +151,7 @@ async def get_automations():
 
 @app.post("/automations/add_automation/{name}/{device_id}/{trigger_time}/{status}")
 def add_automation(name: str, device_id: int, trigger_time: str, status: str):
-    """Add a new automation rule to the JSON file"""
+    """Add a new automation rule with enabled=True by default"""
     return am.addAutomation(name, device_id, trigger_time, status)
 
 @app.put("/automations/edit_automation/{automation_id}/{name}/{device_id}/{trigger_time}/{status}")

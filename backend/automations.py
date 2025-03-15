@@ -1,7 +1,7 @@
 import asyncio
 import json
 from datetime import datetime, timedelta
-from devices_json import changeDeviceStatus, loadDevicesJSON
+from devices_json import changeDeviceStatus
 
 AUTOMATION_FILE = "automations.json"
 
@@ -28,7 +28,7 @@ def updateAutomationStatus(automation_id, status):
         json.dump(data, file, indent=4)
 
 def addAutomation(name, device_id, trigger_time, status):
-    """Add a new automation rule to the JSON file."""
+    """Add a new automation rule to the JSON file with enabled set to True by default."""
     with open(AUTOMATION_FILE, "r") as file:
         data = json.load(file)
         automations = data.get("automations", [])
@@ -38,14 +38,13 @@ def addAutomation(name, device_id, trigger_time, status):
             "name": name,
             "device_id": device_id,
             "triggers": trigger_time,
-            "enabled": status
+            "enabled": True,  # Always set to True by default
+            "status": status
         })
         data["automations"] = automations
 
     with open(AUTOMATION_FILE, "w") as file:
         json.dump(data, file, indent=4)
-
-        # print(f"New automation rule added: {name} at {trigger_time}.")
 
 def deleteAutomation(automation_id):
     """Delete an automation rule from the JSON file based on its ID."""
@@ -88,8 +87,12 @@ async def automation_scheduler():
         automations = loadAutomations().get("automations", [])
 
         for automation in automations:
-            if automation["enabled"] and automation["triggers"] == current_time:
-                changeDeviceStatus(automation["device_id"])
+            automation_device_id = int(automation["device_id"])
+            trigger_time = automation["triggers"]
+
+            if automation["enabled"] and trigger_time == current_time:
+                print(f"Triggering automation: {automation['name']} at {current_time}")
+                changeDeviceStatus(automation_device_id)
 
         now = datetime.now()
         next_minute = (now + timedelta(minutes=1)).replace(second=0, microsecond=0)

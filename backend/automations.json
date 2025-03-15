@@ -21,14 +21,16 @@
             "name": "Test3",
             "device_id": 1,
             "triggers": "08:23",
-            "enabled": true
+            "enabled": true,
+            "status": "off"
         },
         {
             "id": 4,
             "name": "Test4",
-            "device_id": 4,
-            "triggers": "21:08",
-            "enabled": true
+            "device_id": 8,
+            "triggers": "22:23",
+            "enabled": true,
+            "status": "off"
         }
     ]
 }
