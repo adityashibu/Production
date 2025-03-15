@@ -495,7 +495,7 @@ const Automations = () => {
             onClick={handleSave}
             variant="contained"
             color="primary"
-            sx={{ fontFamily: "JetBrains Mono" }}
+            sx={{ fontFamily: "JetBrains Mono", color: "white" }}
           >
             Save
           </Button>

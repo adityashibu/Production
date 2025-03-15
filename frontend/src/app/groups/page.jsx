@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Breadcrumb from "../ui/dashboard/breadcrumbs";
 import {
   Box,
@@ -23,20 +23,32 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import IOSSwitch from "../ui/iosButton";
 
-// Sample device list (Replace with actual data if needed)
-const deviceList = [
-  { id: 1, name: "Philips Hue Smart Bulb B" },
-  { id: 2, name: "August Main Door Lock B" },
-  { id: 3, name: "Nest Kitchen Thermostat" },
-  { id: 4, name: "Samsung Living Room TV" },
-  { id: 5, name: "TP-Link Office Smart Plug" },
-];
-
+// Groups component with fetch from API
 const Groups = () => {
   const [open, setOpen] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [groupStatus, setGroupStatus] = useState(true); // "on" or "off"
   const [selectedDevices, setSelectedDevices] = useState([]);
+  const [deviceList, setDeviceList] = useState([]);
+
+  // Fetch devices from API on component mount
+  useEffect(() => {
+    fetch("http://localhost:8000/device_info")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.smart_home_devices && Array.isArray(data.smart_home_devices)) {
+          // Filter available devices if needed (optional for groups page)
+          setDeviceList(data.smart_home_devices);
+        } else {
+          console.error("Unexpected API response:", data);
+          setDeviceList([]);
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching device data:", err);
+        setDeviceList([]);
+      });
+  }, []); // No dependency array here if you want to run this once when the component mounts
 
   const handleOpen = () => setOpen(true);
 
@@ -113,13 +125,16 @@ const Groups = () => {
         >
           {/* Group Name Field */}
           <TextField
-            label="Group Name"
             variant="outlined"
+            label="Group Name"
             fullWidth
             required
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
             sx={{ fontFamily: "JetBrains Mono" }}
+            InputLabelProps={{
+              sx: { fontFamily: "JetBrains Mono" },
+            }}
           />
 
           {/* iOS Switch for Status */}
@@ -129,7 +144,9 @@ const Groups = () => {
             justifyContent="space-between"
             sx={{ marginTop: 2 }}
           >
-            <Typography>Group Status:</Typography>
+            <Typography sx={{ fontFamily: "Jetbrains Mono" }}>
+              Group Status:
+            </Typography>
             <IOSSwitch
               checked={groupStatus}
               onChange={() => setGroupStatus((prev) => !prev)}
@@ -200,7 +217,7 @@ const Groups = () => {
             onClick={handleSubmit}
             variant="contained"
             color="primary"
-            sx={{ fontFamily: "JetBrains Mono" }}
+            sx={{ fontFamily: "JetBrains Mono", color: "white" }}
           >
             Add Group
           </Button>

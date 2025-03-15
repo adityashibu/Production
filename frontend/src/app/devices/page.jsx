@@ -505,7 +505,7 @@ const Devices = () => {
             onClick={handleAddDeviceConfirm}
             variant="contained"
             color="primary"
-            sx={{ fontFamily: "JetBrains Mono" }}
+            sx={{ fontFamily: "JetBrains Mono", color: "white" }}
           >
             Add
           </Button>
