@@ -28,7 +28,7 @@
             "id": 4,
             "name": "Test4",
             "device_id": 8,
-            "triggers": "22:23",
+            "triggers": "23:00",
             "enabled": true,
             "status": "off"
         }
