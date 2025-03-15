@@ -2,36 +2,32 @@
     "users": [
         {
             "user_id": 1,
-            "user_name": "John Doe",
-            "user_password": "1415",
+            "user_name": "Aditya",
+            "user_password": "7777",
             "allocated_devices": [
                 "1",
                 "2",
                 "3",
                 "4",
                 "5",
-                "6"
+                "6",
+                "7",
+                "8"
             ],
             "user_role": "super_user"
         },
         {
             "user_id": 2,
-            "user_name": "Jane Doe",
-            "user_password": "2004",
-            "allocated_devices": [
-                "3",
-                "4"
-            ],
+            "user_name": "David F",
+            "user_password": "1415",
+            "allocated_devices": ["1", "8"],
             "user_role": "sub_user"
         },
         {
             "user_id": 3,
-            "user_name": "John Smith",
-            "user_password": "0007",
-            "allocated_devices": [
-                "5",
-                "6"
-            ],
+            "user_name": "Ann E",
+            "user_password": "9999",
+            "allocated_devices": [],
             "user_role": "sub_user"
         }
     ]

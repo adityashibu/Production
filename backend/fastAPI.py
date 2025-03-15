@@ -1,28 +1,36 @@
+from typing import List, Optional
+from pydantic import BaseModel
+
 import devices_json as dj
 import users
+import energy_json as ej
 
 import asyncio
 import os
 import json
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 # Serve user data (Only for testing purposes)
 USER_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "database", "users_db.json")
 # print(USER_DB_PATH) # For testing purposes
 
-# FastAPI initialization and routes
 app = FastAPI()
 
 # Add CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins (or specify ["http://localhost:3000"])
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all HTTP methods
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
+class UserRequest(BaseModel):
+    user_name: str
+    user_password: str
+    allocated_devices: Optional[List[str]] = None
 
 @app.on_event("startup")
 async def startup_event():
@@ -35,9 +43,9 @@ def root():
     return {"message": "Welcome to the Smart Home API!"}
 
 @app.get("/device_info")
-def device_info():
+async def device_info():
     """Returns the current JSON data."""
-    jsonData = dj.loadJSON()
+    jsonData = dj.loadDevicesJSON()
     return jsonData
 
 @app.post("/device/{id}/status")
@@ -94,7 +102,25 @@ def get_selected_user():
     """Returns the selected user"""
     return users.get_selected_user()
 
-@app.get("/updates/users")
-def get_updates():
-    """Returns the updates list."""
-    return {"updates": users.getUpdates()}
+@app.post("/add_user/")
+def add_new_user(user: UserRequest):
+    """Adds a new user with the given name, password, and optional allocated devices."""
+    return users.add_user(user.user_name, user.user_password, user.allocated_devices or [])
+
+@app.delete("/delete_user/{user_name}/{user_password}")
+def delete_user(user_name: str, user_password: str):
+    """Deletes a user with the given name and password."""
+    return users.delete_user(user_name, user_password)
+
+@app.get("/energy_usage")
+def fetch_energy_usage(range: str):
+    if range == "daily":
+        return ej.get_energy_data("daily")
+    elif range == "monthly":
+        return ej.get_energy_data("monthly")
+    else:
+        raise HTTPException(status_code=400, detail="Invalid range")
+    
+@app.get("/energy_usage/{time_range}")
+def fetch_energy_usage(time_range: str):
+    return ej.get_energy_data(time_range)

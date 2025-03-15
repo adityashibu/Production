@@ -17,9 +17,12 @@ import {
 } from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import BackspaceIcon from "@mui/icons-material/Backspace";
-import { ThemeProvider, CssBaseline } from "@mui/material";
+import { ThemeProvider, CssBaseline, TextField, MenuItem } from "@mui/material";
 import getTheme from "../theme";
 import { useRouter } from "next/navigation";
+
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 // Custom Dot Component for iOS-style Password
 const DotInput = ({ value, maxLength }) => {
@@ -95,6 +98,8 @@ const Keypad = ({ onKeyPress, onClear }) => {
   );
 };
 
+
+
 const Users = () => {
   const [darkMode, setDarkMode] = useState(true);
   const [users, setUsers] = useState([]);
@@ -103,26 +108,104 @@ const Users = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [passwordInput, setPasswordInput] = useState("");
   const [passwordValid, setPasswordValid] = useState(null);
+  const [openNewUserDialog, setOpenNewUserDialog] = useState(false);
+  const [newUsername, setNewUsername] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [error, setError] = useState("");
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+
+  const handleDeleteClick = (user) => {
+    setUserToDelete(user);
+    setDeletePassword("");
+    setDeleteError("");
+    setDeleteDialogOpen(true);
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/user_data");
+      const data = await response.json();
+      setUsers(data.users || []);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleNewUserSubmit = async () => {
+    if (newUsername.trim() === "" || newPassword.length !== 4 || isNaN(newPassword)) {
+      setError("Username must not be empty and password must be a 4-digit number.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/add_user/${encodeURIComponent(newUsername)}/${encodeURIComponent(newPassword)}`,
+        {
+          method: "POST",
+        }
+      );
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        setError(`Failed to add user: ${errorMessage}`);
+        return;
+      }
+
+      setOpenNewUserDialog(false);
+      setNewUsername("");
+      setNewPassword("");
+      setError("");
+
+      fetchUsers();
+    } catch (error) {
+      console.error("Error adding user:", error);
+      setError("An error occurred while adding the user.");
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!userToDelete || deletePassword.length !== 4 || isNaN(deletePassword)) {
+      setDeleteError("Please enter a valid 4-digit password.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/delete_user/${encodeURIComponent(userToDelete.user_name)}/${encodeURIComponent(deletePassword)}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        setDeleteError(`Failed to delete user: ${errorMessage}`);
+        return;
+      }
+
+      // Fetch users again to update the UI correctly
+      await fetchUsers();
+
+      setDeleteDialogOpen(false);
+      setUserToDelete(null);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      setDeleteError("An error occurred while deleting the user.");
+    }
+  };
 
   const router = useRouter();
 
   const theme = getTheme(darkMode ? "dark" : "light");
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/user_data");
-        const data = await response.json();
-        setUsers(data.users || []);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
 
   const handleUserClick = (user) => {
     setSelectedUser(user);
@@ -136,7 +219,6 @@ const Users = () => {
       setPasswordValid(true);
   
       try {
-        // Now, only set the selected user AFTER successful login
         const response = await fetch(`http://localhost:8000/select_user/${selectedUser.user_name}`, {
           method: "POST",
         });
@@ -146,12 +228,10 @@ const Users = () => {
           return;
         }
   
-        // Fetch to verify if the user was actually set
         const selectedResponse = await fetch("http://localhost:8000/selected_user");
         const selectedData = await selectedResponse.json();
         console.log("Selected user from API:", selectedData);
   
-        // Redirect to dashboard after successful login
         router.push("/dashboard");
       } catch (error) {
         console.error("Error setting selected user:", error);
@@ -226,15 +306,15 @@ const Users = () => {
                   sx={{
                     bgcolor: "background.paper",
                     color: "text.primary",
-                    p: 2,
                     textAlign: "center",
+                    p: 2,
                     boxShadow: 6,
                     borderRadius: 3,
                     cursor: "pointer",
+                    position: "relative",
                   }}
-                  onClick={() => handleUserClick(user)}
                 >
-                  <CardContent>
+                  <CardContent onClick={() => handleUserClick(user)}>
                     <Typography
                       variant="h6"
                       sx={{
@@ -246,6 +326,19 @@ const Users = () => {
                       {user.user_name}
                     </Typography>
                   </CardContent>
+
+                  {/* Delete Button */}
+                  <IconButton
+                    sx={{
+                      position: "absolute",
+                      bottom: 8,
+                      right: 8,
+                      color: "primary.main",
+                    }}
+                    onClick={() => handleDeleteClick(user)}
+                  >
+                    <DeleteIcon sx={{ fontSize: 20 }} />
+                  </IconButton>
                 </Card>
               ))
             ) : (
@@ -298,6 +391,84 @@ const Users = () => {
             </Button>
           </DialogActions>
         </Dialog>
+
+        <Dialog open={openNewUserDialog} onClose={() => setOpenNewUserDialog(false)}>
+          <DialogTitle sx={{fontFamily: "Jetbrains Mono", color: "primary.main"}}>Add New User</DialogTitle>
+          <DialogContent>
+            <Typography variant="body1" sx={{ mb: 2, fontFamily: "JetBrains Mono" }}>
+              Enter a username and a 4-digit password.
+            </Typography>
+            <TextField
+              label="Username"
+              variant="outlined"
+              fullWidth
+              required
+              value={newUsername}
+              onChange={(e) => setNewUsername(e.target.value)}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              label="4-digit Password"
+              variant="outlined"
+              fullWidth
+              required
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              inputProps={{ maxLength: 4, pattern: "[0-9]*", inputMode: "numeric" }} 
+              sx={{ mb: 2 }}
+            />
+            {error && <Typography color="error">{error}</Typography>}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenNewUserDialog(false)} color="primary" sx={{ fontFamily: "JetBrains Mono" }}>
+              Cancel
+            </Button>
+            <Button onClick={handleNewUserSubmit} color="primary" sx={{ fontFamily: "JetBrains Mono" }}>
+              Submit
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+          <DialogTitle sx={{ fontFamily: "JetBrains Mono", color: "primary.main" }}>
+            Confirm Delete
+          </DialogTitle>
+          <DialogContent>
+            <Typography variant="body1" sx={{ mb: 2, fontFamily: "JetBrains Mono" }}>
+              Selected user to delete: <strong>{userToDelete?.user_name}</strong>
+            </Typography>
+            <TextField
+              label="Enter 4-digit Password"
+              variant="outlined"
+              fullWidth
+              required
+              type="password"
+              value={deletePassword}
+              onChange={(e) => setDeletePassword(e.target.value)}
+              inputProps={{ maxLength: 4, pattern: "[0-9]*", inputMode: "numeric" }}
+              sx={{ mb: 2 }}
+            />
+            {deleteError && <Typography color="error">{deleteError}</Typography>}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setDeleteDialogOpen(false)} color="primary" sx={{ fontFamily: "JetBrains Mono" }}>
+              Cancel
+            </Button>
+            <Button onClick={handleConfirmDelete} color="error" sx={{ fontFamily: "JetBrains Mono" }}>
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ mt: 5, fontFamily: "JetBrains Mono", color: "white" }}
+          onClick={() => setOpenNewUserDialog(true)}
+        >
+          Add New User
+        </Button>
       </Box>
     </ThemeProvider>
   );

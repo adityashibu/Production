@@ -12,6 +12,8 @@ import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 
+import AddUserDialog from "../newUserDialogue";
+
 import { signOut } from "firebase/auth";
 import { auth } from "@/app/firebase/config";
 
@@ -21,6 +23,8 @@ export default function AccountMenu() {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selectedUser, setSelectedUser] = React.useState("Loading...");
+  const [isSuperUser, setIsSuperUser] = React.useState(false);
+  const [openUserDialog, setOpenUserDialog] = React.useState(false);
 
   const open = Boolean(anchorEl);
   
@@ -42,7 +46,6 @@ export default function AccountMenu() {
     }
   };
 
-  // Fetch selected user from the backend
   React.useEffect(() => {
     const fetchSelectedUser = async () => {
       try {
@@ -52,6 +55,8 @@ export default function AccountMenu() {
         }
         const data = await response.json();
         setSelectedUser(data.selected_user || "Unknown User");
+        setIsSuperUser(data.user_role === "super_user");
+        console.log("Fetched user role:", data.user_role);
       } catch (error) {
         console.error("Error fetching user:", error);
         setSelectedUser("Error fetching user");
@@ -60,6 +65,9 @@ export default function AccountMenu() {
 
     fetchSelectedUser();
   }, []);
+
+  // Log just before rendering
+  // console.log("isSuperUser:", isSuperUser);
 
   return (
     <React.Fragment>
@@ -73,7 +81,7 @@ export default function AccountMenu() {
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32 }}>{selectedUser.charAt(0)}</Avatar>
+            <Avatar sx={{ width: 32, height: 32, fontFamily: "Jetbrains Mono" }}>{selectedUser.charAt(0)}</Avatar>
           </IconButton>
         </Tooltip>
       </Box>
@@ -122,15 +130,17 @@ export default function AccountMenu() {
             color: "primary.main",
           }}
         >
-          <Avatar /> {selectedUser}
+          <Avatar sx={{ fontFamily: "Jetbrains Mono" }}>{selectedUser.charAt(0)}</Avatar> {selectedUser}
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleClose} sx={{ fontFamily: "JetBrains Mono" }}>
-          <ListItemIcon>
-            <PersonAdd fontSize="small" sx={{ color: "primary.main" }} />
-          </ListItemIcon>
-          Add another account
-        </MenuItem>
+        {isSuperUser && (
+          <MenuItem onClick={() => setOpenUserDialog(true)} sx={{ fontFamily: "JetBrains Mono" }}>
+            <ListItemIcon>
+              <PersonAdd fontSize="small" sx={{ color: "primary.main" }} />
+            </ListItemIcon>
+            Add another account
+          </MenuItem>
+        )}
         <MenuItem onClick={handleClose} sx={{ fontFamily: "JetBrains Mono" }}>
           <ListItemIcon>
             <Settings fontSize="small" sx={{ color: "primary.main" }} />
@@ -144,6 +154,12 @@ export default function AccountMenu() {
           Logout
         </MenuItem>
       </Menu>
+
+      <AddUserDialog
+        open={openUserDialog}
+        onClose={() => setOpenUserDialog(false)}
+        // onSave={handleSaveUser}
+      />
     </React.Fragment>
   );
 }

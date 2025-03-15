@@ -38,6 +38,7 @@ const Devices = () => {
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [notConnectedDevices, setNotConnectedDevices] = useState([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState(null);
+  const [isSuperUser, setIsSuperUser] = useState(false);
   // const [selectedDeviceName, setSelectedDeviceName] = useState("");
 
   const disappearingStyle = {
@@ -46,6 +47,17 @@ const Devices = () => {
   };
 
   useEffect(() => {
+    fetch("http://localhost:8000/selected_user")
+      .then((res) => res.json())
+      .then((data) => {
+        setIsSuperUser(data.user_role === "super_user");
+      })
+      .catch((err) => {
+        console.error("Error fetching user role:", err);
+        setIsSuperUser(false);
+      });
+
+    // Fetch devices information
     fetch("http://localhost:8000/device_info")
       .then((res) => res.json())
       .then((data) => {
@@ -259,19 +271,21 @@ const Devices = () => {
             marginBottom: 3,
           }}
         >
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={handleAddDeviceClick}
-            sx={{
-              fontFamily: "JetBrains Mono",
-              fontWeight: 600,
-              textTransform: "none",
-              color: "white",
-            }}
-          >
-            Add Device
-          </Button>
+          {isSuperUser && (
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={handleAddDeviceClick}
+              sx={{
+                fontFamily: "JetBrains Mono",
+                fontWeight: 600,
+                textTransform: "none",
+                color: "white",
+              }}
+            >
+              Add Device
+            </Button>
+          )}
         </Box>
 
         <Grid container spacing={3}>
@@ -336,13 +350,14 @@ const Devices = () => {
                     }}
                     onClick={() => handleEdit(device.id, device.name)}
                   >
-                    <EditIcon sx={{ fontSize: 20 }} />
+                    {isSuperUser && <EditIcon sx={{ fontSize: 20 }} />}
                   </IconButton>
+
                   <IconButton
                     sx={{ position: "absolute", bottom: 8, right: 8 }}
                     onClick={() => handleDeleteClick(device.id)}
                   >
-                    <DeleteIcon sx={{ fontSize: 20 }} />
+                    {isSuperUser && <DeleteIcon sx={{ fontSize: 20 }} />}
                   </IconButton>
                 </CardContent>
               </Card>

@@ -1,11 +1,12 @@
 # JSON files
 devices.json
 selected_user.json
+selected_user_devices.json
 
 # Venv files
 venv/
 
-Python cache files
+# Python cache files
 __pycache__/
 
 # Secrets
