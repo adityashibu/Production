@@ -8,7 +8,7 @@ groupsFile = os.path.abspath(os.path.join(BASE_DIR, "../database/groups.json"))
 def addGroup(name, devices):
     """Add a new group to the JSON file."""
     if not devices:
-            return {"error": "No devices selected!"}
+        return {"error": "No devices selected!"}
         
     if not name:
         return {"error": "No group name provided!"}
@@ -16,6 +16,11 @@ def addGroup(name, devices):
     with open(groupsFile, "r") as file:
         data = json.load(file)
         groups = data.get("device_groups", [])
+        
+        for group in groups:
+            if group["name"] == name:
+                return {"error": "Group name already exists!"}
+            
         new_id = max([group["id"] for group in groups] + [0]) + 1
         groups.append({
             "id": new_id,
@@ -24,7 +29,7 @@ def addGroup(name, devices):
             "devices": devices
         })
         data["groups"] = groups
-        
+
     for device in devices:
         dj.changeDeviceStatus(device, "on")    
         
