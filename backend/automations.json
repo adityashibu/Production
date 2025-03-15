@@ -1,12 +1,36 @@
 {
-    "automation_example": [
+    "automations": [
         {
-        "id": 1,
-        "device": "absolute device name goes here",    
-        "name": "Name goes here",
-        "enabled": true,
-        "triggers": "time goes here (in 24 hour format)",
-        "action": "function call goes here"
+            "id": 1,
+            "name": "Test",
+            "device_id": 1,
+            "enabled": true,
+            "triggers": "11:05",
+            "status": "off"
+        },
+        {
+            "id": 2,
+            "name": "Test2",
+            "device_id": "2",
+            "enabled": true,
+            "triggers": "8:45",
+            "status": "off"
+        },
+        {
+            "id": 3,
+            "name": "Test3",
+            "device_id": 1,
+            "triggers": "08:23",
+            "enabled": true,
+            "status": "off"
+        },
+        {
+            "id": 4,
+            "name": "Test4",
+            "device_id": 8,
+            "triggers": "22:23",
+            "enabled": true,
+            "status": "off"
         }
     ]
 }

@@ -19,3 +19,7 @@ def get_energy_data(time_range: str):
         return {"error": f"{time_range}_energy.json not found."}
     except json.JSONDecodeError:
         return {"error": f"Invalid JSON format in {time_range}_energy.json."}
+
+def get_energy_data_pdf(time_range: str):
+    """Fetch energy usage data from JSON files and convert to PDF."""
+    return # To be implemented

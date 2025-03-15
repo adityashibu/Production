@@ -68,7 +68,7 @@ def update_firestore():
         if device.get("connection_status") == "connected"
     ]
 
-    existing_devices = {doc.id: doc.to_dict() for doc in db.collection("Devices").stream()}
+    existing_devices = {doc.id: doc.to_dict() for doc in db.collection("Device").stream()}
 
     added_devices = []
     modified_devices = []
@@ -80,16 +80,16 @@ def update_firestore():
     for device in filtered_devices:
         device_id = str(device["id"])
         if device_id not in existing_devices:
-            db.collection("Devices").document(device_id).set(device)
+            db.collection("Device").document(device_id).set(device)
             added_devices.append(device)
         elif existing_devices[device_id] != device:
-            db.collection("Devices").document(device_id).set(device)
+            db.collection("Device").document(device_id).set(device)
             modified_devices.append(device)
 
     # Delete devices not in the JSON anymore
     for device_id in existing_devices.keys():
         if device_id not in new_device_ids:
-            db.collection("Devices").document(device_id).delete()
+            db.collection("Device").document(device_id).delete()
             deleted_devices.append(device_id)
 
     # Logging updates

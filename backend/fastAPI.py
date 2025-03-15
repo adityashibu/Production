@@ -2,8 +2,9 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 import devices_json as dj
-import users
+import users as u
 import energy_json as ej
+import automations as am
 
 import asyncio
 import os
@@ -18,7 +19,6 @@ USER_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "d
 
 app = FastAPI()
 
-# Add CORS Middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -41,6 +41,7 @@ async def startup_event():
     """Starts device updates when the FastAPI server starts."""
     loop = asyncio.get_event_loop()
     loop.create_task(dj.updateDevices())
+    asyncio.create_task(am.automation_scheduler())
 
 @app.get("/")
 def root():
@@ -67,7 +68,7 @@ def change_device_name(id: int, new_name: str):
 def get_updates():
     """Returns combined updates from devices and users."""
     device_updates = dj.getUpdates()
-    user_updates = users.getUpdates()
+    user_updates = u.getUpdates()
 
     all_updates = device_updates + user_updates
 
@@ -99,27 +100,32 @@ def get_device_functions():
 @app.post("/select_user/{user}")
 def set_selected_user(user: str):
     """Sets the selected user"""
-    return users.select_user(user)
+    return u.select_user(user)
 
 @app.get("/selected_user")
 def get_selected_user():
     """Returns the selected user"""
-    return users.get_selected_user()
+    return u.get_selected_user()
 
 @app.post("/add_user")
 def add_new_user(user: UserRequest):
     """Adds a new user with the given name, password, and optional allocated devices."""
-    return users.add_user(user.user_name, user.user_password, user.allocated_devices or [])
+    return u.add_user(user.user_name, user.user_password, user.allocated_devices or [])
 
 @app.delete("/delete_user/{user_name}/{user_password}")
 def delete_user(user_name: str, user_password: str):
     """Deletes a user with the given name and password."""
-    return users.delete_user(user_name, user_password)
+    return u.delete_user(user_name, user_password)
 
 @app.post("/allocate_devices")
 def allocate_devices(request: DeviceAllocation):
     """Allocates devices to a user based on their user ID."""
-    return users.allocate_devices(request.user_id, request.device_ids)
+    return u.allocate_devices(request.user_id, request.device_ids)
+
+@app.get("/devices/oven/{device_id}/timer/{timer}")
+def set_oven_timer(device_id: int, timer: int):
+    """Set the timer for an oven device."""
+    return dj.setOvenTimer(device_id, timer)
 
 @app.get("/energy_usage")
 def fetch_energy_usage(range: str):
@@ -133,3 +139,38 @@ def fetch_energy_usage(range: str):
 @app.get("/energy_usage/{time_range}")
 def fetch_energy_usage(time_range: str):
     return ej.get_energy_data(time_range)
+
+@app.get("/energy_usage/{time_range}/pdf")
+def fetch_energy_usage_pdf(time_range: str):
+    return ej.get_energy_data_pdf(time_range)
+
+@app.get("/automations")
+async def get_automations():
+    """Returns the current automation rules"""
+    return am.loadAutomations()
+
+@app.post("/automations/add_automation/{name}/{device_id}/{trigger_time}/{status}")
+def add_automation(name: str, device_id: int, trigger_time: str, status: str):
+    """Add a new automation rule with enabled=True by default"""
+    return am.addAutomation(name, device_id, trigger_time, status)
+
+@app.put("/automations/edit_automation/{automation_id}/{name}/{device_id}/{trigger_time}/{status}")
+def edit_automation(automation_id: int, name: str, device_id: int, trigger_time: str, status: str):
+    status_bool = status.lower() == "true"
+    # print(f"Received: ID={automation_id}, Name={name}, Device ID={device_id}, Time={trigger_time}, Status={status_bool}")
+    return am.editAutomation(automation_id, name, device_id, trigger_time, status_bool)
+
+@app.delete("/automations/{automation_id}")
+def delete_automation(automation_id: int):
+    """FastAPI endpoint to delete an automation by ID."""
+    return am.deleteAutomation(automation_id)
+
+@app.post("/automations/{automation_id}/{status}")
+def update_automation_status(automation_id: int, status: bool):
+    """Update the 'enabled' status of an automation by ID"""
+    return am.updateAutomationStatus(automation_id, status)
+
+@app.delete("/automations/{automation_id}")
+def delete_automation(automation_id: int):
+    """Delete an automation rule by ID"""
+    return am.deleteAutomation(automation_id)
