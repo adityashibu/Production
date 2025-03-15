@@ -5,6 +5,7 @@ import devices_json as dj
 import users as u
 import energy_json as ej
 import automations as am
+import groups as gr
 
 import asyncio
 import os
@@ -174,3 +175,23 @@ def update_automation_status(automation_id: int, status: bool):
 def delete_automation(automation_id: int):
     """Delete an automation rule by ID"""
     return am.deleteAutomation(automation_id)
+
+@app.post("/groups/add_group/{name}/{device_ids}")
+def add_group(name: str, device_ids: List[int]):
+    """Add a new group with the given name and device IDs"""
+    return gr.addGroup(name, device_ids)
+
+@app.post("/groups/add_devices/{group_id}/{device_ids}")
+def add_devices_to_group(group_id: int, device_ids: List[int]):
+    """Add devices to a group by group ID"""
+    return gr.addDevices(group_id, device_ids)
+
+@app.post("/groups/remove_devices/{group_id}/{device_ids}")
+def remove_devices_from_group(group_id: int, device_ids: List[int]):
+    """Remove devices from a group by group ID"""
+    return gr.removeDevices(group_id, device_ids)
+
+@app.delete("/groups/{group_id}")
+def delete_group(group_id: int):
+    """Delete a group by group ID"""
+    return gr.deleteGroup(group_id)
