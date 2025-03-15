@@ -53,3 +53,27 @@ def deleteGroup(id):
     with open(groupsFile, "w") as file:
         json.dump(data, file, indent=4)
         return {"success": "Group deleted successfully!"}
+    
+def addDevices(id, devices):
+    """Add devices to a group."""
+    with open(groupsFile, "r") as file:
+        data = json.load(file)
+        groups = data.get("device_groups", [])
+        group = next((group for group in groups if group["id"] == id), None)
+        
+        if not group:
+            return {"error": "Group not found!"}
+        
+        group_devices = group.get("devices", [])
+        for device in devices:
+            if device in group_devices:
+                return {"error": "One or more devices are already in the group!"}
+        
+        group_devices.extend(devices)
+        group["devices"] = list(set(group_devices))
+        
+        data["groups"] = groups
+        
+    with open(groupsFile, "w") as file:
+        json.dump(data, file, indent=4)
+        return {"success": "Devices added successfully!"}
