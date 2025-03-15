@@ -397,6 +397,7 @@ const Devices = () => {
           </Button>
           <Button
             onClick={handleSave}
+            variant="contained"
             color="primary"
             sx={{ fontFamily: "JetBrains Mono" }}
           >
@@ -432,6 +433,7 @@ const Devices = () => {
           </Button>
           <Button
             onClick={handleDeleteConfirm}
+            variant="contained"
             color="primary"
             sx={{ fontFamily: "JetBrains Mono" }}
           >
@@ -501,6 +503,7 @@ const Devices = () => {
           </Button>
           <Button
             onClick={handleAddDeviceConfirm}
+            variant="contained"
             color="primary"
             sx={{ fontFamily: "JetBrains Mono" }}
           >
