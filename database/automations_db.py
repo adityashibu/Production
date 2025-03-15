@@ -59,7 +59,7 @@ def set_automations_data():
             device_ids = [device_ids]
 
         # Convert to Firestore references
-        device_refs = [db.collection("Devices").document(str(device_id)) for device_id in device_ids]
+        device_refs = [db.collection("Device").document(str(device_id)) for device_id in device_ids]
 
         filtered_automations[automation_id] = {
             "id": automation["id"],
@@ -74,16 +74,16 @@ def set_automations_data():
     # Add or update automations
     for automation_id, automation_data in filtered_automations.items():
         if automation_id not in existing_automations:
-            db.collection("Automations").document(automation_id).set(automation_data)
+            db.collection("Automation").document(automation_id).set(automation_data)
             added_automations.append(automation_data)
         elif existing_automations[automation_id] != automation_data:
-            db.collection("Automations").document(automation_id).set(automation_data)
+            db.collection("Automation").document(automation_id).set(automation_data)
             modified_automations.append(automation_data)
 
     # Delete outdated automations no longer in the JSON
     for automation_id in existing_automations.keys():
         if automation_id not in filtered_automations:
-            db.collection("Automations").document(automation_id).delete()
+            db.collection("Automation").document(automation_id).delete()
             deleted_automations.append(automation_id)
 
     # Logging changes
