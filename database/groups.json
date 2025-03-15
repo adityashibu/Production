@@ -1,0 +1,16 @@
+{
+  "device_groups": [
+    {
+      "id": 1,
+      "name": "Living Room Devices",
+      "status": "on",
+      "devices": [1, 4, 6]
+    },
+    {
+      "id": 2,
+      "name": "Bedroom Devices",
+      "status": "off",
+      "devices": [2, 5]
+    }
+  ]
+}
