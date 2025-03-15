@@ -66,6 +66,9 @@ def update_firestore():
         {key: device[key] for key in ["id", "name", "ip"]}
         for device in data["smart_home_devices"]
         if device.get("connection_status") == "connected"
+        {key: device[key] for key in ["id", "name", "ip"]}
+        for device in data["smart_home_devices"]
+        if device.get("connection_status") == "connected"
     ]
 
     existing_devices = {doc.id: doc.to_dict() for doc in db.collection("Device").stream()}
