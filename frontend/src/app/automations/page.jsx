@@ -103,10 +103,8 @@ const Automations = () => {
     if (automation) {
       setEditingAutomation(automation);
       setName(automation.name);
-
       const triggerTime = dayjs(automation.triggers, "HH:mm");
       setTrigger(triggerTime.isValid() ? triggerTime : dayjs());
-
       setCondition("At time");
       setSelectedDevice(getDeviceName(automation.device_id));
       setDeviceStatus(automation.status === "on");
@@ -138,7 +136,9 @@ const Automations = () => {
       return;
     }
 
-    const apiUrl = editingAutomation
+    const isEditing = editingAutomation !== null; // Check if editing
+
+    const apiUrl = isEditing
       ? `http://localhost:8000/automations/edit_automation/${
           editingAutomation.id
         }/${encodeURIComponent(name)}/${device.id}/${trigger.format(
@@ -150,7 +150,7 @@ const Automations = () => {
 
     try {
       const response = await fetch(apiUrl, {
-        method: editingAutomation ? "PUT" : "POST",
+        method: isEditing ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
       });
 
@@ -216,7 +216,7 @@ const Automations = () => {
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            onClick={handleOpenDialog}
+            onClick={() => handleOpenDialog()}
             sx={{
               fontFamily: "JetBrains Mono",
               fontWeight: 600,

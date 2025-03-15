@@ -150,7 +150,7 @@ async def get_automations():
     return am.loadAutomations()
 
 @app.post("/automations/add_automation/{name}/{device_id}/{trigger_time}/{status}")
-def add_automation(name: str, device_id: int, trigger_time: str, status: bool):
+def add_automation(name: str, device_id: int, trigger_time: str, status: str):
     """Add a new automation rule to the JSON file"""
     return am.addAutomation(name, device_id, trigger_time, status)
 
@@ -159,6 +159,11 @@ def edit_automation(automation_id: int, name: str, device_id: int, trigger_time:
     status_bool = status.lower() == "true"
     # print(f"Received: ID={automation_id}, Name={name}, Device ID={device_id}, Time={trigger_time}, Status={status_bool}")
     return am.editAutomation(automation_id, name, device_id, trigger_time, status_bool)
+
+@app.delete("/automations/{automation_id}")
+def delete_automation(automation_id: int):
+    """FastAPI endpoint to delete an automation by ID."""
+    return am.deleteAutomation(automation_id)
 
 @app.post("/automations/{automation_id}/{status}")
 def update_automation_status(automation_id: int, status: bool):
