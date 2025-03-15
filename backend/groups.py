@@ -77,3 +77,47 @@ def addDevices(id, devices):
     with open(groupsFile, "w") as file:
         json.dump(data, file, indent=4)
         return {"success": "Devices added successfully!"}
+    
+def removeDevices(id, devices):
+    """Remove devices from a group."""
+    with open(groupsFile, "r") as file:
+        data = json.load(file)
+        groups = data.get("device_groups", [])
+        group = next((group for group in groups if group["id"] == id), None)
+        
+        if not group:
+            return {"error": "Group not found!"}
+        
+        group_devices = group.get("devices", [])
+        for device in devices:
+            if device not in group_devices:
+                return {"error": "One or more devices are not in the group!"}
+        
+        group_devices = [device for device in group_devices if device not in devices]
+        group["devices"] = group_devices
+        
+        data["groups"] = groups
+        
+    with open(groupsFile, "w") as file:
+        json.dump(data, file, indent=4)
+        return {"success": "Devices removed successfully!"}
+
+def changeGroupStatus(id, status):
+    """Change the status of a group."""
+    with open(groupsFile, "r") as file:
+        data = json.load(file)
+        groups = data.get("device_groups", [])
+        group = next((group for group in groups if group["id"] == id), None)
+        
+        if not group:
+            return {"error": "Group not found!"}
+        
+        group["status"] = status
+        data["groups"] = groups
+        
+    for device in group["devices"]:
+        dj.changeDeviceStatus(device, status)
+        
+    with open(groupsFile, "w") as file:
+        json.dump(data, file, indent=4)
+        return {"success": "Group status changed successfully!"}
