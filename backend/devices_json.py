@@ -132,7 +132,7 @@ def changeDeviceStatus(id, status): #Overloading previous function to persist ch
         if device["id"] == id:
             device["status"] = status
             saveJSON(data)
-            message = f"Changed {device['name']} status to {status}."
+            message = f"Turned {status} {device['name']}."
             updates.append(message)
             return {"success": message}
     return {"error": "ID not found!"}
