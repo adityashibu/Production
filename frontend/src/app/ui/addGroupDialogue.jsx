@@ -95,7 +95,7 @@ const AddGroupDialog = ({ open, onClose, group, onSave }) => {
       })
         .then((res) => res.json())
         .then((data) => {
-          onSave(data); // Send the newly created/updated group to parent
+          onSave(data);
           onClose();
         })
         .catch((err) => console.error("Error adding group:", err));
