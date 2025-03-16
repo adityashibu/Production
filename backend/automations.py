@@ -89,10 +89,11 @@ async def automation_scheduler():
         for automation in automations:
             automation_device_id = int(automation["device_id"])
             trigger_time = automation["triggers"]
+            device_status = automation["status"]
 
             if automation["enabled"] and trigger_time == current_time:
                 print(f"Triggering automation: {automation['name']} at {current_time}")
-                changeDeviceStatus(automation_device_id)
+                changeDeviceStatus(automation_device_id, device_status)
 
         now = datetime.now()
         next_minute = (now + timedelta(minutes=1)).replace(second=0, microsecond=0)
