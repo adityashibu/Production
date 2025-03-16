@@ -136,7 +136,7 @@ export default function Navbar() {
               overflow: "visible",
               filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
               mt: 1.5,
-              borderRadius: 4,
+              borderRadius: 2,
               "&::before": {
                 content: '""',
                 display: "block",
