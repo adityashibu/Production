@@ -193,15 +193,10 @@ def add_group(group: GroupRequest):
     """Add a new group to the selected user"""
     return gr.addGroup(group.name, group.device_ids)
 
-@app.post("/groups/add_devices/{group_id}")
-def add_devices_to_group(group_id: int, devices: DeviceIdsRequest):
-    """Add devices to a group for the selected user"""
-    return gr.addDevices(group_id, devices.device_ids)
-
-@app.post("/groups/remove_devices/{group_id}")
-def remove_devices_from_group(group_id: int, request: DeviceIdsRequest):
-    """Remove devices from a group for the selected user"""
-    return gr.removeDevices(group_id, request.device_ids)
+@app.post("/groups/edit_group/{group_id}")
+def edit_group(group_id: int, group: GroupRequest):
+    """Edit an existing group for the selected user"""
+    return gr.editGroup(group_id, group.name, group.device_ids, group.status)
 
 @app.delete("/groups/{group_id}")
 def delete_group(group_id: int):

@@ -82,8 +82,8 @@ def deleteGroup(group_id):
     return {"success": "Group deleted successfully!"}
 
 
-def addDevices(group_id, devices):
-    """Add devices to a group"""
+def editGroup(group_id, name=None, devices=None, status=None):
+    """Edit an existing group by overwriting its details."""
     selected_user = get_selected_user()
     users_data = load_users()
     user = next((u for u in users_data["users"] if u["user_name"] == selected_user), None)
@@ -97,41 +97,18 @@ def addDevices(group_id, devices):
     if not group:
         return {"error": "Group not found!"}
 
-    group_devices = set(group.get("devices", []))
-    for device in devices:
-        if device in group_devices:
-            return {"error": "One or more devices are already in the group!"}
-
-    group_devices.update(devices)
-    group["devices"] = list(group_devices)
-
-    save_users(users_data)
-    return {"success": "Devices added successfully!"}
-
-
-def removeDevices(group_id, devices):
-    """Remove devices from a group"""
-    selected_user = get_selected_user()
-    users_data = load_users()
-    user = next((u for u in users_data["users"] if u["user_name"] == selected_user), None)
-
-    if not user:
-        return {"error": "Selected user not found!"}
-
-    groups = user.get("device_groups", [])
-    group = next((g for g in groups if g["id"] == group_id), None)
-
-    if not group:
-        return {"error": "Group not found!"}
-
-    group_devices = set(group.get("devices", []))
-    if not any(device in group_devices for device in devices):
-        return {"error": "One or more devices are not in the group!"}
-
-    group["devices"] = list(group_devices - set(devices))
+    # Overwrite values if provided
+    if name:
+        group["name"] = name
+    if status:
+        group["status"] = status
+        for device in group["devices"]:
+            dj.changeDeviceStatus(device, status)
+    if devices is not None:
+        group["devices"] = devices
 
     save_users(users_data)
-    return {"success": "Devices removed successfully!"}
+    return {"success": "Group updated successfully!"}
 
 
 def changeGroupStatus(group_id, status):
@@ -156,6 +133,7 @@ def changeGroupStatus(group_id, status):
 
     save_users(users_data)
     return {"success": "Group status changed successfully!"}
+
 
 def getGroupsForSelectedUser():
     """Retrieve all groups associated with the selected user."""

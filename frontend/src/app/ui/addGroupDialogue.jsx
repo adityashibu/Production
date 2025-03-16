@@ -21,7 +21,7 @@ import IOSSwitch from "../ui/iosButton";
 
 const AddGroupDialog = ({ open, onClose, group, onSave }) => {
   const [groupName, setGroupName] = useState("");
-  const [groupStatus, setGroupStatus] = useState(false); // false = "off", true = "on"
+  const [groupStatus, setGroupStatus] = useState(false);
   const [selectedDevices, setSelectedDevices] = useState([]);
   const [deviceList, setDeviceList] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
@@ -68,31 +68,34 @@ const AddGroupDialog = ({ open, onClose, group, onSave }) => {
 
     const newGroup = {
       name: groupName,
+      device_ids: selectedDevices,
       status: groupStatus ? "on" : "off",
-      devices: selectedDevices,
     };
 
     if (group) {
-      fetch(`http://localhost:8000/groups/${group.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newGroup),
-      })
-        .then((res) => res.json())
-        .then(() => {
-          onSave();
-          onClose();
-        })
-        .catch((err) => console.error("Error editing group:", err));
-    } else {
-      fetch("http://localhost:8000/groups", {
+      fetch(`http://localhost:8000/groups/edit_group/${group.id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newGroup),
       })
         .then((res) => res.json())
-        .then(() => {
-          onSave();
+        .then((data) => {
+          onSave(data);
+          onClose();
+        })
+        .catch((err) => console.error("Error editing group:", err));
+    } else {
+      fetch("http://localhost:8000/groups/add_group", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: groupName,
+          device_ids: selectedDevices,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          onSave(data); // Send the newly created/updated group to parent
           onClose();
         })
         .catch((err) => console.error("Error adding group:", err));

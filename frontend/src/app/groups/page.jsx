@@ -22,27 +22,9 @@ const Groups = () => {
   const [groups, setGroups] = useState([]);
   const [checked, setChecked] = useState([]);
   const [devices, setDevices] = useState({});
-  const [editingGroup, setEditingGroup] = useState(null); // New state to store the group being edited
+  const [editingGroup, setEditingGroup] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:8000/groups")
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data.device_groups)) {
-          setGroups(data.device_groups);
-          setChecked(
-            data.device_groups.filter((g) => g.status === "on").map((g) => g.id)
-          );
-        } else {
-          console.error("Unexpected API response:", data);
-          setGroups([]);
-        }
-      })
-      .catch((err) => {
-        console.error("Error fetching groups:", err);
-        setGroups([]);
-      });
-
     fetch("http://localhost:8000/device_info")
       .then((res) => res.json())
       .then((data) => {
@@ -57,6 +39,8 @@ const Groups = () => {
         }
       })
       .catch((err) => console.error("Error fetching devices:", err));
+
+    fetchGroups();
   }, []);
 
   const handleToggle = (groupId) => {
@@ -75,6 +59,26 @@ const Groups = () => {
     }).catch((err) => console.error("Error toggling group:", err));
   };
 
+  const fetchGroups = () => {
+    fetch("http://localhost:8000/groups")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data.device_groups)) {
+          setGroups(data.device_groups);
+          setChecked(
+            data.device_groups.filter((g) => g.status === "on").map((g) => g.id)
+          );
+        } else {
+          console.error("Unexpected API response:", data);
+          setGroups([]);
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching groups:", err);
+        setGroups([]);
+      });
+  };
+
   const handleDeleteClick = (groupId) => {
     fetch(`http://localhost:8000/groups/${groupId}`, { method: "DELETE" })
       .then(() => {
@@ -85,9 +89,14 @@ const Groups = () => {
   };
 
   const handleEdit = (groupId, groupName, groupDevices) => {
-    // Set the group to be edited
     setEditingGroup({ id: groupId, name: groupName, devices: groupDevices });
-    setOpen(true); // Open the dialog for editing
+    setOpen(true);
+  };
+
+  const handleGroupSaved = (newGroup) => {
+    setGroups((prevGroups) => [...prevGroups, newGroup]);
+
+    fetchGroups();
   };
 
   return (
@@ -112,7 +121,7 @@ const Groups = () => {
               color: "white",
             }}
             onClick={() => {
-              setEditingGroup(null); // Clear editing group when adding a new one
+              setEditingGroup(null);
               setOpen(true);
             }}
           >
@@ -205,14 +214,23 @@ const Groups = () => {
                     justifyContent: "center",
                   }}
                 >
-                  {group.devices.map((deviceId) =>
-                    devices[deviceId] ? (
-                      <Chip
-                        key={deviceId}
-                        label={devices[deviceId]}
-                        sx={{ fontSize: 12, fontFamily: "JetBrains Mono" }}
-                      />
-                    ) : null
+                  {group.devices && group.devices.length > 0 ? (
+                    group.devices.map((deviceId) =>
+                      devices[deviceId] ? (
+                        <Chip
+                          key={deviceId}
+                          label={devices[deviceId]}
+                          sx={{ fontSize: 12, fontFamily: "JetBrains Mono" }}
+                        />
+                      ) : null
+                    )
+                  ) : (
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      No devices assigned
+                    </Typography>
                   )}
                 </Box>
               </CardContent>
@@ -225,7 +243,8 @@ const Groups = () => {
       <AddGroupDialog
         open={open}
         onClose={() => setOpen(false)}
-        group={editingGroup} // Pass the group data to the dialog
+        group={editingGroup}
+        onSave={handleGroupSaved}
       />
     </div>
   );
