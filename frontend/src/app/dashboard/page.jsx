@@ -49,6 +49,7 @@ const Dashboard = () => {
   const [checked, setChecked] = useState([]);
   const [timeRange, setTimeRange] = useState("realtime");
   const [energyData, setEnergyData] = useState({ daily: [], monthly: [] });
+  const [automations, setAutomations] = useState([]);
 
   const theme = useTheme();
   const boxShadow =
@@ -61,7 +62,6 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch device data
         const deviceResponse = await fetch("http://localhost:8000/device_info");
         const deviceResult = await deviceResponse.json();
 
@@ -93,6 +93,13 @@ const Dashboard = () => {
           daily: dailyResult,
           monthly: monthlyResult,
         });
+
+        const automationResponse = await fetch(
+          "http://localhost:8000/automations"
+        );
+        const automationResult = await automationResponse.json();
+
+        setAutomations(automationResult.automations);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -118,7 +125,6 @@ const Dashboard = () => {
         throw new Error("Failed to change device status");
       }
 
-      // Toggle switch state locally
       setChecked((prevChecked) => {
         const currentIndex = prevChecked.indexOf(deviceId);
         const newChecked = [...prevChecked];
@@ -171,14 +177,14 @@ const Dashboard = () => {
                 link: "/devices",
               },
               {
-                title: "Automation Schedules", // Hardcoded value for now
-                value: "18 Schedules",
+                title: "Automation Schedules",
+                value: `${automations.length} Schedules`,
                 icon: (
                   <PrecisionManufacturingIcon
                     sx={{ color: "primary.main", fontSize: { xs: 50, md: 65 } }}
                   />
                 ),
-                link: "automations",
+                link: "/automations",
               },
             ].map((card, index) => (
               <Box key={index} sx={{ flex: 1 }}>
