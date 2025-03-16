@@ -71,6 +71,36 @@ def add_user(user_name: str, user_password: str, allocated_device_ids: list = No
 
     return {"success": message, "user": new_user}
 
+def rename_selected_user(new_name: str):
+    """Rename the currently selected user and update both selected_user.json and users_db.json."""
+    selected_user_data = get_selected_user()
+    current_name = selected_user_data.get("selected_user")
+
+    if not current_name:
+        return {"error": "No user selected."}
+
+    users = load_users()
+
+    if any(user["user_name"] == new_name for user in users):
+        return {"error": f"Username '{new_name}' is already taken."}
+
+    user = next((u for u in users if u["user_name"] == current_name), None)
+    
+    if not user:
+        return {"error": f"User {current_name} not found in database."}
+
+    user["user_name"] = new_name
+    save_users(users)
+
+    with open(SELECTED_USER_FILE, "w") as f:
+        json.dump({"selected_user": new_name, "user_role": user["user_role"]}, f)
+
+    message = f"User {current_name} renamed to {new_name}."
+    updates.append(message)
+
+    return {"success": message, "selected_user": new_name, "user_role": user["user_role"]}
+
+
 
 def delete_user(user_name: str, user_password: str):
     """Deletes a user from the system if the given password matches. If deleting the super user, assign the position to the next user.

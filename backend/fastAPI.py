@@ -125,6 +125,11 @@ def add_new_user(user: UserRequest):
     """Adds a new user with the given name, password, and optional allocated devices."""
     return u.add_user(user.user_name, user.user_password, user.allocated_devices or [])
 
+@app.put("/rename_user/{new_name}")
+def rename_user(new_name: str):
+    """API endpoint to rename the selected user."""
+    return u.rename_selected_user(new_name)
+
 @app.delete("/delete_user/{user_name}/{user_password}")
 def delete_user(user_name: str, user_password: str):
     """Deletes a user with the given name and password."""
