@@ -38,7 +38,7 @@ def addAutomation(name, device_id, trigger_time, status):
             "name": name,
             "device_id": device_id,
             "triggers": trigger_time,
-            "enabled": True,  # Always set to True by default
+            "enabled": True,
             "status": status
         })
         data["automations"] = automations

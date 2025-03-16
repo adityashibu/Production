@@ -14,7 +14,64 @@
                 "7",
                 "8"
             ],
-            "user_role": "super_user"
+            "user_role": "super_user",
+            "device_groups": [
+                {
+                    "id": 1,
+                    "name": "Living Room Devices",
+                    "status": "on",
+                    "devices": [
+                        1,
+                        4,
+                        6
+                    ]
+                },
+                {
+                    "id": 2,
+                    "name": "Bedroom Device",
+                    "status": "on",
+                    "devices": [
+                        1,
+                        2,
+                        3
+                    ]
+                },
+                {
+                    "id": 3,
+                    "name": "Hall Devices",
+                    "status": "on",
+                    "devices": [
+                        1,
+                        3,
+                        4,
+                        6
+                    ]
+                },
+                {
+                    "id": 4,
+                    "name": "Bathroom Devices",
+                    "status": "on",
+                    "devices": [
+                        7,
+                        8,
+                        6,
+                        5
+                    ]
+                },
+                {
+                    "id": 5,
+                    "name": "Idk what this is",
+                    "status": "on",
+                    "devices": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        7,
+                        8
+                    ]
+                }
+            ]
         },
         {
             "user_id": 2,
@@ -27,7 +84,18 @@
                 "3",
                 "7"
             ],
-            "user_role": "sub_user"
+            "user_role": "sub_user",
+            "device_groups": [
+                {
+                    "id": 2,
+                    "name": "Bedroom Devices",
+                    "status": "off",
+                    "devices": [
+                        2,
+                        7
+                    ]
+                }
+            ]
         },
         {
             "user_id": 3,
@@ -39,7 +107,8 @@
                 "3",
                 "4"
             ],
-            "user_role": "sub_user"
+            "user_role": "sub_user",
+            "device_groups": []
         }
     ]
 }

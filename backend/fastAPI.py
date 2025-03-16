@@ -5,6 +5,7 @@ import devices_json as dj
 import users as u
 import energy_json as ej
 import automations as am
+import groups as gr
 
 import asyncio
 import os
@@ -36,6 +37,18 @@ class DeviceAllocation(BaseModel):
     user_id: int
     device_ids: List[int]
 
+class GroupRequestNoStatus(BaseModel):
+    name: str
+    device_ids: List[int]
+
+class GroupRequestStatus(BaseModel):
+    name: str
+    device_ids: List[int]
+    status: str
+
+class DeviceIdsRequest(BaseModel):
+    device_ids: List[int]
+
 @app.on_event("startup")
 async def startup_event():
     """Starts device updates when the FastAPI server starts."""
@@ -54,9 +67,9 @@ async def device_info():
     return jsonData
 
 @app.post("/device/{id}/status")
-def change_device_status(id: int):
+def change_device_status(id: int, status: str):
     """Changes the status of a device according to its ID."""
-    return dj.changeDeviceStatus(id)
+    return dj.changeDeviceStatus(id, status)
 
 @app.post("/device/{id}/name/{new_name}")
 def change_device_name(id: int, new_name: str):
@@ -174,3 +187,28 @@ def update_automation_status(automation_id: int, status: bool):
 def delete_automation(automation_id: int):
     """Delete an automation rule by ID"""
     return am.deleteAutomation(automation_id)
+
+@app.get("/groups")
+def get_groups():
+    """Retrieve all groups for the selected user"""
+    return gr.getGroupsForSelectedUser()
+
+@app.post("/groups/add_group")
+def add_group(group: GroupRequestNoStatus):
+    """Add a new group to the selected user"""
+    return gr.addGroup(group.name, group.device_ids)
+
+@app.post("/groups/edit_group/{group_id}")
+def edit_group(group_id: int, group: GroupRequestStatus):
+    """Edit an existing group for the selected user"""
+    return gr.editGroup(group_id, group.name, group.device_ids, group.status)
+
+@app.put("/groups/status")
+def update_group_status(group_id: int, status: str):
+    """FastAPI endpoint to update group status using query parameters"""
+    return gr.changeGroupStatus(group_id, status)
+
+@app.delete("/groups/{group_id}")
+def delete_group(group_id: int):
+    """Delete a group from the selected user"""
+    return gr.deleteGroup(group_id)

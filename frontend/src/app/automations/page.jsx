@@ -394,7 +394,9 @@ const Automations = () => {
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle sx={{ fontFamily: "JetBrains Mono" }}>
+        <DialogTitle
+          sx={{ fontFamily: "JetBrains Mono", color: "primary.main" }}
+        >
           Add Schedule
         </DialogTitle>
         <DialogContent
@@ -493,7 +495,7 @@ const Automations = () => {
             onClick={handleSave}
             variant="contained"
             color="primary"
-            sx={{ fontFamily: "JetBrains Mono" }}
+            sx={{ fontFamily: "JetBrains Mono", color: "white" }}
           >
             Save
           </Button>
