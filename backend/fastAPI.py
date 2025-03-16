@@ -37,9 +37,14 @@ class DeviceAllocation(BaseModel):
     user_id: int
     device_ids: List[int]
 
-class GroupRequest(BaseModel):
+class GroupRequestNoStatus(BaseModel):
     name: str
     device_ids: List[int]
+
+class GroupRequestStatus(BaseModel):
+    name: str
+    device_ids: List[int]
+    status: str
 
 class DeviceIdsRequest(BaseModel):
     device_ids: List[int]
@@ -62,9 +67,9 @@ async def device_info():
     return jsonData
 
 @app.post("/device/{id}/status")
-def change_device_status(id: int):
+def change_device_status(id: int, status: str):
     """Changes the status of a device according to its ID."""
-    return dj.changeDeviceStatus(id)
+    return dj.changeDeviceStatus(id, status)
 
 @app.post("/device/{id}/name/{new_name}")
 def change_device_name(id: int, new_name: str):
@@ -189,12 +194,12 @@ def get_groups():
     return gr.getGroupsForSelectedUser()
 
 @app.post("/groups/add_group")
-def add_group(group: GroupRequest):
+def add_group(group: GroupRequestNoStatus):
     """Add a new group to the selected user"""
     return gr.addGroup(group.name, group.device_ids)
 
 @app.post("/groups/edit_group/{group_id}")
-def edit_group(group_id: int, group: GroupRequest):
+def edit_group(group_id: int, group: GroupRequestStatus):
     """Edit an existing group for the selected user"""
     return gr.editGroup(group_id, group.name, group.device_ids, group.status)
 

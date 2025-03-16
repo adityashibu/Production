@@ -31,7 +31,7 @@ import { useRouter } from "next/navigation";
 
 const Dashboard = () => {
   const router = useRouter();
-  if(typeof window !== 'undefined'){
+  if (typeof window !== "undefined") {
     const userSession = sessionStorage.getItem("user");
     const [user, loading] = useAuthState(auth);
     useEffect(() => {
@@ -79,10 +79,14 @@ const Dashboard = () => {
           console.error("Invalid response structure", deviceResult);
         }
 
-        const dailyResponse = await fetch("http://localhost:8000/energy_usage/daily");
+        const dailyResponse = await fetch(
+          "http://localhost:8000/energy_usage/daily"
+        );
         const dailyResult = await dailyResponse.json();
 
-        const monthlyResponse = await fetch("http://localhost:8000/energy_usage/monthly");
+        const monthlyResponse = await fetch(
+          "http://localhost:8000/energy_usage/monthly"
+        );
         const monthlyResult = await monthlyResponse.json();
 
         setEnergyData({
@@ -95,15 +99,16 @@ const Dashboard = () => {
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 1000); // Update every 10 seconds
+    const interval = setInterval(fetchData, 1000);
     return () => clearInterval(interval);
   }, []);
 
   const handleToggle = (deviceId) => async () => {
     try {
-      // Send API request to toggle device status
+      const newStatus = checked.includes(deviceId) ? "off" : "on";
+
       const response = await fetch(
-        `http://localhost:8000/device/${deviceId}/status`,
+        `http://localhost:8000/device/${deviceId}/status?status=${newStatus}`,
         {
           method: "POST",
         }
@@ -348,7 +353,13 @@ const Dashboard = () => {
               }}
             >
               <EnergyUsageChart
-                data={timeRange === "daily" ? energyData.daily : timeRange === "monthly" ? energyData.monthly : data}
+                data={
+                  timeRange === "daily"
+                    ? energyData.daily
+                    : timeRange === "monthly"
+                    ? energyData.monthly
+                    : data
+                }
                 timeRange={timeRange}
               />
               <ButtonGroup

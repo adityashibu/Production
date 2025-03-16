@@ -93,21 +93,28 @@ const Devices = () => {
 
   const handleToggle = async (id) => {
     try {
-      await fetch(`http://localhost:8000/device/${id}/status`, {
-        method: "POST",
-      });
-
+      // First, update the UI (toggle checked state)
       setChecked((prevChecked) =>
         prevChecked.includes(id)
           ? prevChecked.filter((deviceId) => deviceId !== id)
           : [...prevChecked, id]
       );
 
-      setDevices((prev) =>
-        prev.map((device) =>
-          device.id === id
-            ? { ...device, status: device.status === "on" ? "off" : "on" }
-            : device
+      const device = devices.find((d) => d.id === id);
+      const newStatus = device.status === "on" ? "off" : "on";
+
+      const response = await fetch(
+        `http://localhost:8000/device/${id}/status?status=${newStatus}`,
+        { method: "POST" }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to change device status");
+      }
+
+      setDevices((prevDevices) =>
+        prevDevices.map((device) =>
+          device.id === id ? { ...device, status: newStatus } : device
         )
       );
     } catch (error) {

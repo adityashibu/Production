@@ -176,7 +176,7 @@ const AddGroupDialog = ({ open, onClose, group, onSave }) => {
                 label={device?.name}
                 onDelete={() => handleRemoveChip(deviceId)}
                 deleteIcon={<CloseIcon />}
-                sx={{ fontSize: 14 }}
+                sx={{ fontSize: 14, fontFamily: "Jetbrains Mono" }}
               />
             );
           })}

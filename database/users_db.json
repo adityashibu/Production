@@ -28,7 +28,7 @@
                 },
                 {
                     "id": 2,
-                    "name": "Bedroom Devices",
+                    "name": "Bedroom Device",
                     "status": "on",
                     "devices": [
                         1,
@@ -56,6 +56,21 @@
                         8,
                         6,
                         5
+                    ]
+                },
+                {
+                    "id": 5,
+                    "name": "Idk what this is",
+                    "status": "on",
+                    "devices": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8
                     ]
                 }
             ]
