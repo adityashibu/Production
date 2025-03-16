@@ -183,22 +183,27 @@ def delete_automation(automation_id: int):
     """Delete an automation rule by ID"""
     return am.deleteAutomation(automation_id)
 
+@app.get("/groups")
+def get_groups():
+    """Retrieve all groups for the selected user"""
+    return gr.getGroupsForSelectedUser()
+
 @app.post("/groups/add_group")
 def add_group(group: GroupRequest):
-    """Add a new group with the given name and device IDs"""
+    """Add a new group to the selected user"""
     return gr.addGroup(group.name, group.device_ids)
 
 @app.post("/groups/add_devices/{group_id}")
-def add_devices_to_group(group_id: int, devices: GroupRequest):
-    """Add devices to a group by group ID"""
+def add_devices_to_group(group_id: int, devices: DeviceIdsRequest):
+    """Add devices to a group for the selected user"""
     return gr.addDevices(group_id, devices.device_ids)
 
 @app.post("/groups/remove_devices/{group_id}")
 def remove_devices_from_group(group_id: int, request: DeviceIdsRequest):
-    """Remove devices from a group by group ID"""
+    """Remove devices from a group for the selected user"""
     return gr.removeDevices(group_id, request.device_ids)
 
 @app.delete("/groups/{group_id}")
 def delete_group(group_id: int):
-    """Delete a group by group ID"""
+    """Delete a group from the selected user"""
     return gr.deleteGroup(group_id)
