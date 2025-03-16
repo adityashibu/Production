@@ -97,7 +97,6 @@ def editGroup(group_id, name=None, devices=None, status=None):
     if not group:
         return {"error": "Group not found!"}
 
-    # Overwrite values if provided
     if name:
         group["name"] = name
     if status:
@@ -148,5 +147,7 @@ def getGroupsForSelectedUser():
     # print(result)
     return result
 
-getGroupsForSelectedUser()
+# getGroupsForSelectedUser()
+
+# DEBUGGING SHI #
 # deleteGroup(2)
