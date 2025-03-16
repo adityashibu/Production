@@ -4,80 +4,87 @@ import Breadcrumb from "../ui/dashboard/breadcrumbs";
 import {
   Box,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  MenuItem,
-  Checkbox,
-  ListItemText,
-  FormControl,
-  InputLabel,
-  Select,
+  Grid,
+  Card,
+  CardContent,
   Typography,
+  IconButton,
   Chip,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import CloseIcon from "@mui/icons-material/Close";
-
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import IOSSwitch from "../ui/iosButton";
+import AddGroupDialog from "../ui/addGroupDialogue";
 
-// Groups component with fetch from API
 const Groups = () => {
   const [open, setOpen] = useState(false);
-  const [groupName, setGroupName] = useState("");
-  const [groupStatus, setGroupStatus] = useState(true); // "on" or "off"
-  const [selectedDevices, setSelectedDevices] = useState([]);
-  const [deviceList, setDeviceList] = useState([]);
+  const [groups, setGroups] = useState([]);
+  const [checked, setChecked] = useState([]);
+  const [devices, setDevices] = useState({});
 
-  // Fetch devices from API on component mount
   useEffect(() => {
+    fetch("http://localhost:8000/groups")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data.device_groups)) {
+          setGroups(data.device_groups);
+          setChecked(
+            data.device_groups.filter((g) => g.status === "on").map((g) => g.id)
+          );
+        } else {
+          console.error("Unexpected API response:", data);
+          setGroups([]);
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching groups:", err);
+        setGroups([]);
+      });
+
     fetch("http://localhost:8000/device_info")
       .then((res) => res.json())
       .then((data) => {
         if (data.smart_home_devices && Array.isArray(data.smart_home_devices)) {
-          // Filter available devices if needed (optional for groups page)
-          setDeviceList(data.smart_home_devices);
+          const deviceMap = {};
+          data.smart_home_devices.forEach((device) => {
+            deviceMap[device.id] = device.name;
+          });
+          setDevices(deviceMap);
         } else {
           console.error("Unexpected API response:", data);
-          setDeviceList([]);
         }
       })
-      .catch((err) => {
-        console.error("Error fetching device data:", err);
-        setDeviceList([]);
-      });
-  }, []); // No dependency array here if you want to run this once when the component mounts
+      .catch((err) => console.error("Error fetching devices:", err));
+  }, []);
 
-  const handleOpen = () => setOpen(true);
+  const handleToggle = (groupId) => {
+    const newChecked = checked.includes(groupId)
+      ? checked.filter((id) => id !== groupId)
+      : [...checked, groupId];
 
-  const handleClose = () => {
-    setOpen(false);
-    setGroupName("");
-    setGroupStatus(true);
-    setSelectedDevices([]);
+    setChecked(newChecked);
+
+    fetch(`http://localhost:8000/groups/${groupId}/toggle`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        status: newChecked.includes(groupId) ? "on" : "off",
+      }),
+    }).catch((err) => console.error("Error toggling group:", err));
   };
 
-  const handleDeviceChange = (event) => {
-    const value = event.target.value;
-    setSelectedDevices(typeof value === "string" ? value.split(",") : value);
+  const handleDeleteClick = (groupId) => {
+    fetch(`http://localhost:8000/groups/${groupId}`, { method: "DELETE" })
+      .then(() => {
+        setGroups(groups.filter((group) => group.id !== groupId));
+        setChecked(checked.filter((id) => id !== groupId));
+      })
+      .catch((err) => console.error("Error deleting group:", err));
   };
 
-  const handleRemoveChip = (deviceId) => {
-    setSelectedDevices((prev) => prev.filter((id) => id !== deviceId));
-  };
-
-  const handleSubmit = () => {
-    const newGroup = {
-      id: Date.now(),
-      name: groupName,
-      status: groupStatus ? "on" : "off",
-      devices: selectedDevices,
-    };
-
-    console.log("New Group Created:", newGroup);
-    handleClose();
+  const handleEdit = (groupId, groupName) => {
+    console.log(`Edit Group: ${groupId} - ${groupName}`);
   };
 
   return (
@@ -101,128 +108,115 @@ const Groups = () => {
               textTransform: "none",
               color: "white",
             }}
-            onClick={handleOpen}
+            onClick={() => setOpen(true)}
           >
             Add Group
           </Button>
         </Box>
       </Box>
 
-      {/* Dialog for Adding New Group */}
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-        <DialogTitle
-          sx={{ fontFamily: "JetBrains Mono", color: "primary.main" }}
-        >
-          Add New Group
-        </DialogTitle>
-        <DialogContent
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-            mt: 1,
-          }}
-        >
-          {/* Group Name Field */}
-          <TextField
-            variant="outlined"
-            label="Group Name"
-            fullWidth
-            required
-            value={groupName}
-            onChange={(e) => setGroupName(e.target.value)}
-            sx={{ fontFamily: "JetBrains Mono" }}
-            InputLabelProps={{
-              sx: { fontFamily: "JetBrains Mono" },
-            }}
-          />
-
-          {/* iOS Switch for Status */}
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-            sx={{ marginTop: 2 }}
-          >
-            <Typography sx={{ fontFamily: "Jetbrains Mono" }}>
-              Group Status:
-            </Typography>
-            <IOSSwitch
-              checked={groupStatus}
-              onChange={() => setGroupStatus((prev) => !prev)}
-            />
-          </Box>
-
-          {/* Multiple Device Selection */}
-          <FormControl fullWidth sx={{ marginTop: 2 }}>
-            <InputLabel sx={{ fontFamily: "JetBrains Mono" }}>
-              Select Devices
-            </InputLabel>
-            <Select
-              multiple
-              value={selectedDevices}
-              onChange={handleDeviceChange}
-              renderValue={(selected) =>
-                selected
-                  .map(
-                    (id) => deviceList.find((device) => device.id === id)?.name
-                  )
-                  .join(", ")
-              }
+      {/* Groups Display */}
+      <Grid container spacing={3}>
+        {groups.map((group) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={group.id}>
+            <Card
+              sx={{
+                height: "18vh",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
+                transition: "transform 0.2s ease-in-out",
+                "&:hover": { transform: "scale(1.02)" },
+                padding: 2,
+              }}
             >
-              {deviceList.map((device) => (
-                <MenuItem key={device.id} value={device.id}>
-                  <Checkbox checked={selectedDevices.includes(device.id)} />
-                  <ListItemText primary={device.name} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+              {/* Edit and Delete Icons */}
+              <IconButton
+                sx={{
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                  color: "text.secondary",
+                }}
+                onClick={() => handleEdit(group.id, group.name)}
+              >
+                <EditIcon sx={{ fontSize: 20 }} />
+              </IconButton>
 
-          {/* Selected Devices as Chips */}
-          <Box
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 1,
-              marginTop: 2,
-            }}
-          >
-            {selectedDevices.map((deviceId) => {
-              const device = deviceList.find((d) => d.id === deviceId);
-              return (
-                <Chip
-                  key={deviceId}
-                  label={device?.name}
-                  onDelete={() => handleRemoveChip(deviceId)}
-                  deleteIcon={<CloseIcon />}
+              <IconButton
+                sx={{
+                  position: "absolute",
+                  bottom: 8,
+                  right: 8,
+                  color: "text.secondary",
+                }}
+                onClick={() => handleDeleteClick(group.id)}
+              >
+                <DeleteIcon sx={{ fontSize: 20 }} />
+              </IconButton>
+
+              <CardContent
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                  height: "100%",
+                }}
+              >
+                {/* Title and Switch in a column */}
+                <Typography
+                  variant="h6"
                   sx={{
-                    fontSize: 14,
+                    fontSize: { xs: 16, md: 20 },
+                    fontWeight: 600,
+                    fontFamily: "JetBrains Mono",
+                    color: "primary.main",
+                    textAlign: "center",
+                    mb: 1,
                   }}
-                />
-              );
-            })}
-          </Box>
-        </DialogContent>
+                >
+                  {group.name}
+                </Typography>
 
-        {/* Dialog Actions */}
-        <DialogActions>
-          <Button
-            onClick={handleClose}
-            sx={{ fontFamily: "JetBrains Mono", color: "primary.main" }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            variant="contained"
-            color="primary"
-            sx={{ fontFamily: "JetBrains Mono", color: "white" }}
-          >
-            Add Group
-          </Button>
-        </DialogActions>
-      </Dialog>
+                {/* Toggle Switch */}
+                <IOSSwitch
+                  edge="end"
+                  onChange={() => handleToggle(group.id)}
+                  checked={checked.includes(group.id)}
+                />
+
+                {/* Device Chips */}
+                <Box
+                  sx={{
+                    display: { xs: "none", sm: "flex" },
+                    flexWrap: "wrap",
+                    gap: 1,
+                    mt: 3,
+                    justifyContent: "center",
+                  }}
+                >
+                  {group.devices.map((deviceId) =>
+                    devices[deviceId] ? (
+                      <Chip
+                        key={deviceId}
+                        label={devices[deviceId]}
+                        sx={{ fontSize: 12, fontFamily: "JetBrains Mono" }}
+                      />
+                    ) : null
+                  )}
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+
+      {/* Add Group Dialog */}
+      <AddGroupDialog open={open} onClose={() => setOpen(false)} />
     </div>
   );
 };
