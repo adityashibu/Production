@@ -50,13 +50,22 @@ const Groups = () => {
 
     setChecked(newChecked);
 
-    fetch(`http://localhost:8000/groups/${groupId}/toggle`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        status: newChecked.includes(groupId) ? "on" : "off",
-      }),
-    }).catch((err) => console.error("Error toggling group:", err));
+    fetch(
+      `http://localhost:8000/groups/status?group_id=${groupId}&status=${
+        newChecked.includes(groupId) ? "on" : "off"
+      }`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          console.error("Error toggling group:", data.error);
+        }
+      })
+      .catch((err) => console.error("Error toggling group:", err));
   };
 
   const fetchGroups = () => {

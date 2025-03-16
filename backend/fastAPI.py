@@ -198,6 +198,11 @@ def edit_group(group_id: int, group: GroupRequest):
     """Edit an existing group for the selected user"""
     return gr.editGroup(group_id, group.name, group.device_ids, group.status)
 
+@app.put("/groups/status")
+def update_group_status(group_id: int, status: str):
+    """FastAPI endpoint to update group status using query parameters"""
+    return gr.changeGroupStatus(group_id, status)
+
 @app.delete("/groups/{group_id}")
 def delete_group(group_id: int):
     """Delete a group from the selected user"""
