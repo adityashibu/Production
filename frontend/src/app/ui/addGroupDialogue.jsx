@@ -19,18 +19,38 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import IOSSwitch from "../ui/iosButton";
 
-const AddGroupDialog = ({ open, onClose }) => {
+const AddGroupDialog = ({ open, onClose, group, onSave }) => {
   const [groupName, setGroupName] = useState("");
   const [groupStatus, setGroupStatus] = useState(false); // false = "off", true = "on"
   const [selectedDevices, setSelectedDevices] = useState([]);
   const [deviceList, setDeviceList] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:8000/devices")
+    fetch("http://localhost:8000/device_info")
       .then((res) => res.json())
-      .then((data) => setDeviceList(data.devices || []))
-      .catch((err) => console.error("Error fetching devices:", err));
-  }, []);
+      .then((data) => {
+        if (data.smart_home_devices && Array.isArray(data.smart_home_devices)) {
+          setDeviceList(data.smart_home_devices || []);
+        } else {
+          console.error("Unexpected API response:", data);
+          setDeviceList([]);
+        }
+      })
+      .catch((err) => console.error("Error fetching device info:", err));
+
+    if (group) {
+      setIsEditing(true);
+      setGroupName(group.name);
+      setGroupStatus(group.status === "on");
+      setSelectedDevices(group.devices || []);
+    } else {
+      setIsEditing(false);
+      setGroupName("");
+      setGroupStatus(false);
+      setSelectedDevices([]);
+    }
+  }, [group, open]);
 
   const handleDeviceChange = (event) => {
     setSelectedDevices(event.target.value);
@@ -52,30 +72,53 @@ const AddGroupDialog = ({ open, onClose }) => {
       devices: selectedDevices,
     };
 
-    fetch("http://localhost:8000/groups", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newGroup),
-    })
-      .then((res) => res.json())
-      .then(() => {
-        onClose();
-        setGroupName("");
-        setGroupStatus(false);
-        setSelectedDevices([]);
+    if (group) {
+      fetch(`http://localhost:8000/groups/${group.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newGroup),
       })
-      .catch((err) => console.error("Error adding group:", err));
+        .then((res) => res.json())
+        .then(() => {
+          onSave();
+          onClose();
+        })
+        .catch((err) => console.error("Error editing group:", err));
+    } else {
+      fetch("http://localhost:8000/groups", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newGroup),
+      })
+        .then((res) => res.json())
+        .then(() => {
+          onSave();
+          onClose();
+        })
+        .catch((err) => console.error("Error adding group:", err));
+    }
+
+    setGroupName("");
+    setGroupStatus(false);
+    setSelectedDevices([]);
+  };
+
+  const handleCancel = () => {
+    setGroupName("");
+    setGroupStatus(false);
+    setSelectedDevices([]);
+    setIsEditing(false);
+    onClose();
   };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle sx={{ fontFamily: "JetBrains Mono", color: "primary.main" }}>
-        Add New Group
+        {group ? "Edit Group" : "Add New Group"}
       </DialogTitle>
       <DialogContent
         sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}
       >
-        {/* Group Name Field */}
         <TextField
           variant="outlined"
           label="Group Name"
@@ -86,7 +129,6 @@ const AddGroupDialog = ({ open, onClose }) => {
           InputLabelProps={{ sx: { fontFamily: "JetBrains Mono" } }}
         />
 
-        {/* iOS Switch for Status */}
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Typography sx={{ fontFamily: "JetBrains Mono" }}>
             Group Status:
@@ -97,7 +139,6 @@ const AddGroupDialog = ({ open, onClose }) => {
           />
         </Box>
 
-        {/* Multiple Device Selection */}
         <FormControl fullWidth>
           <InputLabel sx={{ fontFamily: "JetBrains Mono" }}>
             Select Devices
@@ -123,7 +164,6 @@ const AddGroupDialog = ({ open, onClose }) => {
           </Select>
         </FormControl>
 
-        {/* Selected Devices as Chips */}
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
           {selectedDevices.map((deviceId) => {
             const device = deviceList.find((d) => d.id === deviceId);
@@ -140,10 +180,9 @@ const AddGroupDialog = ({ open, onClose }) => {
         </Box>
       </DialogContent>
 
-      {/* Dialog Actions */}
       <DialogActions>
         <Button
-          onClick={onClose}
+          onClick={handleCancel}
           sx={{ fontFamily: "JetBrains Mono", color: "primary.main" }}
         >
           Cancel
@@ -154,7 +193,7 @@ const AddGroupDialog = ({ open, onClose }) => {
           color="primary"
           sx={{ fontFamily: "JetBrains Mono", color: "white" }}
         >
-          Add Group
+          {group ? "Save Changes" : "Add Group"}
         </Button>
       </DialogActions>
     </Dialog>

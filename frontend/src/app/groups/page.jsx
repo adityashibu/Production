@@ -22,6 +22,7 @@ const Groups = () => {
   const [groups, setGroups] = useState([]);
   const [checked, setChecked] = useState([]);
   const [devices, setDevices] = useState({});
+  const [editingGroup, setEditingGroup] = useState(null); // New state to store the group being edited
 
   useEffect(() => {
     fetch("http://localhost:8000/groups")
@@ -83,8 +84,10 @@ const Groups = () => {
       .catch((err) => console.error("Error deleting group:", err));
   };
 
-  const handleEdit = (groupId, groupName) => {
-    console.log(`Edit Group: ${groupId} - ${groupName}`);
+  const handleEdit = (groupId, groupName, groupDevices) => {
+    // Set the group to be edited
+    setEditingGroup({ id: groupId, name: groupName, devices: groupDevices });
+    setOpen(true); // Open the dialog for editing
   };
 
   return (
@@ -108,7 +111,10 @@ const Groups = () => {
               textTransform: "none",
               color: "white",
             }}
-            onClick={() => setOpen(true)}
+            onClick={() => {
+              setEditingGroup(null); // Clear editing group when adding a new one
+              setOpen(true);
+            }}
           >
             Add Group
           </Button>
@@ -140,7 +146,7 @@ const Groups = () => {
                   right: 8,
                   color: "text.secondary",
                 }}
-                onClick={() => handleEdit(group.id, group.name)}
+                onClick={() => handleEdit(group.id, group.name, group.devices)}
               >
                 <EditIcon sx={{ fontSize: 20 }} />
               </IconButton>
@@ -215,8 +221,12 @@ const Groups = () => {
         ))}
       </Grid>
 
-      {/* Add Group Dialog */}
-      <AddGroupDialog open={open} onClose={() => setOpen(false)} />
+      {/* Add/Edit Group Dialog */}
+      <AddGroupDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        group={editingGroup} // Pass the group data to the dialog
+      />
     </div>
   );
 };

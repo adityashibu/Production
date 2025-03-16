@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
 from backend.fastAPI import app
+from unittest.mock import patch
 import pytest
 import json
 
@@ -35,6 +36,11 @@ def mock_user_data():
         ]
     }
 
+@pytest.fixture(autouse=True)
+def mock_selected_user():
+    """Mock get_selected_user() globally for all tests to prevent file errors"""
+    with patch("backend.groups.get_selected_user", return_value={"selected_user": "Aditya", "user_role": "super_user"}):
+        yield
 
 def test_root():
     response = client.get("/")
