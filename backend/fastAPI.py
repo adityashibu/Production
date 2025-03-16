@@ -13,12 +13,15 @@ import json
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from collections import deque
 
 # Serve user data (Only for testing purposes)
 USER_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "database", "users_db.json")
 # print(USER_DB_PATH) # For testing purposes
 
 app = FastAPI()
+
+latest_updates = deque(maxlen=5)
 
 app.add_middleware(
     CORSMiddleware,
@@ -84,8 +87,14 @@ def get_updates():
     user_updates = u.getUpdates()
 
     all_updates = device_updates + user_updates
+    latest_updates.extend(all_updates)
 
     return {"updates": all_updates}
+
+@app.get("/latest_updates")
+def get_latest_updates():
+    """Returns the latest 5 updates."""
+    return {"latest_updates": list(latest_updates)}
 
 @app.post("/device/{id}/connect")
 async def change_connection_status(id: int):
