@@ -3,121 +3,172 @@ import os
 import devices_json as dj
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-groupsFile = os.path.abspath(os.path.join(BASE_DIR, "../database/groups.json"))
-    
+usersFile = os.path.abspath(os.path.join(BASE_DIR, "../database/users_db.json"))
+selectedUserFile = os.path.abspath(os.path.join(BASE_DIR, "../backend/selected_user.json"))
+
+def get_selected_user():
+    """Fetch the selected user from selected_user.json"""
+    with open(selectedUserFile, "r") as file:
+        selected_data = json.load(file)
+        return selected_data.get("selected_user")
+
+
+def load_users():
+    """Load users from users_db.json"""
+    with open(usersFile, "r") as file:
+        return json.load(file)
+
+
+def save_users(data):
+    """Save updated user data back to users_db.json"""
+    with open(usersFile, "w") as file:
+        json.dump(data, file, indent=4)
+
+
 def addGroup(name, devices):
-    """Add a new group to the JSON file."""
+    """Add a new group to the selected user's groups"""
     if not devices:
         return {"error": "No devices selected!"}
-        
+
     if not name:
         return {"error": "No group name provided!"}
-    
-    with open(groupsFile, "r") as file:
-        data = json.load(file)
-        groups = data.get("device_groups", [])
 
-        for group in groups:
-            if group["name"] == name:
-                return {"error": "Group name already exists!"}
-            
-        new_id = max([group["id"] for group in groups] + [0]) + 1
-        groups.append({
-            "id": new_id,
-            "name": name,
-            "status": "on",
-            "devices": devices
-        })
-        data["groups"] = groups
+    selected_user = get_selected_user()
+    users_data = load_users()
+    user = next((u for u in users_data["users"] if u["user_name"] == selected_user), None)
+
+    if not user:
+        return {"error": "Selected user not found!"}
+
+    groups = user.get("device_groups", [])
+    if any(group["name"] == name for group in groups):
+        return {"error": "Group name already exists!"}
+
+    new_id = max([group["id"] for group in groups] + [0]) + 1
+    groups.append({
+        "id": new_id,
+        "name": name,
+        "status": "on",
+        "devices": devices
+    })
+    user["device_groups"] = groups
 
     for device in devices:
-        dj.changeDeviceStatus(device, "on")    
-        
-    with open(groupsFile, "w") as file:
-        json.dump(data, file, indent=4)
-        return {"success": "Group added successfully!"}
-    
-def deleteGroup(id):
-    """Delete a group from the JSON file."""
-    with open(groupsFile, "r") as file:
-        data = json.load(file)
-        groups = data.get("device_groups", [])
-        group = next((group for group in groups if group["id"] == id), None)
-        
-        if not group:
-            return {"error": "Group not found!"}
-        
-        groups.remove(group)
-        data["groups"] = groups
-        
-    with open(groupsFile, "w") as file:
-        json.dump(data, file, indent=4)
-        return {"success": "Group deleted successfully!"}
-    
-def addDevices(id, devices):
-    """Add devices to a group."""
-    with open(groupsFile, "r") as file:
-        data = json.load(file)
-        groups = data.get("device_groups", [])
-        group = next((group for group in groups if group["id"] == id), None)
-        
-        if not group:
-            return {"error": "Group not found!"}
-        
-        group_devices = group.get("devices", [])
-        for device in devices:
-            if device in group_devices:
-                return {"error": "One or more devices are already in the group!"}
-        
-        group_devices.extend(devices)
-        group["devices"] = list(set(group_devices))
-        
-        data["groups"] = groups
-        
-    with open(groupsFile, "w") as file:
-        json.dump(data, file, indent=4)
-        return {"success": "Devices added successfully!"}
-    
-def removeDevices(id, devices):
-    """Remove devices from a group."""
-    with open(groupsFile, "r") as file:
-        data = json.load(file)
-        groups = data.get("device_groups", [])
-        group = next((group for group in groups if group["id"] == id), None)
-        
-        if not group:
-            return {"error": "Group not found!"}
-        
-        group_devices = group.get("devices", [])
-        for device in devices:
-            if device not in group_devices:
-                return {"error": "One or more devices are not in the group!"}
-        
-        group_devices = [device for device in group_devices if device not in devices]
-        group["devices"] = group_devices
-        
-        data["groups"] = groups
-        
-    with open(groupsFile, "w") as file:
-        json.dump(data, file, indent=4)
-        return {"success": "Devices removed successfully!"}
+        dj.changeDeviceStatus(device, "on")
 
-def changeGroupStatus(id, status):
-    """Change the status of a group."""
-    with open(groupsFile, "r") as file:
-        data = json.load(file)
-        groups = data.get("device_groups", [])
-        group = next((group for group in groups if group["id"] == id), None)
-        
-        if not group:
-            return {"error": "Group not found!"}
-        
-        group["status"] = status
-        data["groups"] = groups
-        
+    save_users(users_data)
+    return {"success": "Group added successfully!"}
+
+
+def deleteGroup(group_id):
+    """Delete a group from the selected user's groups"""
+    selected_user = get_selected_user()
+    users_data = load_users()
+    user = next((u for u in users_data["users"] if u["user_name"] == selected_user), None)
+
+    if not user:
+        return {"error": "Selected user not found!"}
+
+    groups = user.get("device_groups", [])
+    group = next((g for g in groups if g["id"] == group_id), None)
+
+    if not group:
+        return {"error": "Group not found!"}
+
+    groups.remove(group)
+    user["device_groups"] = groups
+
+    save_users(users_data)
+    return {"success": "Group deleted successfully!"}
+
+
+def addDevices(group_id, devices):
+    """Add devices to a group"""
+    selected_user = get_selected_user()
+    users_data = load_users()
+    user = next((u for u in users_data["users"] if u["user_name"] == selected_user), None)
+
+    if not user:
+        return {"error": "Selected user not found!"}
+
+    groups = user.get("device_groups", [])
+    group = next((g for g in groups if g["id"] == group_id), None)
+
+    if not group:
+        return {"error": "Group not found!"}
+
+    group_devices = set(group.get("devices", []))
+    for device in devices:
+        if device in group_devices:
+            return {"error": "One or more devices are already in the group!"}
+
+    group_devices.update(devices)
+    group["devices"] = list(group_devices)
+
+    save_users(users_data)
+    return {"success": "Devices added successfully!"}
+
+
+def removeDevices(group_id, devices):
+    """Remove devices from a group"""
+    selected_user = get_selected_user()
+    users_data = load_users()
+    user = next((u for u in users_data["users"] if u["user_name"] == selected_user), None)
+
+    if not user:
+        return {"error": "Selected user not found!"}
+
+    groups = user.get("device_groups", [])
+    group = next((g for g in groups if g["id"] == group_id), None)
+
+    if not group:
+        return {"error": "Group not found!"}
+
+    group_devices = set(group.get("devices", []))
+    if not any(device in group_devices for device in devices):
+        return {"error": "One or more devices are not in the group!"}
+
+    group["devices"] = list(group_devices - set(devices))
+
+    save_users(users_data)
+    return {"success": "Devices removed successfully!"}
+
+
+def changeGroupStatus(group_id, status):
+    """Change the status of a group"""
+    selected_user = get_selected_user()
+    users_data = load_users()
+    user = next((u for u in users_data["users"] if u["user_name"] == selected_user), None)
+
+    if not user:
+        return {"error": "Selected user not found!"}
+
+    groups = user.get("device_groups", [])
+    group = next((g for g in groups if g["id"] == group_id), None)
+
+    if not group:
+        return {"error": "Group not found!"}
+
+    group["status"] = status
+
     for device in group["devices"]:
         dj.changeDeviceStatus(device, status)
-        
-    with open(groupsFile, "w") as file:
-        json.dump(data, file, indent=4)
-        return {"success": "Group status changed successfully!"}
+
+    save_users(users_data)
+    return {"success": "Group status changed successfully!"}
+
+def getGroupsForSelectedUser():
+    """Retrieve all groups associated with the selected user."""
+    selected_user = get_selected_user()
+    users_data = load_users()
+    user = next((u for u in users_data["users"] if u["user_name"] == selected_user), None)
+
+    if not user:
+        return {"error": "Selected user not found!"}
+
+    result = {"device_groups": user.get("device_groups", [])}
+    # print(result)
+    return result
+
+getGroupsForSelectedUser()
+# deleteGroup(2)
