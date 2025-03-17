@@ -110,7 +110,7 @@ const Energy = () => {
       fetchDeviceData();
       fetchMonthlyData();
       fetchEnergyGoal();
-    }, 60000);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);
