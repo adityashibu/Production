@@ -169,18 +169,20 @@ export default function AccountMenu() {
           </MenuItem>
         )}
         {/* Add new MenuItem for setting energy goal */}
-        <MenuItem
-          onClick={() => setOpenSetEnergyGoalDialog(true)} // Open the dialog
-          sx={{ fontFamily: "JetBrains Mono" }}
-        >
-          <ListItemIcon>
-            <BatteryChargingFullIcon
-              fontSize="small"
-              sx={{ color: "primary.main" }}
-            />
-          </ListItemIcon>
-          Set Energy Goal
-        </MenuItem>
+        {isSuperUser && (
+          <MenuItem
+            onClick={() => setOpenSetEnergyGoalDialog(true)}
+            sx={{ fontFamily: "JetBrains Mono" }}
+          >
+            <ListItemIcon>
+              <BatteryChargingFullIcon
+                fontSize="small"
+                sx={{ color: "primary.main" }}
+              />
+            </ListItemIcon>
+            Set Energy Goal
+          </MenuItem>
+        )}
         <MenuItem
           onClick={() => setOpenUserSettingsDialog(true)}
           sx={{ fontFamily: "JetBrains Mono" }}

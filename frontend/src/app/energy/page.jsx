@@ -1,5 +1,12 @@
 "use client";
-import { Card, CardContent, Typography, Grid, Box } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Grid,
+  Box,
+  IconButton,
+} from "@mui/material";
 import {
   PieChart,
   Pie,
@@ -13,8 +20,8 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 
 import Breadcrumb from "@/app/ui/dashboard/breadcrumbs";
+import SetEnergyGoalDialog from "../ui/setEnergyGoalDialogue";
 
-import { motion } from "framer-motion";
 import {
   AreaChart,
   Area,
@@ -25,8 +32,13 @@ import {
   Legend as RechartLegend,
 } from "recharts";
 
+import { Edit } from "@mui/icons-material";
+
 const Energy = () => {
   const [deviceData, setDeviceData] = useState([]);
+  const [monthlyData, setMonthlyData] = useState([]);
+  const [energyGoal, setEnergyGoal] = useState(0);
+  const [openDialog, setOpenDialog] = useState(false);
   const isMobile = useMediaQuery("(max-width: 600px)");
   const isMdUp = useMediaQuery("(min-width: 960px)");
   const theme = useTheme();
@@ -35,15 +47,10 @@ const Energy = () => {
       ? ["#8253D7", "#9B6BE6", "#A97DFF", "#6A3BCC", "#5C2FB3"]
       : ["#1F99FC", "#1A84D9", "#187BB0", "#155C8D", "#134C6A"];
 
-  const revenueData = [
-    { month: "Jan", revenue: 4000, target: 6500 },
-    { month: "Feb", revenue: 3000, target: 6500 },
-    { month: "Mar", revenue: 5000, target: 6500 },
-    { month: "Apr", revenue: 4500, target: 6500 },
-    { month: "May", revenue: 6000, target: 6500 },
-    { month: "Jun", revenue: 5500, target: 6500 },
-    { month: "Jul", revenue: 7000, target: 6500 },
-  ];
+  const chartColors = {
+    usage: theme.palette.mode === "dark" ? "#8B5CF6" : "#1D4ED8",
+    goal: theme.palette.mode === "dark" ? "#D8B8FF" : "#93C5FD",
+  };
 
   useEffect(() => {
     const fetchDeviceData = async () => {
@@ -65,12 +72,61 @@ const Energy = () => {
       }
     };
 
-    fetchDeviceData();
+    const fetchMonthlyData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8000/energy_usage/monthly"
+        );
+        const data = await response.json();
 
-    const interval = setInterval(fetchDeviceData, 1000);
+        const formattedMonthlyData = data.map((item) => ({
+          month: new Date(item.timestamp).toLocaleString("default", {
+            month: "short",
+          }),
+          usage: item.power_usage,
+        }));
+
+        setMonthlyData(formattedMonthlyData);
+      } catch (error) {
+        console.error("Error fetching monthly data:", error);
+      }
+    };
+
+    const fetchEnergyGoal = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/energy_goal");
+        const data = await response.json();
+        setEnergyGoal(data.goal_value);
+      } catch (error) {
+        console.error("Error fetching energy goal:", error);
+      }
+    };
+
+    fetchDeviceData();
+    fetchMonthlyData();
+    fetchEnergyGoal();
+
+    const interval = setInterval(() => {
+      fetchDeviceData();
+      fetchMonthlyData();
+      fetchEnergyGoal();
+    }, 60000);
 
     return () => clearInterval(interval);
   }, []);
+
+  const monthlyDataWithGoal = monthlyData.map((data) => ({
+    ...data,
+    goal: energyGoal,
+  }));
+
+  const handleDialogOpen = () => {
+    setOpenDialog(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+  };
 
   return (
     <div>
@@ -170,7 +226,7 @@ const Energy = () => {
           <Card
             component="a"
             sx={{
-              height: { xs: "auto", md: "100%" }, // Auto height for mobile and 100% for desktop
+              height: { xs: "auto", md: "100%" },
               display: "flex",
               flexDirection: "column",
               textDecoration: "none",
@@ -201,25 +257,36 @@ const Energy = () => {
                 }}
               >
                 Energy Goals
+                <IconButton
+                  onClick={handleDialogOpen}
+                  sx={{ marginLeft: 1 }}
+                  color="primary"
+                  size="small"
+                >
+                  <Edit />
+                </IconButton>
               </Typography>
               <div
                 style={{
                   flex: 1,
                   display: "flex",
                   flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
                   height: "100%",
                 }}
               >
                 <div
-                  style={{ width: "100%", height: isMobile ? "450px" : "100%" }}
+                  style={{
+                    width: "80%",
+                    height: isMobile ? "450px" : "90%",
+                  }}
                 >
-                  {" "}
-                  {/* Set larger height for mobile */}
                   <ResponsiveContainer>
-                    <AreaChart data={revenueData}>
+                    <AreaChart data={monthlyDataWithGoal}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                       <XAxis dataKey="month" stroke="#9CA3AF" />
-                      <YAxis stroke="#9CA3AF" />
+                      {!isMobile && <YAxis stroke="#9CA3AF" />}
                       <RechartTooltip
                         contentStyle={{
                           backgroundColor: "rgba(31, 41, 55, 0.8)",
@@ -230,17 +297,17 @@ const Energy = () => {
                       <RechartLegend />
                       <Area
                         type="monotone"
-                        dataKey="revenue"
-                        stroke="#8B5CF6"
-                        fill="#8B5CF6"
-                        fillOpacity={0.3}
+                        dataKey="goal"
+                        stroke={chartColors.goal}
+                        fill={chartColors.goal}
+                        fillOpacity={0.2}
                       />
                       <Area
                         type="monotone"
-                        dataKey="target"
-                        stroke="#10B981"
-                        fill="#10B981"
-                        fillOpacity={0.3}
+                        dataKey="usage"
+                        stroke={chartColors.usage}
+                        fill={chartColors.usage}
+                        fillOpacity={0.6}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -250,6 +317,8 @@ const Energy = () => {
           </Card>
         </Grid>
       </Grid>
+
+      <SetEnergyGoalDialog open={openDialog} onClose={handleDialogClose} />
     </div>
   );
 };
