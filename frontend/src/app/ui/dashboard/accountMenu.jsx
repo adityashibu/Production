@@ -1,4 +1,3 @@
-"use client";
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
@@ -12,10 +11,12 @@ import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import DevicesIcon from "@mui/icons-material/Devices";
+import BatteryChargingFullIcon from "@mui/icons-material/BatteryChargingFull";
 
 import AddUserDialog from "../newUserDialogue";
 import AllocateDevicesDialog from "../allocateDevices";
 import UserSettingsDialog from "../userSettingsDialogue";
+import SetEnergyGoalDialog from "../setEnergyGoalDialogue";
 
 import { signOut } from "firebase/auth";
 import { auth } from "@/app/firebase/config";
@@ -31,6 +32,8 @@ export default function AccountMenu() {
   const [openAllocateDialog, setOpenAllocateDialog] = React.useState(false);
   const [openUserSettingsDialog, setOpenUserSettingsDialog] =
     React.useState(false);
+  const [openSetEnergyGoalDialog, setOpenSetEnergyGoalDialog] =
+    React.useState(false); // New dialog state
 
   const open = Boolean(anchorEl);
 
@@ -71,9 +74,6 @@ export default function AccountMenu() {
 
     fetchSelectedUser();
   }, []);
-
-  // Log just before rendering
-  // console.log("isSuperUser:", isSuperUser);
 
   return (
     <React.Fragment>
@@ -168,6 +168,19 @@ export default function AccountMenu() {
             Add another account
           </MenuItem>
         )}
+        {/* Add new MenuItem for setting energy goal */}
+        <MenuItem
+          onClick={() => setOpenSetEnergyGoalDialog(true)} // Open the dialog
+          sx={{ fontFamily: "JetBrains Mono" }}
+        >
+          <ListItemIcon>
+            <BatteryChargingFullIcon
+              fontSize="small"
+              sx={{ color: "primary.main" }}
+            />
+          </ListItemIcon>
+          Set Energy Goal
+        </MenuItem>
         <MenuItem
           onClick={() => setOpenUserSettingsDialog(true)}
           sx={{ fontFamily: "JetBrains Mono" }}
@@ -188,7 +201,6 @@ export default function AccountMenu() {
       <AddUserDialog
         open={openUserDialog}
         onClose={() => setOpenUserDialog(false)}
-        // onSave={handleSaveUser}
       />
       <AllocateDevicesDialog
         open={openAllocateDialog}
@@ -197,6 +209,13 @@ export default function AccountMenu() {
       <UserSettingsDialog
         open={openUserSettingsDialog}
         onClose={() => setOpenUserSettingsDialog(false)}
+      />
+
+      {/* Add dialog for setting energy goal */}
+      {/* You need to create this dialog if it doesn't exist already */}
+      <SetEnergyGoalDialog
+        open={openSetEnergyGoalDialog}
+        onClose={() => setOpenSetEnergyGoalDialog(false)}
       />
     </React.Fragment>
   );

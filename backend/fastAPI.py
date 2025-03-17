@@ -171,6 +171,16 @@ def fetch_energy_usage(time_range: str):
 def fetch_energy_usage_pdf(time_range: str):
     return ej.get_energy_data_pdf(time_range)
 
+@app.get("/energy_goal")
+def read_energy_goal():
+    """Endpoint to read/fetch the current energy goal"""
+    return ej.get_energy_goal()
+
+@app.post("/energy_goal/{goal_value}")
+def set_energy_goal(goal_value: float):
+    """Endpoint to set the energy goal"""
+    return ej.set_energy_goal(goal_value)
+
 @app.get("/automations")
 async def get_automations():
     """Returns the current automation rules"""
