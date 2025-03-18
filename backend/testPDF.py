@@ -9,6 +9,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
 from datetime import datetime
+import numpy as np
 
 font_path_regular = os.path.abspath("../frontend/public/fonts/JetBrainsMono-Regular.ttf")
 font_path_bold = os.path.abspath("../frontend/public/fonts/JetBrainsMono-Bold.ttf")
@@ -254,6 +255,38 @@ def generate_power_rating_bar_chart(device_data, device_ids, theme):
     plt.savefig(graph_path, bbox_inches="tight", facecolor=theme_config["card_color"])  
     plt.close()
 
+def generate_gauge_chart(value, title, theme):
+    plt.style.use("dark_background" if theme == "dark" else "default")
+    fig, ax = plt.subplots(figsize=(6, 3), subplot_kw={'projection': 'polar'})
+    fig.subplots_adjust(bottom=0.2)
+
+    theme_config = THEME_CONFIG[theme]
+    fig.patch.set_facecolor(theme_config["card_color"])
+    ax.set_facecolor(theme_config["card_color"])
+
+    theta = np.linspace(0, np.pi, 100) 
+    r = np.ones_like(theta)
+
+    ax.plot(theta, r, color=theme_config["accent_colors"][0], linewidth=3)
+    ax.fill_between(theta, 0, r, color=theme_config["accent_colors"][0], alpha=0.5)
+
+    needle_theta = value / 100 * np.pi
+    ax.plot([needle_theta, needle_theta], [0, 1], color=theme_config["accent_colors"][1], linewidth=2)
+
+    ax.set_ylim(0, 1)
+    ax.set_yticklabels([])
+    ax.set_xticks(np.linspace(0, np.pi, 5))
+    ax.set_xticklabels(['0', '25', '50', '75', '100'], color=theme_config["text_color"], fontproperties=jetbrains_font, fontsize=10)
+
+    ax.set_title(title, color=theme_config["accent_colors"][0], fontproperties=jetbrains_bold_font, fontsize=12, pad=20)
+
+    comparison_text = "You've used 20% less energy than the average household."
+    plt.figtext(0.5, 0.05, comparison_text, ha='center', va='center', color=theme_config["accent_colors"][0], fontproperties=jetbrains_font, fontsize=12)
+
+    graph_path = os.path.join(graphs_folder, "gauge_chart.png")
+    plt.savefig(graph_path, bbox_inches="tight", facecolor=theme_config["card_color"])
+    plt.close()
+
 def get_random_energy_tip():
     with open("energy_tips.json", "r") as file:
         data = json.load(file)
@@ -262,7 +295,12 @@ def get_random_energy_tip():
     return tip["tip"]
 
 def generate_pdf(from_month, to_month, from_day, to_day, device_ids, theme="dark"):
-    pdf_filename = f"Energy Report - {str(from_month)[:10]}, {str(from_day)[:10]} to {str(to_month)[:10]}, {str(to_day)[:10 ]}.pdf"
+    for file in os.listdir():
+        if file.startswith("Energy Report") and file.endswith(".pdf"):
+            os.remove(file)
+            print(f"🗑️ Deleted previous report: {file}")
+
+    pdf_filename = f"Energy Report - {str(from_month)[:10]}, {str(from_day)[:10]} to {str(to_month)[:10]}, {str(to_day)[:10]}.pdf"
     c = canvas.Canvas(pdf_filename, pagesize=letter)
     
     theme_config = THEME_CONFIG[theme]
@@ -311,7 +349,6 @@ def generate_pdf(from_month, to_month, from_day, to_day, device_ids, theme="dark
     card_width, card_height = 250, 150
     padding = 20
 
-    # First row of cards
     card1_x, card1_y = 50, 530
     card2_x, card2_y = card1_x + card_width + padding, card1_y
 
@@ -387,14 +424,14 @@ def generate_pdf(from_month, to_month, from_day, to_day, device_ids, theme="dark
     c.setFillColor(colors.HexColor(theme_config["card_color"]))
     c.rect(card7_x, card7_y, card_width, card_height, fill=True, stroke=False)
 
-    c.setFont("JetBrainsMono", 12)
-    c.setFillColor(colors.HexColor(theme_config["text_color"]))
-    c.drawString(card7_x + 15, card7_y + card_height - 30, "New Card 7 Content")
+    generate_gauge_chart(75, "Energy Efficiency", theme)  # Example value for the gauge chart
+    gauge_chart_path = os.path.join(graphs_folder, "gauge_chart.png")
+    c.drawImage(gauge_chart_path, card7_x + 10, card7_y + 10, width=230, height=130, preserveAspectRatio=True, mask=None)
 
     c.save()
     print(f"✅ PDF saved as {pdf_filename}")
 
-from_month = datetime(2024, 12, 1)
+from_month = datetime(2024, 4, 1)
 to_month = datetime(2024, 12, 31)
 from_day = datetime(2025, 3, 1)
 to_day = datetime(2025, 3, 15)
