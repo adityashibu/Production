@@ -42,7 +42,6 @@ if not os.path.exists(graphs_folder):
     os.makedirs(graphs_folder)
     print(f"✅ Created folder: {graphs_folder}")
 
-# Theme configurations
 THEME_CONFIG = {
     "dark": {
         "bg_color": "#121212",
@@ -222,6 +221,39 @@ def generate_energy_goal_chart(data, goal_value, title, x_label, y_label, theme)
     plt.savefig(graph_path, bbox_inches="tight", facecolor=theme_config["card_color"])
     plt.close()
 
+def generate_power_rating_bar_chart(device_data, device_ids, theme):
+    plt.style.use("dark_background" if theme == "dark" else "default")
+    fig, ax = plt.subplots(figsize=(6, 3))
+
+    theme_config = THEME_CONFIG[theme]
+    fig.patch.set_facecolor(theme_config["card_color"])
+    ax.set_facecolor(theme_config["card_color"])
+
+    filtered_devices = [device for device in device_data if device["id"] in device_ids]
+    if not filtered_devices:
+        print("❌ No devices found for the specified IDs.")
+        return
+
+    devices = [device["name"] for device in filtered_devices]
+    power_ratings = [device["power_rating"] for device in filtered_devices]
+
+    bars = ax.bar(devices, power_ratings, color=theme_config["accent_colors"][:len(devices)])
+
+    ax.set_xlabel("Devices", color=theme_config["text_color"], fontproperties=jetbrains_font, fontsize=10)
+    ax.set_ylabel("Power Rating (W)", color=theme_config["text_color"], fontproperties=jetbrains_font, fontsize=10)
+    ax.set_title("Device Power Ratings", color=theme_config["accent_colors"][0], fontproperties=jetbrains_bold_font, fontsize=12)
+
+    ax.set_xticks([])  # Hide x-axis ticks
+    ax.set_xticklabels([])  # Hide x-axis labels
+
+    ax.grid(color=theme_config["grid_color"], linestyle="dashed", linewidth=0.5)
+
+    ax.legend(bars, devices, facecolor=theme_config["card_color"], edgecolor=theme_config["text_color"], labelcolor=theme_config["text_color"], prop=jetbrains_font, fontsize=8, bbox_to_anchor=(0.5, -0.2), loc="upper center", ncol=2)
+
+    graph_path = os.path.join(graphs_folder, "power_rating_bar_chart.png")
+    plt.savefig(graph_path, bbox_inches="tight", facecolor=theme_config["card_color"])  
+    plt.close()
+
 def get_random_energy_tip():
     with open("energy_tips.json", "r") as file:
         data = json.load(file)
@@ -343,9 +375,9 @@ def generate_pdf(from_month, to_month, from_day, to_day, device_ids, theme="dark
     c.setFillColor(colors.HexColor(theme_config["card_color"]))
     c.rect(card6_x, card6_y, card_width, card_height, fill=True, stroke=False)
 
-    c.setFont("JetBrainsMono", 12)
-    c.setFillColor(colors.HexColor(theme_config["text_color"]))
-    c.drawString(card6_x + 15, card6_y + card_height - 30, "New Card 6 Content")
+    generate_power_rating_bar_chart(device_data, device_ids, theme)
+    power_rating_graph_path = os.path.join(graphs_folder, "power_rating_bar_chart.png")
+    c.drawImage(power_rating_graph_path, card6_x + 10, card6_y + 10, width=230, height=130, preserveAspectRatio=True, mask=None)
 
     c.setFillColor(colors.HexColor(theme_config["card_color"]))
     c.rect(card7_x, card7_y, card_width, card_height, fill=True, stroke=False)
