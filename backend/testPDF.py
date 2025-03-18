@@ -428,6 +428,13 @@ def generate_pdf(from_month, to_month, from_day, to_day, device_ids, theme="dark
     gauge_chart_path = os.path.join(graphs_folder, "gauge_chart.png")
     c.drawImage(gauge_chart_path, card7_x + 10, card7_y + 10, width=230, height=130, preserveAspectRatio=True, mask=None)
 
+    c.setFillColor(colors.HexColor(theme_config["accent_colors"][0]))
+    c.setFont("JetBrainsMono-Bold", 12)
+    footer_text = "Generated from System. All rights reserved PowerHouse Inc."
+    footer_width = c.stringWidth(footer_text, "JetBrainsMono-Bold", 12)
+    centered_footer_x = (letter[0] - footer_width) / 2
+    c.drawString(centered_footer_x, 20, footer_text)
+
     c.save()
     print(f"✅ PDF saved as {pdf_filename}")
 
