@@ -262,7 +262,7 @@ def get_random_energy_tip():
     return tip["tip"]
 
 def generate_pdf(from_month, to_month, from_day, to_day, device_ids, theme="dark"):
-    pdf_filename = "energy_report.pdf"
+    pdf_filename = f"Energy Report - {str(from_month)[:10]}, {str(from_day)[:10]} to {str(to_month)[:10]}, {str(to_day)[:10 ]}.pdf"
     c = canvas.Canvas(pdf_filename, pagesize=letter)
     
     theme_config = THEME_CONFIG[theme]
@@ -343,9 +343,9 @@ def generate_pdf(from_month, to_month, from_day, to_day, device_ids, theme="dark
     c.setFillColor(colors.HexColor(theme_config["card_color"]))
     c.rect(card4_x, card4_y, card_width, card_height, fill=True, stroke=False)
 
-    generate_energy_goal_chart(monthly_energy_data, energy_goal, "Energy Goal Tracking", "Month", "Energy (kWh)", theme)
-    energy_goal_graph_path = os.path.join(graphs_folder, "energy_goal_chart.png")
-    c.drawImage(energy_goal_graph_path, card4_x + 10, card4_y + 10, width=230, height=130, preserveAspectRatio=True, mask=None)
+    generate_power_rating_bar_chart(device_data, device_ids, theme)
+    power_rating_graph_path = os.path.join(graphs_folder, "power_rating_bar_chart.png")
+    c.drawImage(power_rating_graph_path, card4_x + 10, card4_y + 10, width=230, height=130, preserveAspectRatio=True, mask=None)
 
     card5_x, card5_y = 50, card3_y - 80
     card5_width = letter[0] - 90
@@ -363,11 +363,16 @@ def generate_pdf(from_month, to_month, from_day, to_day, device_ids, theme="dark
 
     c.setFont("JetBrainsMono-Bold", 14)
     c.setFillColor(colors.HexColor(theme_config["accent_colors"][0]))
-    c.drawString(card5_x + 15, text_y - 5, "Energy Tip:")
+    energy_tip_title = "Energy Tip:"
+    energy_tip_title_width = c.stringWidth(energy_tip_title, "JetBrainsMono-Bold", 14)
+    centered_title_x = card5_x + (card5_width - energy_tip_title_width) / 2
+    c.drawString(centered_title_x, text_y - 5, energy_tip_title)
 
     c.setFont("JetBrainsMono", 10)
     c.setFillColor(colors.HexColor(theme_config["text_color"]))
-    c.drawString(card5_x + 15, text_y - 20, energy_tip)
+    energy_tip_width = c.stringWidth(energy_tip, "JetBrainsMono", 10)
+    centered_tip_x = card5_x + (card5_width - energy_tip_width) / 2
+    c.drawString(centered_tip_x, text_y - 20, energy_tip)
 
     card6_x, card6_y = 50, card5_y - card_height - padding
     card7_x, card7_y = card6_x + card_width + padding, card6_y
@@ -375,9 +380,9 @@ def generate_pdf(from_month, to_month, from_day, to_day, device_ids, theme="dark
     c.setFillColor(colors.HexColor(theme_config["card_color"]))
     c.rect(card6_x, card6_y, card_width, card_height, fill=True, stroke=False)
 
-    generate_power_rating_bar_chart(device_data, device_ids, theme)
-    power_rating_graph_path = os.path.join(graphs_folder, "power_rating_bar_chart.png")
-    c.drawImage(power_rating_graph_path, card6_x + 10, card6_y + 10, width=230, height=130, preserveAspectRatio=True, mask=None)
+    generate_energy_goal_chart(monthly_energy_data, energy_goal, "Energy Goal Tracking", "Month", "Energy (kWh)", theme)
+    energy_goal_graph_path = os.path.join(graphs_folder, "energy_goal_chart.png")
+    c.drawImage(energy_goal_graph_path, card6_x + 10, card6_y + 10, width=230, height=130, preserveAspectRatio=True, mask=None)
 
     c.setFillColor(colors.HexColor(theme_config["card_color"]))
     c.rect(card7_x, card7_y, card_width, card_height, fill=True, stroke=False)
@@ -389,9 +394,9 @@ def generate_pdf(from_month, to_month, from_day, to_day, device_ids, theme="dark
     c.save()
     print(f"✅ PDF saved as {pdf_filename}")
 
-from_month = datetime(2024, 4, 1)
+from_month = datetime(2024, 12, 1)
 to_month = datetime(2024, 12, 31)
 from_day = datetime(2025, 3, 1)
 to_day = datetime(2025, 3, 15)
 device_ids = [1, 2, 3, 4, 5, 6]
-generate_pdf(from_month, to_month, from_day, to_day, device_ids, "light")
+generate_pdf(from_month, to_month, from_day, to_day, device_ids, "dark")
