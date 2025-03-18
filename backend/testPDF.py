@@ -1,5 +1,6 @@
 import os
 import json
+import random
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 from reportlab.pdfbase.ttfonts import TTFont
@@ -221,6 +222,13 @@ def generate_energy_goal_chart(data, goal_value, title, x_label, y_label, theme)
     plt.savefig(graph_path, bbox_inches="tight", facecolor=theme_config["card_color"])
     plt.close()
 
+def get_random_energy_tip():
+    with open("energy_tips.json", "r") as file:
+        data = json.load(file)
+    category = random.choice(["highEnergyTip", "mediumEnergyTip"])
+    tip = random.choice(data[category])
+    return tip["tip"]
+
 def generate_pdf(from_month, to_month, from_day, to_day, device_ids, theme="dark"):
     pdf_filename = "energy_report.pdf"
     c = canvas.Canvas(pdf_filename, pagesize=letter)
@@ -271,6 +279,7 @@ def generate_pdf(from_month, to_month, from_day, to_day, device_ids, theme="dark
     card_width, card_height = 250, 150
     padding = 20
 
+    # First row of cards
     card1_x, card1_y = 50, 530
     card2_x, card2_y = card1_x + card_width + padding, card1_y
 
@@ -305,6 +314,45 @@ def generate_pdf(from_month, to_month, from_day, to_day, device_ids, theme="dark
     generate_energy_goal_chart(monthly_energy_data, energy_goal, "Energy Goal Tracking", "Month", "Energy (kWh)", theme)
     energy_goal_graph_path = os.path.join(graphs_folder, "energy_goal_chart.png")
     c.drawImage(energy_goal_graph_path, card4_x + 10, card4_y + 10, width=230, height=130, preserveAspectRatio=True, mask=None)
+
+    card5_x, card5_y = 50, card3_y - 80
+    card5_width = letter[0] - 90
+    card5_height = 60
+
+    c.setFillColor(colors.HexColor(theme_config["card_color"]))
+    c.rect(card5_x, card5_y, card5_width, card5_height, fill=True, stroke=False)
+
+    c.setFont("JetBrainsMono", 12)
+    c.setFillColor(colors.HexColor(theme_config["text_color"]))
+
+    energy_tip = get_random_energy_tip()
+    
+    text_y = card5_y + card5_height - 20
+
+    c.setFont("JetBrainsMono-Bold", 14)
+    c.setFillColor(colors.HexColor(theme_config["accent_colors"][0]))
+    c.drawString(card5_x + 15, text_y - 5, "Energy Tip:")
+
+    c.setFont("JetBrainsMono", 10)
+    c.setFillColor(colors.HexColor(theme_config["text_color"]))
+    c.drawString(card5_x + 15, text_y - 20, energy_tip)
+
+    card6_x, card6_y = 50, card5_y - card_height - padding
+    card7_x, card7_y = card6_x + card_width + padding, card6_y
+
+    c.setFillColor(colors.HexColor(theme_config["card_color"]))
+    c.rect(card6_x, card6_y, card_width, card_height, fill=True, stroke=False)
+
+    c.setFont("JetBrainsMono", 12)
+    c.setFillColor(colors.HexColor(theme_config["text_color"]))
+    c.drawString(card6_x + 15, card6_y + card_height - 30, "New Card 6 Content")
+
+    c.setFillColor(colors.HexColor(theme_config["card_color"]))
+    c.rect(card7_x, card7_y, card_width, card_height, fill=True, stroke=False)
+
+    c.setFont("JetBrainsMono", 12)
+    c.setFillColor(colors.HexColor(theme_config["text_color"]))
+    c.drawString(card7_x + 15, card7_y + card_height - 30, "New Card 7 Content")
 
     c.save()
     print(f"✅ PDF saved as {pdf_filename}")
