@@ -6,6 +6,7 @@ import users as u
 import energy_json as ej
 import automations as am
 import groups as gr
+import testPDF as pdf
 
 import asyncio
 import os
@@ -236,3 +237,8 @@ def update_group_status(group_id: int, status: str):
 def delete_group(group_id: int):
     """Delete a group from the selected user"""
     return gr.deleteGroup(group_id)
+
+@app.get("/energy_report/{from_month}/{to_month}/{from_date}/{to_date}/{device_ids}/{theme}")
+def generate_energy_report(from_month: int, to_month: int, from_date: str, to_date: str, device_ids: DeviceIdsRequest, theme: str):
+    """Generate an energy report for the selected user"""
+    return pdf.generate_pdf(from_month, to_month, from_date, to_date, device_ids, theme)
