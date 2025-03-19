@@ -1,6 +1,8 @@
 import os
 import json
 import random
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 from reportlab.pdfbase.ttfonts import TTFont
@@ -38,7 +40,7 @@ if os.path.exists(font_path_bold):
 else:
     print(f"❌ JetBrains Mono Bold font file not found: {font_path_bold}")
 
-graphs_folder = "graphs"
+graphs_folder = os.path.abspath("graphs")
 if not os.path.exists(graphs_folder):
     os.makedirs(graphs_folder)
     print(f"✅ Created folder: {graphs_folder}")
@@ -163,12 +165,12 @@ def generate_monthly_energy_graph(data, title, x_label, y_label, theme):
     plt.close()
 
 def generate_device_bar_chart(device_data, device_ids, theme):
-    plt.style.use("dark_background" if theme == "dark" else "default")
+    # Remove plt.style.use() since theme_config already manages colors
     fig, ax = plt.subplots(figsize=(6, 3))
 
     theme_config = THEME_CONFIG[theme]
-    fig.patch.set_facecolor(theme_config["card_color"])
-    ax.set_facecolor(theme_config["card_color"])
+    fig.patch.set_facecolor(theme_config["card_color"])  # Set background
+    ax.set_facecolor(theme_config["card_color"])  # Set axis background
 
     filtered_devices = [device for device in device_data if device["id"] in device_ids]
     if not filtered_devices:
@@ -222,8 +224,9 @@ def generate_energy_goal_chart(data, goal_value, title, x_label, y_label, theme)
     plt.savefig(graph_path, bbox_inches="tight", facecolor=theme_config["card_color"])
     plt.close()
 
+
 def generate_power_rating_bar_chart(device_data, device_ids, theme):
-    plt.style.use("dark_background" if theme == "dark" else "default")
+    # Same change here: remove plt.style.use()
     fig, ax = plt.subplots(figsize=(6, 3))
 
     theme_config = THEME_CONFIG[theme]
@@ -295,6 +298,13 @@ def get_random_energy_tip():
     return tip["tip"]
 
 def generate_pdf(from_month, to_month, from_day, to_day, device_ids, theme="dark"):
+    print(f"Received from_month: {from_month}, to_month: {to_month}, from_day: {from_day}, to_day: {to_day}")
+
+    from_month = datetime(2024, from_month, 1)
+    to_month = datetime(2024, to_month, 1)
+    from_day = datetime(2025, 3, from_day)
+    to_day = datetime(2025, 3, to_day)
+
     for file in os.listdir():
         if file.startswith("Energy Report") and file.endswith(".pdf"):
             os.remove(file)
@@ -438,9 +448,11 @@ def generate_pdf(from_month, to_month, from_day, to_day, device_ids, theme="dark
     c.save()
     print(f"✅ PDF saved as {pdf_filename}")
 
-from_month = datetime(2024, 4, 1)
-to_month = datetime(2024, 12, 31)
-from_day = datetime(2025, 3, 1)
-to_day = datetime(2025, 3, 15)
-device_ids = [1, 2, 3, 4, 5, 6]
-generate_pdf(from_month, to_month, from_day, to_day, device_ids, "dark")
+    return os.path.abspath(pdf_filename)
+
+# from_month = datetime(2024, 4, 1)
+# to_month = datetime(2024, 12, 31)
+# from_day = datetime(2025, 3, 1)
+# to_day = datetime(2025, 3, 15)
+# device_ids = [1, 2, 3, 4, 5, 6]
+# generate_pdf(from_month, to_month, from_day, to_day, device_ids, "dark")

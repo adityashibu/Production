@@ -5,7 +5,14 @@ import {
   Typography,
   Grid,
   Box,
+  Button,
   IconButton,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Checkbox,
+  ListItemText,
 } from "@mui/material";
 import {
   PieChart,
@@ -21,6 +28,8 @@ import { useTheme } from "@mui/material/styles";
 
 import Breadcrumb from "@/app/ui/dashboard/breadcrumbs";
 import SetEnergyGoalDialog from "../ui/setEnergyGoalDialogue";
+
+import { Description } from "@mui/icons-material";
 
 import {
   AreaChart,
@@ -39,6 +48,12 @@ const Energy = () => {
   const [monthlyData, setMonthlyData] = useState([]);
   const [energyGoal, setEnergyGoal] = useState(0);
   const [openDialog, setOpenDialog] = useState(false);
+  const [selectedFromMonth, setSelectedFromMonth] = useState("");
+  const [selectedToMonth, setSelectedToMonth] = useState("");
+  const [selectedDevices, setSelectedDevices] = useState([]);
+  const [selectedFromDate, setSelectedFromDate] = useState("");
+  const [selectedToDate, setSelectedToDate] = useState("");
+
   const isMobile = useMediaQuery("(max-width: 600px)");
   const isMdUp = useMediaQuery("(min-width: 960px)");
   const theme = useTheme();
@@ -63,6 +78,7 @@ const Energy = () => {
           .map((device) => ({
             name: device.name,
             value: device.power_usage,
+            id: device.id,
           }));
 
         console.log("Transformed data:", transformedData);
@@ -126,6 +142,109 @@ const Energy = () => {
 
   const handleDialogClose = () => {
     setOpenDialog(false);
+  };
+
+  const handleGeneratePDF = async () => {
+    try {
+      const fromMonthNumber =
+        [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ].indexOf(selectedFromMonth) + 1;
+      const toMonthNumber =
+        [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ].indexOf(selectedToMonth) + 1;
+
+      console.log(
+        "Selected From Month:",
+        selectedFromMonth,
+        "Converted:",
+        fromMonthNumber
+      );
+      console.log(
+        "Selected To Month:",
+        selectedToMonth,
+        "Converted:",
+        toMonthNumber
+      );
+
+      const deviceIds = selectedDevices
+        .map(
+          (deviceName) =>
+            deviceData.find((device) => device.name === deviceName)?.id || null
+        )
+        .filter((id) => id !== null);
+
+      const dataToSend = {
+        from_month: fromMonthNumber,
+        to_month: toMonthNumber,
+        from_date: parseInt(selectedFromDate, 10),
+        to_date: parseInt(selectedToDate, 10),
+        device_ids: deviceIds,
+        theme: theme.palette.mode,
+      };
+
+      console.log("Data being sent to backend:", dataToSend);
+
+      const response = await fetch("http://localhost:8000/energy_report/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToSend),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          `Error generating PDF report: ${response.status} - ${
+            errorData.detail || "Unknown error"
+          }`
+        );
+      }
+
+      const pdfBlob = await response.blob();
+      const url = window.URL.createObjectURL(pdfBlob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Energy_Report.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+    }
+  };
+
+  const getAvailableDates = () => {
+    return Array.from({ length: 30 }, (_, i) => i + 1);
+  };
+
+  const handleDeviceChange = (event) => {
+    setSelectedDevices(event.target.value);
+    console.log("Selected devices:", event.target.value);
   };
 
   return (
@@ -313,6 +432,247 @@ const Energy = () => {
                   </ResponsiveContainer>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} md={12}>
+          <Card
+            sx={{
+              height: { xs: "auto", md: "100%" },
+              display: "flex",
+              flexDirection: "column",
+              textDecoration: "none",
+              color: "inherit",
+              transition: "transform 0.2s ease-in-out",
+              "&:hover": { transform: "scale(1.01)" },
+              boxShadow: 3,
+              overflow: "hidden",
+            }}
+          >
+            <CardContent
+              sx={{
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                padding: 2,
+              }}
+            >
+              <Box
+                display="flex"
+                flexDirection={isMobile ? "column" : "row"}
+                justifyContent="space-between"
+                alignItems={isMobile ? "flex-start" : "center"}
+              >
+                <Typography
+                  sx={{
+                    fontSize: { xs: 20, md: 30 },
+                    fontWeight: 800,
+                    fontFamily: "JetBrains Mono",
+                    marginBottom: 2,
+                    marginLeft: 2,
+                    marginTop: { xs: 1, md: 2 },
+                    color: "primary.main",
+                  }}
+                >
+                  Generate PDF
+                </Typography>
+
+                {/* Generate PDF Button */}
+                <Button
+                  onClick={handleGeneratePDF}
+                  sx={{
+                    mt: isMobile ? 2 : 0,
+                    ml: isMobile ? 2 : 0,
+                    fontFamily: "JetBrains Mono",
+                    textTransform: "none",
+                    color: "white",
+                  }}
+                  color="primary"
+                  variant="contained"
+                  startIcon={<Description />}
+                >
+                  Generate PDF
+                </Button>
+              </Box>
+
+              {/* Form for filters */}
+              <Grid container spacing={2} sx={{ mt: 2 }}>
+                <Grid item xs={6} md={2}>
+                  <FormControl fullWidth sx={{ marginTop: 2 }}>
+                    <InputLabel
+                      sx={{
+                        fontFamily: "JetBrains Mono",
+                        fontSize: { xs: 12, md: 16 },
+                      }}
+                    >
+                      From Month
+                    </InputLabel>
+                    <Select
+                      value={selectedFromMonth}
+                      onChange={(e) => setSelectedFromMonth(e.target.value)}
+                    >
+                      {[
+                        "Jan",
+                        "Feb",
+                        "Mar",
+                        "Apr",
+                        "May",
+                        "Jun",
+                        "Jul",
+                        "Aug",
+                        "Sep",
+                        "Oct",
+                        "Nov",
+                        "Dec",
+                      ].map((month) => (
+                        <MenuItem
+                          key={month}
+                          value={month}
+                          sx={{ fontFamily: "JetBrains Mono" }}
+                        >
+                          {month}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={6} md={2}>
+                  <FormControl fullWidth sx={{ marginTop: 2 }}>
+                    <InputLabel
+                      sx={{
+                        fontFamily: "JetBrains Mono",
+                        fontSize: { xs: 12, md: 16 },
+                      }}
+                    >
+                      To Month
+                    </InputLabel>
+                    <Select
+                      value={selectedToMonth}
+                      onChange={(e) => setSelectedToMonth(e.target.value)}
+                    >
+                      {[
+                        "Jan",
+                        "Feb",
+                        "Mar",
+                        "Apr",
+                        "May",
+                        "Jun",
+                        "Jul",
+                        "Aug",
+                        "Sep",
+                        "Oct",
+                        "Nov",
+                        "Dec",
+                      ].map((month) => (
+                        <MenuItem
+                          key={month}
+                          value={month}
+                          sx={{ fontFamily: "JetBrains Mono" }}
+                        >
+                          {month}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                <Grid item xs={6} md={2}>
+                  <FormControl fullWidth sx={{ marginTop: 2 }}>
+                    <InputLabel
+                      sx={{
+                        fontFamily: "JetBrains Mono",
+                        fontSize: { xs: 12, md: 16 },
+                      }}
+                    >
+                      From Date
+                    </InputLabel>
+                    <Select
+                      value={selectedFromDate}
+                      onChange={(e) =>
+                        setSelectedFromDate(Number(e.target.value))
+                      }
+                    >
+                      {getAvailableDates().map((day) => (
+                        <MenuItem
+                          key={day}
+                          value={Number(day)}
+                          sx={{ fontFamily: "JetBrains Mono" }}
+                        >
+                          {day}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                {/* To Date */}
+                <Grid item xs={6} md={2}>
+                  <FormControl fullWidth sx={{ marginTop: 2 }}>
+                    <InputLabel
+                      sx={{
+                        fontFamily: "Jetbrains Mono",
+                        fontSize: { xs: 12, md: 16 },
+                      }}
+                    >
+                      To Date
+                    </InputLabel>
+                    <Select
+                      value={selectedToDate}
+                      onChange={(e) =>
+                        setSelectedToDate(Number(e.target.value))
+                      }
+                    >
+                      {getAvailableDates().map((day) => (
+                        <MenuItem
+                          key={day}
+                          value={Number(day)}
+                          sx={{ fontFamily: "Jetbrains Mono" }}
+                        >
+                          {day}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                {/* Device Selection */}
+                <Grid item xs={12} md={4}>
+                  <FormControl fullWidth sx={{ marginTop: 2 }}>
+                    <InputLabel
+                      sx={{
+                        fontFamily: "JetBrains Mono",
+                        fontSize: { xs: 12, md: 16 },
+                      }}
+                    >
+                      Select Devices
+                    </InputLabel>
+                    <Select
+                      multiple
+                      value={selectedDevices}
+                      onChange={handleDeviceChange}
+                      renderValue={(selected) =>
+                        selected
+                          .map(
+                            (id) =>
+                              deviceData.find((device) => device.name === id)
+                                ?.name
+                          )
+                          .join(", ")
+                      }
+                    >
+                      {deviceData.map((device) => (
+                        <MenuItem key={device.name} value={device.name}>
+                          <Checkbox
+                            checked={selectedDevices.includes(device.name)}
+                          />
+                          <ListItemText primary={device.name} />
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
             </CardContent>
           </Card>
         </Grid>

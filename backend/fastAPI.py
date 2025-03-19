@@ -15,10 +15,23 @@ import json
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from collections import deque
+from fastapi.responses import FileResponse
 
 # Serve user data (Only for testing purposes)
 USER_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "database", "users_db.json")
 # print(USER_DB_PATH) # For testing purposes
+
+print("Current Working Directory:", os.getcwd())
+print("Graphs folder exists:", os.path.exists("graphs"))
+print("Available files in graphs:", os.listdir("graphs"))
+
+base_dir = os.path.dirname(os.path.abspath(__file__))
+daily_graph_path = os.path.join(base_dir, "graphs", "daily_energy_graph.png")
+monthly_graph_path = os.path.join(base_dir, "graphs", "monthly_energy_graph.png")
+
+print("Daily graph path:", daily_graph_path, "| Exists:", os.path.exists(daily_graph_path))
+print("Monthly graph path:", monthly_graph_path, "| Exists:", os.path.exists(monthly_graph_path))
+
 
 app = FastAPI()
 
@@ -52,6 +65,15 @@ class GroupRequestStatus(BaseModel):
 
 class DeviceIdsRequest(BaseModel):
     device_ids: List[int]
+
+
+class EnergyReportRequest(BaseModel):
+    from_month: int
+    to_month: int
+    from_date: int
+    to_date: int
+    device_ids: List[int]
+    theme: str = "dark"
 
 @app.on_event("startup")
 async def startup_event():
@@ -238,7 +260,18 @@ def delete_group(group_id: int):
     """Delete a group from the selected user"""
     return gr.deleteGroup(group_id)
 
-@app.get("/energy_report/{from_month}/{to_month}/{from_date}/{to_date}/{device_ids}/{theme}")
-def generate_energy_report(from_month: int, to_month: int, from_date: str, to_date: str, device_ids: DeviceIdsRequest, theme: str):
-    """Generate an energy report for the selected user"""
-    return pdf.generate_pdf(from_month, to_month, from_date, to_date, device_ids, theme)
+@app.post("/energy_report/")
+def generate_energy_report(data: EnergyReportRequest):
+        print(f"FastAPI CWD: {os.getcwd()}")
+        print(f"Graphs folder exists: {os.path.exists(os.path.join(os.getcwd(), 'graphs'))}")
+        print(f"Daily graph exists: {os.path.exists(os.path.join(os.getcwd(), 'graphs', 'daily_energy_graph.png'))}")
+
+        pdf_path = pdf.generate_pdf(
+            from_month=data.from_month,
+            to_month=data.to_month,
+            from_day=data.from_date,
+            to_day=data.to_date,
+            device_ids=data.device_ids,
+            theme=data.theme
+        )
+        return FileResponse(pdf_path, filename="Energy_Report.pdf")
