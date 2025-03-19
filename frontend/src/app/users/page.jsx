@@ -55,7 +55,9 @@ const Keypad = ({ onKeyPress, onClear }) => {
   };
 
   return (
-    <Box sx={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 1 }}>
+    <Box
+      sx={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 1 }}
+    >
       {[1, 2, 3, 4, 5, 6, 7].map((num) => (
         <Button
           key={num}
@@ -98,8 +100,6 @@ const Keypad = ({ onKeyPress, onClear }) => {
   );
 };
 
-
-
 const Users = () => {
   const [darkMode, setDarkMode] = useState(true);
   const [users, setUsers] = useState([]);
@@ -141,8 +141,14 @@ const Users = () => {
   }, []);
 
   const handleNewUserSubmit = async () => {
-    if (newUsername.trim() === "" || newPassword.length !== 4 || isNaN(newPassword)) {
-      setError("Username must not be empty and password must be a 4-digit number.");
+    if (
+      newUsername.trim() === "" ||
+      newPassword.length !== 4 ||
+      isNaN(newPassword)
+    ) {
+      setError(
+        "Username must not be empty and password must be a 4-digit number."
+      );
       return;
     }
 
@@ -185,7 +191,9 @@ const Users = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/delete_user/${encodeURIComponent(userToDelete.user_name)}/${encodeURIComponent(deletePassword)}`,
+        `http://localhost:8000/delete_user/${encodeURIComponent(
+          userToDelete.user_name
+        )}/${encodeURIComponent(deletePassword)}`,
         {
           method: "DELETE",
         }
@@ -218,25 +226,30 @@ const Users = () => {
     setPasswordInput("");
     setPasswordValid(null);
   };
-  
+
   const handlePasswordSubmit = async () => {
     if (selectedUser && passwordInput === selectedUser.user_password) {
       setPasswordValid(true);
-  
+
       try {
-        const response = await fetch(`http://localhost:8000/select_user/${selectedUser.user_name}`, {
-          method: "POST",
-        });
-  
+        const response = await fetch(
+          `http://localhost:8000/select_user/${selectedUser.user_name}`,
+          {
+            method: "POST",
+          }
+        );
+
         if (!response.ok) {
           console.error("Failed to set selected user");
           return;
         }
-  
-        const selectedResponse = await fetch("http://localhost:8000/selected_user");
+
+        const selectedResponse = await fetch(
+          "http://localhost:8000/selected_user"
+        );
         const selectedData = await selectedResponse.json();
         console.log("Selected user from API:", selectedData);
-  
+
         router.push("/dashboard");
       } catch (error) {
         console.error("Error setting selected user:", error);
@@ -355,12 +368,21 @@ const Users = () => {
         )}
 
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle>
+          <DialogTitle>
             Enter Password for {selectedUser ? selectedUser.user_name : "User"}
-        </DialogTitle>
+          </DialogTitle>
           <DialogContent>
             <DotInput value={passwordInput} maxLength={4} />
-            <Typography variant="h6" sx={{ textAlign: "center", mt: 2, mb:2, fontFamily: "JetBrains Mono", fontSize: {xs: "15px", md:"24px"} }}>
+            <Typography
+              variant="h6"
+              sx={{
+                textAlign: "center",
+                mt: 2,
+                mb: 2,
+                fontFamily: "JetBrains Mono",
+                fontSize: { xs: "15px", md: "24px" },
+              }}
+            >
               Please enter your 4-digit password:
             </Typography>
 
@@ -397,10 +419,20 @@ const Users = () => {
           </DialogActions>
         </Dialog>
 
-        <Dialog open={openNewUserDialog} onClose={() => setOpenNewUserDialog(false)}>
-          <DialogTitle sx={{fontFamily: "Jetbrains Mono", color: "primary.main"}}>Add New User</DialogTitle>
+        <Dialog
+          open={openNewUserDialog}
+          onClose={() => setOpenNewUserDialog(false)}
+        >
+          <DialogTitle
+            sx={{ fontFamily: "Jetbrains Mono", color: "primary.main" }}
+          >
+            Add New User
+          </DialogTitle>
           <DialogContent>
-            <Typography variant="body1" sx={{ mb: 2, fontFamily: "JetBrains Mono" }}>
+            <Typography
+              variant="body1"
+              sx={{ mb: 2, fontFamily: "JetBrains Mono" }}
+            >
               Enter a username and a 4-digit password.
             </Typography>
             <TextField
@@ -420,28 +452,49 @@ const Users = () => {
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              inputProps={{ maxLength: 4, pattern: "[0-9]*", inputMode: "numeric" }} 
+              inputProps={{
+                maxLength: 4,
+                pattern: "[0-9]*",
+                inputMode: "numeric",
+              }}
               sx={{ mb: 2 }}
             />
             {error && <Typography color="error">{error}</Typography>}
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpenNewUserDialog(false)} color="primary" sx={{ fontFamily: "JetBrains Mono" }}>
+            <Button
+              onClick={() => setOpenNewUserDialog(false)}
+              color="primary"
+              sx={{ fontFamily: "JetBrains Mono" }}
+            >
               Cancel
             </Button>
-            <Button onClick={handleNewUserSubmit} color="primary" sx={{ fontFamily: "JetBrains Mono" }}>
+            <Button
+              onClick={handleNewUserSubmit}
+              color="primary"
+              sx={{ fontFamily: "JetBrains Mono" }}
+            >
               Submit
             </Button>
           </DialogActions>
         </Dialog>
 
-        <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-          <DialogTitle sx={{ fontFamily: "JetBrains Mono", color: "primary.main" }}>
+        <Dialog
+          open={deleteDialogOpen}
+          onClose={() => setDeleteDialogOpen(false)}
+        >
+          <DialogTitle
+            sx={{ fontFamily: "JetBrains Mono", color: "primary.main" }}
+          >
             Confirm Delete
           </DialogTitle>
           <DialogContent>
-            <Typography variant="body1" sx={{ mb: 2, fontFamily: "JetBrains Mono" }}>
-              Selected user to delete: <strong>{userToDelete?.user_name}</strong>
+            <Typography
+              variant="body1"
+              sx={{ mb: 2, fontFamily: "JetBrains Mono" }}
+            >
+              Selected user to delete:{" "}
+              <strong>{userToDelete?.user_name}</strong>
             </Typography>
             <TextField
               label="Enter 4-digit Password"
@@ -451,16 +504,30 @@ const Users = () => {
               type="password"
               value={deletePassword}
               onChange={(e) => setDeletePassword(e.target.value)}
-              inputProps={{ maxLength: 4, pattern: "[0-9]*", inputMode: "numeric" }}
+              inputProps={{
+                maxLength: 4,
+                pattern: "[0-9]*",
+                inputMode: "numeric",
+              }}
               sx={{ mb: 2 }}
             />
-            {deleteError && <Typography color="error">{deleteError}</Typography>}
+            {deleteError && (
+              <Typography color="error">{deleteError}</Typography>
+            )}
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setDeleteDialogOpen(false)} color="primary" sx={{ fontFamily: "JetBrains Mono" }}>
+            <Button
+              onClick={() => setDeleteDialogOpen(false)}
+              color="primary"
+              sx={{ fontFamily: "JetBrains Mono" }}
+            >
               Cancel
             </Button>
-            <Button onClick={handleConfirmDelete} color="error" sx={{ fontFamily: "JetBrains Mono" }}>
+            <Button
+              onClick={handleConfirmDelete}
+              color="error"
+              sx={{ fontFamily: "JetBrains Mono" }}
+            >
               Delete
             </Button>
           </DialogActions>
