@@ -147,12 +147,17 @@ const Users = () => {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:8000/add_user/${encodeURIComponent(newUsername)}/${encodeURIComponent(newPassword)}`,
-        {
-          method: "POST",
-        }
-      );
+      const response = await fetch("http://localhost:8000/add_user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_name: newUsername,
+          user_password: newPassword,
+          allocated_devices: [],
+        }),
+      });
 
       if (!response.ok) {
         const errorMessage = await response.text();
