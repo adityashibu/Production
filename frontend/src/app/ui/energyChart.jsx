@@ -99,7 +99,9 @@ const EnergyUsageChart = ({ data, timeRange }) => {
                   : dayjs(time).format("HH:mm")
               }
             />
-            <YAxis label={{ value: "Power (W)", angle: -90, position: "insideLeft" }} />
+            <YAxis
+              label={{ value: "Power (W)", angle: -90, position: "insideLeft" }}
+            />
             <Tooltip
               labelFormatter={(label) =>
                 `Time: ${
@@ -119,7 +121,9 @@ const EnergyUsageChart = ({ data, timeRange }) => {
           </LineChart>
         </ResponsiveContainer>
       ) : (
-        <Typography sx={{ fontSize: 16, fontStyle: "italic", textAlign: "center" }}>
+        <Typography
+          sx={{ fontSize: 16, fontStyle: "italic", textAlign: "center" }}
+        >
           No data available yet...
         </Typography>
       )}

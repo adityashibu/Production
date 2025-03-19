@@ -77,7 +77,7 @@ const AddUserDialog = ({ open, onClose, onSave }) => {
           margin="dense"
           label="Username"
           InputLabelProps={{
-            sx: { fontFamily: "Jetbrains Mono" }
+            sx: { fontFamily: "Jetbrains Mono" },
           }}
           fullWidth
           value={username}
@@ -88,7 +88,7 @@ const AddUserDialog = ({ open, onClose, onSave }) => {
           margin="dense"
           label="Password"
           InputLabelProps={{
-            sx: { fontFamily: "Jetbrains Mono" }
+            sx: { fontFamily: "Jetbrains Mono" },
           }}
           type="password"
           fullWidth
@@ -99,7 +99,12 @@ const AddUserDialog = ({ open, onClose, onSave }) => {
 
         {/* Device Selection */}
         <FormControl fullWidth sx={{ marginTop: 1 }}>
-          <InputLabel id="device-select-label" sx={{fontFamily: "Jetbrains Mono"}}>Select Devices</InputLabel>
+          <InputLabel
+            id="device-select-label"
+            sx={{ fontFamily: "Jetbrains Mono" }}
+          >
+            Select Devices
+          </InputLabel>
           <Select
             labelId="device-select-label"
             multiple
@@ -113,9 +118,21 @@ const AddUserDialog = ({ open, onClose, onSave }) => {
             sx={{ fontFamily: "Jetbrains Mono" }}
           >
             {devices.map((device) => (
-              <MenuItem key={device.id} value={device.id} sx={{fontFamily: "Jetbrains Mono"}}> {/* Ensure font applied here too */}
-                <Checkbox sx={{fontFamily: "Jetbrains Mono"}} checked={selectedDevices.includes(device.id)} />
-                <ListItemText sx={{fontFamily: "Jetbrains Mono"}} primary={device.name} />
+              <MenuItem
+                key={device.id}
+                value={device.id}
+                sx={{ fontFamily: "Jetbrains Mono" }}
+              >
+                {" "}
+                {/* Ensure font applied here too */}
+                <Checkbox
+                  sx={{ fontFamily: "Jetbrains Mono" }}
+                  checked={selectedDevices.includes(device.id)}
+                />
+                <ListItemText
+                  sx={{ fontFamily: "Jetbrains Mono" }}
+                  primary={device.name}
+                />
               </MenuItem>
             ))}
           </Select>
