@@ -73,7 +73,7 @@ def set_users_data():
         filtered_users[user_id] = {
             "user_id": user["user_id"],
             "user_name": user["user_name"],
-            "user_password": hashed_password,  # Use existing hash if unchanged
+            "user_password": hashed_password,  # Use existing hash if unchanged pass
             "allocated_devices": allocated_devices,
             "user_role": user["user_role"]
         }
