@@ -31,7 +31,7 @@ import { useRouter } from "next/navigation";
 
 const Dashboard = () => {
   const router = useRouter();
-  if(typeof window !== 'undefined'){
+  if (typeof window !== "undefined") {
     const userSession = sessionStorage.getItem("user");
     const [user, loading] = useAuthState(auth);
     useEffect(() => {
@@ -49,6 +49,7 @@ const Dashboard = () => {
   const [checked, setChecked] = useState([]);
   const [timeRange, setTimeRange] = useState("realtime");
   const [energyData, setEnergyData] = useState({ daily: [], monthly: [] });
+  const [automations, setAutomations] = useState([]);
 
   const theme = useTheme();
   const boxShadow =
@@ -61,7 +62,6 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch device data
         const deviceResponse = await fetch("http://localhost:8000/device_info");
         const deviceResult = await deviceResponse.json();
 
@@ -79,31 +79,43 @@ const Dashboard = () => {
           console.error("Invalid response structure", deviceResult);
         }
 
-        const dailyResponse = await fetch("http://localhost:8000/energy_usage/daily");
+        const dailyResponse = await fetch(
+          "http://localhost:8000/energy_usage/daily"
+        );
         const dailyResult = await dailyResponse.json();
 
-        const monthlyResponse = await fetch("http://localhost:8000/energy_usage/monthly");
+        const monthlyResponse = await fetch(
+          "http://localhost:8000/energy_usage/monthly"
+        );
         const monthlyResult = await monthlyResponse.json();
 
         setEnergyData({
           daily: dailyResult,
           monthly: monthlyResult,
         });
+
+        const automationResponse = await fetch(
+          "http://localhost:8000/automations"
+        );
+        const automationResult = await automationResponse.json();
+
+        setAutomations(automationResult.automations);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 1000); // Update every 10 seconds
+    const interval = setInterval(fetchData, 1000);
     return () => clearInterval(interval);
   }, []);
 
   const handleToggle = (deviceId) => async () => {
     try {
-      // Send API request to toggle device status
+      const newStatus = checked.includes(deviceId) ? "off" : "on";
+
       const response = await fetch(
-        `http://localhost:8000/device/${deviceId}/status`,
+        `http://localhost:8000/device/${deviceId}/status?status=${newStatus}`,
         {
           method: "POST",
         }
@@ -113,7 +125,6 @@ const Dashboard = () => {
         throw new Error("Failed to change device status");
       }
 
-      // Toggle switch state locally
       setChecked((prevChecked) => {
         const currentIndex = prevChecked.indexOf(deviceId);
         const newChecked = [...prevChecked];
@@ -166,14 +177,14 @@ const Dashboard = () => {
                 link: "/devices",
               },
               {
-                title: "Automation Schedules", // Hardcoded value for now
-                value: "18 Schedules",
+                title: "Automation Schedules",
+                value: `${automations.length} Schedules`,
                 icon: (
                   <PrecisionManufacturingIcon
                     sx={{ color: "primary.main", fontSize: { xs: 50, md: 65 } }}
                   />
                 ),
-                link: "automations",
+                link: "/automations",
               },
             ].map((card, index) => (
               <Box key={index} sx={{ flex: 1 }}>
@@ -348,7 +359,13 @@ const Dashboard = () => {
               }}
             >
               <EnergyUsageChart
-                data={timeRange === "daily" ? energyData.daily : timeRange === "monthly" ? energyData.monthly : data}
+                data={
+                  timeRange === "daily"
+                    ? energyData.daily
+                    : timeRange === "monthly"
+                    ? energyData.monthly
+                    : data
+                }
                 timeRange={timeRange}
               />
               <ButtonGroup

@@ -99,4 +99,8 @@
   npm run start
   ```
 
-## Database Setup
+<!-- ## Database Setup -->
+
+## Total Dev Time
+
+[![Total Dev Time](https://wakatime.com/badge/user/fdd42682-464a-4d52-8867-a5c27a922c77/project/77ef4e30-ada9-4375-a6f2-8ae3e83e4bf5.svg)](https://wakatime.com/badge/user/fdd42682-464a-4d52-8867-a5c27a922c77/project/77ef4e30-ada9-4375-a6f2-8ae3e83e4bf5)

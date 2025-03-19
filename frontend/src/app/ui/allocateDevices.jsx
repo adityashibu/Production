@@ -44,7 +44,9 @@ const AllocateDevicesDialog = ({ open, onClose }) => {
       .then((res) => res.json())
       .then((data) => {
         if (data.smart_home_devices && Array.isArray(data.smart_home_devices)) {
-          const allocatedDevices = users.find((user) => user.user_id === selectedUser)?.allocated_devices || [];
+          const allocatedDevices =
+            users.find((user) => user.user_id === selectedUser)
+              ?.allocated_devices || [];
           const availableDevices = data.smart_home_devices.filter(
             (device) => !allocatedDevices.includes(device.id.toString())
           );
@@ -70,20 +72,25 @@ const AllocateDevicesDialog = ({ open, onClose }) => {
     const user = users.find((user) => user.user_id === selectedUser);
     const existingAllocatedDevices = user?.allocated_devices || [];
 
-    const updatedDevices = [...new Set([...existingAllocatedDevices, ...selectedDevices])];
+    const updatedDevices = [
+      ...new Set([...existingAllocatedDevices, ...selectedDevices]),
+    ];
 
     fetch("http://localhost:8000/allocate_devices", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: selectedUser, device_ids: updatedDevices }),
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id: selectedUser,
+        device_ids: updatedDevices,
+      }),
     })
-        .then((res) => res.json())
-        .then((data) => {
+      .then((res) => res.json())
+      .then((data) => {
         console.log(data);
         handleClose();
-        })
-        .catch((err) => console.error("Error allocating devices:", err));
-    };
+      })
+      .catch((err) => console.error("Error allocating devices:", err));
+  };
 
   const handleClose = () => {
     setSelectedUser("");
@@ -99,25 +106,35 @@ const AllocateDevicesDialog = ({ open, onClose }) => {
       <DialogContent>
         {/* User Selection */}
         <FormControl fullWidth sx={{ marginTop: 1 }}>
-          <InputLabel sx={{ fontFamily: "JetBrains Mono" }}>Select User</InputLabel>
-          <Select value={selectedUser} onChange={(e) => setSelectedUser(e.target.value)}>
-            {Array.isArray(users) && users.map((user) => (
-              <MenuItem key={user.user_id} value={user.user_id}>
-                {user.user_name}
-              </MenuItem>
-            ))}
+          <InputLabel sx={{ fontFamily: "JetBrains Mono" }}>
+            Select User
+          </InputLabel>
+          <Select
+            value={selectedUser}
+            onChange={(e) => setSelectedUser(e.target.value)}
+          >
+            {Array.isArray(users) &&
+              users.map((user) => (
+                <MenuItem key={user.user_id} value={user.user_id}>
+                  {user.user_name}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
 
         {/* Device Selection */}
         <FormControl fullWidth sx={{ marginTop: 2 }}>
-          <InputLabel sx={{ fontFamily: "JetBrains Mono" }}>Select Devices</InputLabel>
+          <InputLabel sx={{ fontFamily: "JetBrains Mono" }}>
+            Select Devices
+          </InputLabel>
           <Select
             multiple
             value={selectedDevices}
             onChange={handleDeviceChange}
             renderValue={(selected) =>
-              selected.map((id) => devices.find((device) => device.id === id)?.name).join(", ")
+              selected
+                .map((id) => devices.find((device) => device.id === id)?.name)
+                .join(", ")
             }
           >
             {devices.map((device) => (
@@ -138,7 +155,9 @@ const AllocateDevicesDialog = ({ open, onClose }) => {
                 key={deviceId}
                 label={device?.name || "Unknown"}
                 onDelete={() =>
-                  setSelectedDevices((prev) => prev.filter((id) => id !== deviceId))
+                  setSelectedDevices((prev) =>
+                    prev.filter((id) => id !== deviceId)
+                  )
                 }
                 sx={{ fontFamily: "JetBrains Mono" }}
               />
@@ -147,8 +166,15 @@ const AllocateDevicesDialog = ({ open, onClose }) => {
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} sx={{fontFamily: "Jetbrains Mono"}}>Cancel</Button>
-        <Button onClick={handleSubmit} variant="contained" color="primary" sx={{ fontFamily: "JetBrains Mono" }}>
+        <Button onClick={handleClose} sx={{ fontFamily: "Jetbrains Mono" }}>
+          Cancel
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          variant="contained"
+          color="primary"
+          sx={{ fontFamily: "JetBrains Mono" }}
+        >
           Allocate
         </Button>
       </DialogActions>

@@ -18,10 +18,11 @@
         },
         {
             "id": 3,
-            "name": "Test3",
+            "name": "Test4",
             "device_id": 1,
-            "triggers": "08:23",
-            "enabled": true
+            "triggers": "21:45",
+            "enabled": true,
+            "status": "off"
         }
     ]
 }

@@ -40,6 +40,8 @@ const Automations = () => {
   const [deviceStatus, setDeviceStatus] = useState(false);
   const [automations, setAutomations] = useState([]);
   const [editingAutomation, setEditingAutomation] = useState(null);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [automationToDelete, setAutomationToDelete] = useState(null);
 
   const conditions = ["At time"];
 
@@ -94,6 +96,7 @@ const Automations = () => {
     if (selectedDevice) {
       const device = devices.find((d) => d.name === selectedDevice);
       if (device) {
+        console.log("Updating deviceStatus:", device.status);
         setDeviceStatus(device.status === "on");
       }
     }
@@ -103,10 +106,8 @@ const Automations = () => {
     if (automation) {
       setEditingAutomation(automation);
       setName(automation.name);
-
       const triggerTime = dayjs(automation.triggers, "HH:mm");
       setTrigger(triggerTime.isValid() ? triggerTime : dayjs());
-
       setCondition("At time");
       setSelectedDevice(getDeviceName(automation.device_id));
       setDeviceStatus(automation.status === "on");
@@ -138,19 +139,23 @@ const Automations = () => {
       return;
     }
 
-    const apiUrl = editingAutomation
+    const isEditing = editingAutomation !== null; // Check if editing
+
+    const apiUrl = isEditing
       ? `http://localhost:8000/automations/edit_automation/${
           editingAutomation.id
-        }/${encodeURIComponent(name)}/${device.id}/${trigger.format(
-          "HH:mm"
-        )}/${deviceStatus}`
+        }/${encodeURIComponent(name)}/${device.id}/${trigger.format("HH:mm")}/${
+          deviceStatus ? "on" : "off"
+        }`
       : `http://localhost:8000/automations/add_automation/${encodeURIComponent(
           name
-        )}/${device.id}/${trigger.format("HH:mm")}/${deviceStatus}`;
+        )}/${device.id}/${trigger.format("HH:mm")}/${
+          deviceStatus ? "on" : "off"
+        }`;
 
     try {
       const response = await fetch(apiUrl, {
-        method: editingAutomation ? "PUT" : "POST",
+        method: isEditing ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
       });
 
@@ -169,7 +174,74 @@ const Automations = () => {
       console.error("Error saving automation:", error);
     }
 
+    console.log("Saving Automation:", {
+      name,
+      device_id: device.id,
+      trigger: trigger.format("HH:mm"),
+      status: deviceStatus ? "on" : "off",
+    });
+
     handleCloseDialog();
+  };
+
+  const handleOpenDeleteDialog = (automation) => {
+    setAutomationToDelete(automation);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+    setAutomationToDelete(null);
+  };
+
+  const confirmDelete = async () => {
+    if (!automationToDelete) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/automations/${automationToDelete.id}`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to delete automation. Status: ${response.status}`
+        );
+      }
+
+      setAutomations((prev) =>
+        prev.filter((a) => a.id !== automationToDelete.id)
+      );
+    } catch (error) {
+      console.error("Error deleting automation:", error);
+    }
+
+    handleCloseDeleteDialog();
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this automation?"))
+      return;
+
+    try {
+      const response = await fetch(`http://localhost:8000/automations/${id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to delete automation. Status: ${response.status}`
+        );
+      }
+
+      setAutomations((prev) => prev.filter((a) => a.id !== id));
+    } catch (error) {
+      console.error("Error deleting automation:", error);
+    }
   };
 
   const handleToggle = async (id) => {
@@ -216,7 +288,7 @@ const Automations = () => {
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            onClick={handleOpenDialog}
+            onClick={() => handleOpenDialog()}
             sx={{
               fontFamily: "JetBrains Mono",
               fontWeight: 600,
@@ -304,7 +376,10 @@ const Automations = () => {
                 <EditIcon sx={{ fontSize: 20 }} />
               </IconButton>
 
-              <IconButton sx={{ position: "absolute", bottom: 8, right: 8 }}>
+              <IconButton
+                sx={{ position: "absolute", bottom: 8, right: 8 }}
+                onClick={() => handleOpenDeleteDialog(automation)}
+              >
                 <DeleteIcon sx={{ fontSize: 20 }} />
               </IconButton>
             </Card>
@@ -319,7 +394,9 @@ const Automations = () => {
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle sx={{ fontFamily: "JetBrains Mono" }}>
+        <DialogTitle
+          sx={{ fontFamily: "JetBrains Mono", color: "primary.main" }}
+        >
           Add Schedule
         </DialogTitle>
         <DialogContent
@@ -392,7 +469,13 @@ const Automations = () => {
                 <span>Device Status:</span>
                 <IOSSwitch
                   checked={deviceStatus}
-                  onChange={(e) => setDeviceStatus(e.target.checked)}
+                  onChange={(e) => {
+                    console.log(
+                      "Switch toggled:",
+                      e.target.checked ? "on" : "off"
+                    );
+                    setDeviceStatus(e.target.checked);
+                  }}
                 />
               </Box>
             </>
@@ -412,9 +495,39 @@ const Automations = () => {
             onClick={handleSave}
             variant="contained"
             color="primary"
-            sx={{ fontFamily: "JetBrains Mono" }}
+            sx={{ fontFamily: "JetBrains Mono", color: "white" }}
           >
             Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
+        <DialogTitle
+          sx={{ fontFamily: "JetBrains Mono", color: "primary.main" }}
+        >
+          Confirm Delete
+        </DialogTitle>
+        <DialogContent>
+          <Typography sx={{ fontFamily: "JetBrains Mono" }}>
+            Are you sure you want to delete automation{" "}
+            <strong sx={{ color: "primary.main" }}>
+              {automationToDelete?.name}
+            </strong>{" "}
+            associated with{" "}
+            <strong>{getDeviceName(automationToDelete?.device_id)}</strong>?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleCloseDeleteDialog}
+            color="primary"
+            sx={{ fontFamily: "JetBrains Mono" }}
+          >
+            Cancel
+          </Button>
+          <Button onClick={confirmDelete} sx={{ fontFamily: "JetBrains Mono" }}>
+            Delete
           </Button>
         </DialogActions>
       </Dialog>
