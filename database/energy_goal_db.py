@@ -8,7 +8,7 @@ from watchdog.events import FileSystemEventHandler
 from dotenv import load_dotenv
 from hashlib import sha256
 
-# Load environment variables
+# Load environment variable
 load_dotenv()
 
 def initialize_firestore():

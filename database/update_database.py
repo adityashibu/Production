@@ -2,7 +2,7 @@ import os
 import subprocess
 
 def main():
-    # List all your database-updating script names here
+    
     scripts = [
         "daily_energy_db.py",
         "automations_db.py",
@@ -16,19 +16,19 @@ def main():
     current_dir = os.path.dirname(__file__)
     processes = []
 
-    # Start each script as a separate process
+    
     for script in scripts:
         script_path = os.path.join(current_dir, script)
         
         if os.path.isfile(script_path):
             print(f"Running {script} in parallel...")
-            # Launch in parallel (non-blocking)
+            # Launching in parallel (non-blocking)
             process = subprocess.Popen(["python", script_path])
             processes.append(process)
         else:
             print(f"Script not found: {script_path}")
 
-    # Wait for all processes to finish
+    # Waiting for all processes to finish
     for process in processes:
         process.wait()
 

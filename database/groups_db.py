@@ -7,7 +7,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from dotenv import load_dotenv
 
-# Load environment variables
+# Load environment variable
 load_dotenv()
 
 def initialize_firestore():
