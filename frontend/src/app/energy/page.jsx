@@ -475,7 +475,7 @@ const Energy = () => {
                     color: "primary.main",
                   }}
                 >
-                  Generate PDF
+                  Generate Energy Analytics PDF
                 </Typography>
 
                 {/* Generate PDF Button */}

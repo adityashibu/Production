@@ -18,7 +18,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import DevicesIcon from "@mui/icons-material/Devices";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import BatteryChargingFullIcon from "@mui/icons-material/BatteryChargingFull";
-import GroupIcon from "@mui/icons-material/Group";
+import DynamicFeedIcon from "@mui/icons-material/DynamicFeed";
 
 import { useAppStore } from "@/app/appStore";
 
@@ -45,7 +45,7 @@ const menuItems = [
   },
   {
     name: "Groups",
-    icon: GroupIcon,
+    icon: DynamicFeedIcon,
     link: "/groups",
   },
 ];
