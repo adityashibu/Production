@@ -30,22 +30,17 @@
         - status (string)
         - user (reference) (FK)
 
-
-      
-- Tentative tables
-
-    4. **Device Energy per day:**
-        - ID (int) (PK)
-        - Device (FK)
-        - Date
- 
-    6. **Energy Goal:**
-        - ID (int) (PK)
-        - Energy Goal (int)
-    7. **DeviceGroup:**
-        - devices (reference) (FK)
+    5. **DailyEnergy:**
         - id (int) (PK)
-        - name (string)
-        - status (string)
-        - user (reference) (FK)
+        - power_usage (int)
+        - timestamp (timestamp)
 
+    6.  **MonthlyEnergy:**
+        - id (int) (PK)
+        - power_usage (int)
+        - timestamp (timestamp)
+
+    7. **EnergyGoal:**
+        - id (int) (PK)
+        - goal_value (int)
+   
