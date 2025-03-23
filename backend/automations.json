@@ -23,6 +23,22 @@
             "triggers": "21:45",
             "enabled": true,
             "status": "off"
+        },
+        {
+            "id": 4,
+            "name": "Test5",
+            "device_id": 2,
+            "triggers": "11:21",
+            "enabled": false,
+            "status": "off"
+        },
+        {
+            "id": 5,
+            "name": "Garden Lights 1",
+            "device_id": 1,
+            "triggers": "12:50",
+            "enabled": false,
+            "status": "on"
         }
     ]
 }

@@ -343,6 +343,18 @@ const Users = () => {
                     >
                       {user.user_name}
                     </Typography>
+                    <Typography
+                      variant="h7"
+                      sx={{
+                        fontFamily: "JetBrains Mono",
+                        fontWeight: "bold",
+                        color: "primary.main",
+                      }}
+                    >
+                      {user.user_role === "super_user"
+                        ? "Super User"
+                        : "Sub User"}
+                    </Typography>
                   </CardContent>
 
                   {/* Delete Button */}
