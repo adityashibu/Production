@@ -25,7 +25,7 @@
       
     4. **DeviceGroup:**
         - devices (reference) (FK)
-        - id (int) (PK)
+        - user-group_id (int) (PK)
         - name (string)
         - status (string)
         - user (reference) (FK)
