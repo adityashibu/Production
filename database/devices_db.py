@@ -14,7 +14,7 @@ load_dotenv()
 
 # Firebase credentials
 FIREBASE_PROJECT_ID = os.getenv('FIREBASE_PROJECT_ID')
-FIREBASE_PRIVATE_KEY = os.getenv('FIREBASE_PRIVATE_KEY').replace('\\n', '\n')  # Fix newlines
+FIREBASE_PRIVATE_KEY = os.getenv('FIREBASE_PRIVATE_KEY').replace('\\n', '\n')  # Fix newline
 FIREBASE_CLIENT_EMAIL = os.getenv('FIREBASE_CLIENT_EMAIL')
 
 firebase_config = {
@@ -63,6 +63,9 @@ def update_firestore():
 
     # Filter devices that are "connected"
     filtered_devices = [
+        {key: device[key] for key in ["id", "name", "ip"]}
+        for device in data["smart_home_devices"]
+        if device.get("connection_status") == "connected"
         {key: device[key] for key in ["id", "name", "ip"]}
         for device in data["smart_home_devices"]
         if device.get("connection_status") == "connected"

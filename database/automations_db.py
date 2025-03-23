@@ -64,7 +64,7 @@ def set_automations_data():
         filtered_automations[automation_id] = {
             "id": automation["id"],
             "name": automation["name"],
-            "device_ids": device_refs,  # Store as a list of Firestore references
+            "device_ids": device_refs,  # Store as a list of Firestore references 
             "triggers": automation["triggers"],
             "status": automation["status"]
         }
