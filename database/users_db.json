@@ -6,14 +6,20 @@
             "user_password": "7777",
             "allocated_devices": [
                 "1",
-                "2"
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8"
             ],
             "user_role": "super_user",
             "device_groups": [
                 {
                     "id": 1,
                     "name": "Living Room Devices",
-                    "status": "off",
+                    "status": "on",
                     "devices": [
                         1,
                         4,
