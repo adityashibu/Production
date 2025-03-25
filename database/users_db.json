@@ -19,7 +19,7 @@
                 {
                     "id": 2,
                     "name": "Bedroom Device",
-                    "status": "on",
+                    "status": "off",
                     "devices": [
                         1,
                         2,
@@ -94,7 +94,8 @@
                 "4",
                 "6",
                 "7",
-                "8"
+                "8",
+                "5"
             ],
             "user_role": "sub_user",
             "device_groups": [

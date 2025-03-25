@@ -2,10 +2,10 @@
     "automations": [
         {
             "id": 1,
-            "name": "Test",
+            "name": "Test ",
             "device_id": 1,
-            "enabled": true,
-            "triggers": "11:05",
+            "enabled": false,
+            "triggers": "23:55",
             "status": "off"
         },
         {
@@ -69,6 +69,14 @@
             "name": "Music ",
             "device_id": 6,
             "triggers": "04:02",
+            "enabled": true,
+            "status": "on"
+        },
+        {
+            "id": 11,
+            "name": "Garden Lights",
+            "device_id": 1,
+            "triggers": "18:02",
             "enabled": true,
             "status": "on"
         }
