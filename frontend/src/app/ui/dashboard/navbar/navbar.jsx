@@ -127,6 +127,7 @@ export default function Navbar() {
               aria-label="show notifications"
               color="inherit"
               onClick={handleNotificationsOpen}
+              sx={{ display: { xs: "none", sm: "block" } }}
             >
               <Badge
                 badgeContent={updates.length > 0 ? updates.length : 0}
