@@ -29,7 +29,7 @@
                 {
                     "id": 3,
                     "name": "Hall Devices",
-                    "status": "on",
+                    "status": "off",
                     "devices": [
                         1,
                         3,
@@ -237,6 +237,13 @@
                 "8",
                 "6"
             ],
+            "user_role": "sub_user"
+        },
+        {
+            "user_id": 16,
+            "user_name": "Anna",
+            "user_password": "1111",
+            "allocated_devices": [],
             "user_role": "sub_user"
         }
     ]

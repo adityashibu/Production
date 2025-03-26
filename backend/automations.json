@@ -12,7 +12,7 @@
             "id": 2,
             "name": "Test2",
             "device_id": "2",
-            "enabled": true,
+            "enabled": false,
             "triggers": "8:45",
             "status": "off"
         },
@@ -21,15 +21,7 @@
             "name": "Test4",
             "device_id": 1,
             "triggers": "14:45",
-            "enabled": true,
-            "status": "off"
-        },
-        {
-            "id": 4,
-            "name": "TEST 3",
-            "device_id": 1,
-            "triggers": "16:06",
-            "enabled": true,
+            "enabled": false,
             "status": "off"
         },
         {
@@ -45,7 +37,7 @@
             "name": "test",
             "device_id": 1,
             "triggers": "17:03",
-            "enabled": true,
+            "enabled": false,
             "status": "on"
         },
         {
@@ -53,15 +45,7 @@
             "name": "NEW ",
             "device_id": 4,
             "triggers": "19:05",
-            "enabled": true,
-            "status": "on"
-        },
-        {
-            "id": 9,
-            "name": "Play devotional songs",
-            "device_id": 4,
-            "triggers": "19:00",
-            "enabled": true,
+            "enabled": false,
             "status": "on"
         },
         {
@@ -69,7 +53,7 @@
             "name": "Music ",
             "device_id": 6,
             "triggers": "04:02",
-            "enabled": true,
+            "enabled": false,
             "status": "on"
         },
         {
@@ -77,7 +61,7 @@
             "name": "Garden Lights",
             "device_id": 1,
             "triggers": "18:02",
-            "enabled": true,
+            "enabled": false,
             "status": "on"
         }
     ]
